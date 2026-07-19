@@ -3,17 +3,24 @@ import 'package:flutter/material.dart';
 class AlmaTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
+  final VoidCallback? onSubmitted;
+  final FocusNode? focusNode;
 
   const AlmaTextField({
     super.key,
     required this.controller,
     required this.hintText,
+	this.onSubmitted,
+	this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+	  focusNode: focusNode,
+	  textInputAction: TextInputAction.send,	
+	  onSubmitted: (_) => onSubmitted?.call(),
       style: const TextStyle(
         color: Colors.white,
       ),
