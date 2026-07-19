@@ -4,6 +4,7 @@ import '../../shared/widgets/alma_button.dart';
 import '../../shared/widgets/alma_scaffold.dart';
 import '../../shared/widgets/alma_text_field.dart';
 import '../../shared/models/chat_message.dart';
+import '../../shared/widgets/chat_bubble.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -17,7 +18,7 @@ class _ChatPageState extends State<ChatPage> {
   
   final List<ChatMessage> _messages = [];
   
-	  void _sendMessage() {
+	 void _sendMessage() {
 	  final text = _controller.text.trim();
 
 	  if (text.isEmpty) return;
@@ -27,6 +28,13 @@ class _ChatPageState extends State<ChatPage> {
 		  ChatMessage(
 			text: text,
 			isUser: true,
+		  ),
+		);
+
+		_messages.add(
+		  const ChatMessage(
+			text: 'Sto ancora imparando 😊',
+			isUser: false,
 		  ),
 		);
 	  });
@@ -63,31 +71,10 @@ class _ChatPageState extends State<ChatPage> {
           itemBuilder: (context, index) {
             final message = _messages[index];
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Align(
-                alignment: message.isUser
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: message.isUser
-                        ? const Color(0xFF00D5FF)
-                        : const Color(0xFF1C2541),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Text(
-                    message.text,
-                    style: TextStyle(
-                      color: message.isUser
-                          ? Colors.black
-                          : Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            );
+            return ChatBubble(
+			text: message.text,
+			isUser: message.isUser,
+			);
           },
         ),
 ),
