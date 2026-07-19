@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../shared/widgets/alma_logo.dart';
 import '../../shared/widgets/alma_button.dart';
 import '../../shared/widgets/alma_scaffold.dart';
+import '../chat/chat_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -31,10 +32,17 @@ class HomePage extends StatelessWidget {
 
         const SizedBox(height: 50),
 
-        AlmaButton(
-          text: 'Inizia',
-          onPressed: () {},
-        ),
+		AlmaButton(
+		  text: 'Inizia',
+		  onPressed: () {
+			Navigator.push(
+			  context,
+			  MaterialPageRoute(
+				builder: (_) => const ChatPage(),
+			  ),
+			);
+		  },
+),
       ],
     ),
   ),
