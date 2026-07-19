@@ -1,0 +1,18 @@
+# Flutter
+app/.dart_tool/
+app/build/
+
+# Flutter environment
+app/.env
+
+# Node.js
+backend/node_modules/
+backend/.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

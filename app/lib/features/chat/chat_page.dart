@@ -6,6 +6,7 @@ import '../../shared/widgets/alma_scaffold.dart';
 import '../../shared/widgets/alma_text_field.dart';
 import '../../shared/widgets/chat_bubble.dart';
 import '../../shared/widgets/typing_indicator.dart';
+import '../../core/services/chat_service.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -18,52 +19,53 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
+  final ChatService _chatService = ChatService();
 
   final List<ChatMessage> _messages = [];
 
   bool _isTyping = false;
 
-  void _sendMessage() {
-    final text = _controller.text.trim();
+ Future<void> _sendMessage() async {
+  final text = _controller.text.trim();
 
-    if (text.isEmpty) return;
+  if (text.isEmpty) return;
 
-    setState(() {
-      _messages.add(
-        ChatMessage(
-          text: text,
-          isUser: true,
-        ),
-      );
+  setState(() {
+    _messages.add(
+      ChatMessage(
+        text: text,
+        isUser: true,
+      ),
+    );
 
-      _isTyping = true;
-    });
+    _isTyping = true;
+  });
 
-    _controller.clear();
+  _controller.clear();
 
-    _scrollToBottom();
+  _scrollToBottom();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
-    });
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _focusNode.requestFocus();
+  });
 
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
+  final response = await _chatService.getResponse(text);
 
-      setState(() {
-        _isTyping = false;
+  if (!mounted) return;
 
-        _messages.add(
-          const ChatMessage(
-            text: 'Sto ancora imparando 😊',
-            isUser: false,
-          ),
-        );
-      });
+  setState(() {
+    _isTyping = false;
 
-      _scrollToBottom();
-    });
-  }
+    _messages.add(
+      ChatMessage(
+        text: response,
+        isUser: false,
+      ),
+    );
+  });
+
+  _scrollToBottom();
+}
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {

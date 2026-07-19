@@ -20,7 +20,7 @@ class AlmaTheme {
 
         textTheme: const TextTheme(
           headlineLarge: TextStyle(
-            fontSize: 42,
+            fontSize: 48,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -31,8 +31,8 @@ class AlmaTheme {
           ),
 
           bodyLarge: TextStyle(
-            fontSize: 18,
-            color: Colors.white70,
+            fontSize: 20,
+            color: Color(0xFF00D5FF),
           ),
         ),
       );
