@@ -2,16 +2,12 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const OpenAI = require("openai");
+const aiRouter = require("./ai/router");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 app.get("/", (req, res) => {
   res.send("ALMA Backend Online");
@@ -19,25 +15,12 @@ app.get("/", (req, res) => {
 
 app.post("/chat", async (req, res) => {
   try {
-    const { message } = req.body;
+   const { message } = req.body;
 
-    const response = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [
-        {
-          role: "system",
-          content: "Sei ALMA, un assistente intelligente, chiaro e disponibile.",
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-    });
+   const result = await aiRouter(message);
 
-    res.json({
-      reply: response.choices[0].message.content,
-    });
+   res.json(result);
+        
   } catch (error) {
     console.error(error);
 

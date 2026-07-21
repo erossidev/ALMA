@@ -25,47 +25,49 @@ class _ChatPageState extends State<ChatPage> {
 
   bool _isTyping = false;
 
- Future<void> _sendMessage() async {
-  final text = _controller.text.trim();
+  Future<void> _sendMessage() async {
+    final text = _controller.text.trim();
 
-  if (text.isEmpty) return;
+    if (text.isEmpty) return;
 
-  setState(() {
-    _messages.add(
-      ChatMessage(
-        text: text,
-        isUser: true,
-      ),
-    );
+    setState(() {
+      _messages.add(
+        ChatMessage(
+          text: text,
+          isUser: true,
+        ),
+      );
 
-    _isTyping = true;
-  });
+      _isTyping = true;
+    });
 
-  _controller.clear();
+    _controller.clear();
 
-  _scrollToBottom();
+    _scrollToBottom();
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _focusNode.requestFocus();
-  });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
 
-  final response = await _chatService.getResponse(text);
+    final response = await _chatService.getResponse(text);
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  setState(() {
-    _isTyping = false;
+    setState(() {
+      _isTyping = false;
 
-    _messages.add(
-      ChatMessage(
-        text: response,
-        isUser: false,
-      ),
-    );
-  });
+      _messages.add(
+        ChatMessage(
+          text: response.reply,
+          isUser: false,
+          provider: response.provider,
+          model: response.model,
+        ),
+      );
+    });
 
-  _scrollToBottom();
-}
+    _scrollToBottom();
+  }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -106,21 +108,23 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   )
                 : ListView.builder(
-				  controller: _scrollController,
-				  itemCount: _messages.length + (_isTyping ? 1 : 0),
-				  itemBuilder: (context, index) {
-					if (_isTyping && index == _messages.length) {
-					  return const TypingIndicator();
-					}
+                    controller: _scrollController,
+                    itemCount: _messages.length + (_isTyping ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (_isTyping && index == _messages.length) {
+                        return const TypingIndicator();
+                      }
 
-					final message = _messages[index];
+                      final message = _messages[index];
 
-					return ChatBubble(
-					  text: message.text,
-					  isUser: message.isUser,
-					);
-				  },
-				),
+                      return ChatBubble(
+                        text: message.text,
+                        isUser: message.isUser,
+                        provider: message.provider,
+                        model: message.model,
+                      );
+                    },
+                  ),
           ),
           Row(
             children: [

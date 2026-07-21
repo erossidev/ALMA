@@ -1,4 +1,5 @@
 import 'ai_provider.dart';
+import 'ai_response.dart';
 import 'providers/openai_provider.dart';
 
 class AIManager {
@@ -6,7 +7,7 @@ class AIManager {
 
   AIManager() : _provider = OpenAIProvider();
 
-  Future<String> getResponse(String message) async {
+  Future<AIResponse> getResponse(String message) async {
     return await _provider.sendMessage(message);
   }
 }

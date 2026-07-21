@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../ai_provider.dart';
+import '../ai_response.dart';
 
 class OpenAIProvider implements AIProvider {
   @override
-  Future<String> sendMessage(String message) async {
+  Future<AIResponse> sendMessage(String message) async {
     try {
       final response = await http.post(
         Uri.parse("http://localhost:3000/chat"),
@@ -20,12 +21,20 @@ class OpenAIProvider implements AIProvider {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data["reply"];
+        return AIResponse.fromJson(data);
       } else {
-        return "Errore ${response.statusCode}: ${response.body}";
+        return AIResponse(
+          reply: "Errore ${response.statusCode}: ${response.body}",
+          provider: "Sistema",
+          model: "",
+        );
       }
     } catch (e) {
-      return "Errore di connessione: $e";
+      return AIResponse(
+        reply: "Errore di connessione: $e",
+        provider: "Sistema",
+        model: "",
+      );
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'ai_response.dart';
+
 abstract class AIProvider {
-  Future<String> sendMessage(String message);
+  Future<AIResponse> sendMessage(String message);
 }
