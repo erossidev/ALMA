@@ -1,3 +1,4 @@
+import 'brain.dart';
 import 'neuron.dart';
 
 enum RelationshipType {
@@ -88,5 +89,58 @@ class Synapse {
     if (strength < 0.0) {
       strength = 0.0;
     }
+  }
+
+  /// ==========================
+  /// SERIALIZZAZIONE
+  /// ==========================
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'from': from.id,
+      'to': to.id,
+      'relationship': relationship.name,
+      'strength': strength,
+      'plasticity': plasticity,
+      'activationCount': activationCount,
+      'lastActivated':
+          lastActivated?.millisecondsSinceEpoch,
+    };
+  }
+
+  /// ==========================
+  /// DESERIALIZZAZIONE
+  /// ==========================
+
+  factory Synapse.fromJson({
+    required Map<String, dynamic> json,
+    required Brain brain,
+  }) {
+    final from = brain.getNeuron(json['from']);
+    final to = brain.getNeuron(json['to']);
+
+    if (from == null || to == null) {
+      throw Exception(
+        'Impossibile ricostruire la sinapsi: neuroni mancanti.',
+      );
+    }
+
+    return Synapse(
+      id: json['id'],
+      from: from,
+      to: to,
+      relationship: RelationshipType.values.firstWhere(
+        (e) => e.name == json['relationship'],
+      ),
+      strength: (json['strength'] ?? 0.2).toDouble(),
+      plasticity: (json['plasticity'] ?? 1.0).toDouble(),
+      activationCount: json['activationCount'] ?? 0,
+      lastActivated: json['lastActivated'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              json['lastActivated'],
+            )
+          : null,
+    );
   }
 }

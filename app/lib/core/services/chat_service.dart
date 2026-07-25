@@ -1,10 +1,17 @@
-import '../ai/ai_manager.dart';
+import '../../brain/cognitive_engine.dart';
 import '../ai/ai_response.dart';
+import '../alma/alma.dart';
 
 class ChatService {
-  final AIManager _aiManager = AIManager();
 
-  Future<AIResponse> getResponse(String message) async {
-    return await _aiManager.getResponse(message);
+  final CognitiveEngine _cognitiveEngine =
+      Alma.instance.cognitiveEngine;
+
+  Future<AIResponse> getResponse(
+    String message,
+  ) async {
+
+    return await _cognitiveEngine.think(message);
+
   }
 }

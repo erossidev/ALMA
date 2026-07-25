@@ -10,6 +10,22 @@ class Brain {
   final Map<String, Synapse> _synapses = {};
 
   /// ==========================
+  /// STATO
+  /// ==========================
+
+  bool _dirty = false;
+
+  bool get isDirty => _dirty;
+
+  void markDirty() {
+    _dirty = true;
+  }
+
+  void clearDirty() {
+    _dirty = false;
+  }
+
+  /// ==========================
   /// GETTERS
   /// ==========================
 
@@ -27,6 +43,7 @@ class Brain {
 
   void addNeuron(Neuron neuron) {
     _neurons[neuron.id] = neuron;
+    markDirty();
   }
 
   void removeNeuron(String id) {
@@ -37,6 +54,8 @@ class Brain {
           synapse.from.id == id ||
           synapse.to.id == id,
     );
+
+    markDirty();
   }
 
   bool containsNeuron(String id) {
@@ -63,10 +82,12 @@ class Brain {
 
   void addSynapse(Synapse synapse) {
     _synapses[synapse.id] = synapse;
+    markDirty();
   }
 
   void removeSynapse(String id) {
     _synapses.remove(id);
+    markDirty();
   }
 
   bool containsSynapse(String id) {
@@ -84,10 +105,12 @@ class Brain {
   void connect(Synapse synapse) {
     if (_synapses.containsKey(synapse.id)) {
       _synapses[synapse.id]!.strengthen();
+      markDirty();
       return;
     }
 
     _synapses[synapse.id] = synapse;
+    markDirty();
   }
 
   List<Synapse> getConnections(String neuronId) {
@@ -126,6 +149,7 @@ class Brain {
     if (neuron == null) return;
 
     neuron.state.activate(stimulus);
+    markDirty();
   }
 
   /// ==========================
@@ -146,6 +170,8 @@ class Brain {
         synapse.strength,
       );
     }
+
+    markDirty();
   }
 
   /// ==========================
@@ -160,7 +186,30 @@ class Brain {
     for (final synapse in _synapses.values) {
       synapse.decay();
     }
+
+    markDirty();
   }
+
+
+  /// ==========================
+  /// COPIA
+  /// ==========================
+
+  void copyFrom(Brain other) {
+    _neurons.clear();
+    _synapses.clear();
+
+    for (final neuron in other.neurons) {
+      _neurons[neuron.id] = neuron;
+    }
+
+    for (final synapse in other.synapses) {
+      _synapses[synapse.id] = synapse;
+    }
+
+    clearDirty();
+  }
+
 
   /// ==========================
   /// STATISTICHE
@@ -173,6 +222,7 @@ Brain
 ------
 Neurons : $neuronCount
 Synapses: $synapseCount
+Dirty    : $isDirty
 ''';
   }
 }

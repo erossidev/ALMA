@@ -94,4 +94,32 @@ class NeuronState {
       importance = 0.0;
     }
   }
+
+  Map<String, dynamic> toJson() {
+  return {
+    'activation': activation,
+    'importance': importance,
+    'confidence': confidence,
+    'plasticity': plasticity,
+    'emotionalWeight': emotionalWeight,
+    'activationCount': activationCount,
+    'lastActivated': lastActivated?.millisecondsSinceEpoch,
+  };
+}
+
+factory NeuronState.fromJson(Map<String, dynamic> json) {
+  return NeuronState(
+    activation: (json['activation'] ?? 0.0).toDouble(),
+    importance: (json['importance'] ?? 0.5).toDouble(),
+    confidence: (json['confidence'] ?? 0.5).toDouble(),
+    plasticity: (json['plasticity'] ?? 1.0).toDouble(),
+    emotionalWeight: (json['emotionalWeight'] ?? 0.0).toDouble(),
+    activationCount: json['activationCount'] ?? 0,
+    lastActivated: json['lastActivated'] != null
+        ? DateTime.fromMillisecondsSinceEpoch(
+            json['lastActivated'],
+          )
+        : null,
+  );
+}
 }
