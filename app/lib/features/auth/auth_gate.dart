@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../home/home_page.dart';
 import 'login_page.dart';
+import 'alma_loader.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -21,7 +22,7 @@ class AuthGate extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          return const HomePage();
+        return const AlmaLoader();
         }
 
         return const LoginPage();

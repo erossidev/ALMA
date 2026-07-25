@@ -14,6 +14,9 @@ import 'language/relation_extractor.dart';
 
 import 'repositories/brain_repository.dart';
 
+import 'retrieval/memory_retriever.dart';
+import 'retrieval/memory_result.dart';
+
 class CognitiveEngine {
   final Brain brain;
   final WorkingMemory workingMemory;
@@ -23,10 +26,10 @@ class CognitiveEngine {
   final BrainRepository repository;
 
   late final BrainUpdater _brainUpdater =
-    BrainUpdater(
-      brain: brain,
-      repository: repository,
-    );
+      BrainUpdater(
+        brain: brain,
+        repository: repository,
+      );
 
   final ConceptExtractor _conceptExtractor =
       ConceptExtractor();
@@ -34,16 +37,19 @@ class CognitiveEngine {
   final RelationExtractor _relationExtractor =
       RelationExtractor();
 
-  late final ContextBuilder _contextBuilder =
-      ContextBuilder(brain);
+  late final MemoryRetriever _memoryRetriever =
+      MemoryRetriever(brain);
+
+  final ContextBuilder _contextBuilder =
+      ContextBuilder();
 
   CognitiveEngine({
-  required this.brain,
-  required this.workingMemory,
-  required this.attentionEngine,
-  required this.hippocampus,
-  required this.aiManager,
-  required this.repository,
+    required this.brain,
+    required this.workingMemory,
+    required this.attentionEngine,
+    required this.hippocampus,
+    required this.aiManager,
+    required this.repository,
   });
 
   /// =====================================================
@@ -72,9 +78,9 @@ class CognitiveEngine {
   Future<void> perceive(String message) async {
     // Versione 1
     // In futuro:
-    // - NLP
     // - Intent Detection
     // - Emotion Detection
+    // - NLP avanzato
   }
 
   /// =====================================================
@@ -101,11 +107,25 @@ class CognitiveEngine {
   }
 
   /// =====================================================
-  /// CONTESTO
+  /// COSTRUZIONE CONTESTO
   /// =====================================================
 
   String buildContext(String message) {
-    return _contextBuilder.build(message);
+    final MemoryResult memory =
+        _memoryRetriever.retrieve(message);
+
+    final prompt = _contextBuilder.build(
+      message,
+      memory,
+    );
+
+    print("");
+    print("========== PROMPT ==========");
+    print(prompt);
+    print("============================");
+    print("");
+
+    return prompt;
   }
 
   /// =====================================================

@@ -1,33 +1,50 @@
-import '../brain.dart';
-import '../neuron.dart';
+import '../synapse.dart';
+import '../retrieval/memory_result.dart';
 
 class ContextBuilder {
-  final Brain brain;
-
-  ContextBuilder(this.brain);
-
-  String build(String userMessage) {
+  String build(
+    String userMessage,
+    MemoryResult memory,
+  ) {
     final buffer = StringBuffer();
 
-    // Recupera tutti i neuroni attivi
-    final activeNeurons = brain.neurons.where(
-      (n) => n.state.activation > 0,
-    );
+    if (memory.isNotEmpty) {
+      buffer.writeln("Conoscenze di ALMA:");
+      buffer.writeln();
 
-    if (activeNeurons.isNotEmpty) {
-      buffer.writeln(
-        "Conoscenze già acquisite:"
-      );
+      for (final synapse in memory.synapses) {
+        switch (synapse.relationship) {
+          case RelationshipType.knows:
+            if (synapse.from.id == "user") {
+              buffer.writeln(
+                "- L'utente si chiama ${synapse.to.label}.",
+              );
+            }
+            break;
 
-      for (final neuron in activeNeurons) {
-        buffer.writeln(
-          "- ${neuron.label}"
-        );
+          case RelationshipType.likes:
+            buffer.writeln(
+              "- ${synapse.from.label} ama ${synapse.to.label}.",
+            );
+            break;
+
+          case RelationshipType.uses:
+            buffer.writeln(
+              "- ${synapse.from.label} usa ${synapse.to.label}.",
+            );
+            break;
+
+          default:
+            buffer.writeln(
+              "- ${synapse.from.label} → ${synapse.relationship.name} → ${synapse.to.label}",
+            );
+        }
       }
 
       buffer.writeln();
     }
 
+    buffer.writeln("Domanda:");
     buffer.writeln(userMessage);
 
     return buffer.toString();

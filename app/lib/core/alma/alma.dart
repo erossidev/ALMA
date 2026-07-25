@@ -31,11 +31,21 @@ class Alma {
   final FirebaseBrainRepository repository =
     FirebaseBrainRepository();
 
-  Future<void> initialize() async {
-  final loadedBrain = await repository.loadBrain();;
+ Future<void> initialize() async {
+  print("===== CARICO BRAIN =====");
+
+  final loadedBrain = await repository.loadBrain();
+
+  print("Brain letto da Firestore:");
+  print(loadedBrain);
 
   brain.copyFrom(loadedBrain);
-  }
+
+  print("Brain dopo copyFrom:");
+  print(brain);
+
+  print("========================");
+}
 
   late final CognitiveEngine cognitiveEngine =
     CognitiveEngine(
