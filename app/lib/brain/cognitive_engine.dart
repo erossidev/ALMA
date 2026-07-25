@@ -8,9 +8,7 @@ import 'attention/attention_engine.dart';
 import 'hippocampus/hippocampus.dart';
 
 import 'language/brain_updater.dart';
-import 'language/concept_extractor.dart';
 import 'language/context_builder.dart';
-import 'language/relation_extractor.dart';
 
 import 'repositories/brain_repository.dart';
 
@@ -34,16 +32,10 @@ class CognitiveEngine {
       );
 
   late final SemanticPipeline _semanticPipeline =
-    SemanticPipeline(
-      aiManager: aiManager,
-      brainUpdater: _brainUpdater,
-    );
-
-  final ConceptExtractor _conceptExtractor =
-      ConceptExtractor();
-
-  final RelationExtractor _relationExtractor =
-      RelationExtractor();
+      SemanticPipeline(
+        aiManager: aiManager,
+        brainUpdater: _brainUpdater,
+      );
 
   late final MemoryRetriever _memoryRetriever =
       MemoryRetriever(brain);
@@ -60,11 +52,13 @@ class CognitiveEngine {
     required this.repository,
   });
 
-  /// =====================================================
-  /// CICLO COGNITIVO
-  /// =====================================================
+  // =====================================================
+  // CICLO COGNITIVO
+  // =====================================================
 
-  Future<AIResponse> think(String message) async {
+  Future<AIResponse> think(
+    String message,
+  ) async {
     await perceive(message);
 
     await remember(message);
@@ -72,18 +66,25 @@ class CognitiveEngine {
     final prompt = buildContext(message);
 
     final response =
-    await aiManager.generateResponse(prompt);
+        await aiManager.generateResponse(
+      prompt,
+    );
 
-    await learn(message, response);
+    await learn(
+      message,
+      response,
+    );
 
     return response;
   }
 
-  /// =====================================================
-  /// PERCEZIONE
-  /// =====================================================
+  // =====================================================
+  // PERCEZIONE
+  // =====================================================
 
-  Future<void> perceive(String message) async {
+  Future<void> perceive(
+    String message,
+  ) async {
     // Versione 1
     // In futuro:
     // - Intent Detection
@@ -91,71 +92,34 @@ class CognitiveEngine {
     // - NLP avanzato
   }
 
-  /// =====================================================
-  /// MEMORIA
-  /// =====================================================
+  // =====================================================
+  // MEMORIA
+  // =====================================================
 
   Future<void> remember(
-  String message,
+    String message,
   ) async {
-
-  // =====================================
-  // NUOVA PIPELINE SEMANTICA
-  // =====================================
-
-  try {
-
     await _semanticPipeline.process(
       message,
     );
 
-    return;
-
-  } catch (e) {
-
-    print(
-      "Semantic pipeline failed: $e",
-    );
-
+    print(brain);
   }
 
-  // =====================================
-  // FALLBACK (TEMPORANEO)
-  // =====================================
+  // =====================================================
+  // COSTRUZIONE CONTESTO
+  // =====================================================
 
-  final concepts =
-      _conceptExtractor.extract(
-    message,
-  );
-
-  final relations =
-      _relationExtractor.extract(
-    message,
-  );
-
-  await _brainUpdater.update(
-    concepts: concepts,
-    relations: relations,
-  );
-
-  for (final concept in concepts) {
-    brain.activateNeuron(
-      concept.id,
-    );
-  }
-
-  print(brain);
-  }
-
-  /// =====================================================
-  /// COSTRUZIONE CONTESTO
-  /// =====================================================
-
-  String buildContext(String message) {
+  String buildContext(
+    String message,
+  ) {
     final MemoryResult memory =
-        _memoryRetriever.retrieve(message);
+        _memoryRetriever.retrieve(
+      message,
+    );
 
-    final prompt = _contextBuilder.build(
+    final prompt =
+        _contextBuilder.build(
       message,
       memory,
     );
@@ -169,9 +133,9 @@ class CognitiveEngine {
     return prompt;
   }
 
-  /// =====================================================
-  /// APPRENDIMENTO
-  /// =====================================================
+  // =====================================================
+  // APPRENDIMENTO
+  // =====================================================
 
   Future<void> learn(
     String message,
@@ -186,9 +150,9 @@ class CognitiveEngine {
     );
   }
 
-  /// =====================================================
-  /// SONNO
-  /// =====================================================
+  // =====================================================
+  // SONNO
+  // =====================================================
 
   Future<void> sleep() async {
     hippocampus.consolidate(
