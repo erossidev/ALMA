@@ -53,13 +53,15 @@ class MemoryRetriever {
     // SINAPSI COINVOLTE
     // ==========================
 
-    final synapses = <dynamic>[];
+    final synapseMap = <String, dynamic>{};
 
     for (final neuron in neurons) {
-      synapses.addAll(
-        brain.getConnections(neuron.id),
-      );
+      for (final synapse in brain.getConnections(neuron.id)) {
+        synapseMap[synapse.id] = synapse;
+      }
     }
+
+    final synapses = synapseMap.values.toList();
 
     return MemoryResult(
       neurons: neurons,
