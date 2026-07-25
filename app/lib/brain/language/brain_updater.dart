@@ -82,6 +82,14 @@ class BrainUpdater {
 
       await repository.saveSynapse(synapse);
     }
+
+    // ===================================
+    // DEBUG
+    // ===================================
+
+    _debugBrain();
+
+    print(brain);
   }
 
   // =====================================================
@@ -102,12 +110,13 @@ class BrainUpdater {
         continue;
       }
 
-      final neuron =
-          _mapper.toNeuron(entity);
+      final neuron = _mapper.toNeuron(entity);
 
       brain.addNeuron(neuron);
 
       await repository.saveNeuron(neuron);
+
+      print(">>> SALVO NEURONE: ${neuron.id}");
     }
 
     // ===================================
@@ -115,18 +124,15 @@ class BrainUpdater {
     // ===================================
 
     for (final relation in semantic.relations) {
-      final from =
-          brain.getNeuron(relation.from);
+      final from = brain.getNeuron(relation.from);
 
-      final to =
-          brain.getNeuron(relation.to);
+      final to = brain.getNeuron(relation.to);
 
       if (from == null || to == null) {
         continue;
       }
 
-      final synapse =
-          _mapper.toSynapse(
+      final synapse = _mapper.toSynapse(
         relation: relation,
         from: from,
         to: to,
@@ -143,8 +149,46 @@ class BrainUpdater {
       await repository.saveSynapse(
         synapse,
       );
+
+      print(">>> SALVO SINAPSI: ${synapse.id}");
     }
 
+    // ===================================
+    // DEBUG COMPLETO DEL BRAIN
+    // ===================================
+
+    _debugBrain();
+
     print(brain);
+  }
+
+  // =====================================================
+  // DEBUG
+  // =====================================================
+
+  void _debugBrain() {
+    print("");
+    print("===== NEURONI =====");
+
+    for (final neuron in brain.neurons) {
+      print(
+        "${neuron.id} (${neuron.type.name})",
+      );
+    }
+
+    print("");
+
+    print("===== SINAPSI =====");
+
+    for (final synapse in brain.synapses) {
+      print(
+        "${synapse.id}"
+        " -> ${synapse.relationship.name}"
+        " (${synapse.from.label} -> ${synapse.to.label})",
+      );
+    }
+
+    print("===================");
+    print("");
   }
 }

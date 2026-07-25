@@ -1,6 +1,7 @@
 import '../neuron.dart';
 
 import 'concept.dart';
+import '../brain_vocabulary.dart';
 
 class ConceptExtractor {
   List<Concept> extract(String message) {
@@ -15,7 +16,7 @@ class ConceptExtractor {
         const Concept(
           id: 'user',
           label: 'Utente',
-          type: NodeType.person,
+          type: EntityType.person,
         ),
       );
 
@@ -23,11 +24,14 @@ class ConceptExtractor {
         Concept(
           id: name.toLowerCase(),
           label: name,
-          type: NodeType.person,
+          type: EntityType.person,
         ),
       );
     }
 
     return concepts;
+
+    final RelationshipType relationship;
+    
   }
 }

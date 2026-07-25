@@ -1,11 +1,12 @@
 import '../neuron.dart';
+import '../brain_vocabulary.dart';
 
 class Concept {
   final String id;
 
   final String label;
 
-  final NodeType type;
+  final EntityType type;
 
   const Concept({
     required this.id,

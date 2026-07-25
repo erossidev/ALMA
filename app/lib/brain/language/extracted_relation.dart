@@ -1,4 +1,4 @@
-import '../synapse.dart';
+import '../brain_vocabulary.dart';
 
 class ExtractedRelation {
   final String from;

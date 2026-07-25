@@ -2,9 +2,16 @@ enum SemanticEntityType {
   person,
   place,
   organization,
-  animal,
-  object,
+  company,
+  project,
+  product,
+  technology,
+  document,
+  date,
   event,
+  preference,
+  goal,
+  emotion,
   concept,
 }
 
