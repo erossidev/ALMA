@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "773454250682",
+    "project_id": "alma-83c9f",
+    "storage_bucket": "alma-83c9f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773454250682:android:6d1fb599014794b496b883",
+        "android_client_info": {
+          "package_name": "com.alma.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFFFulHiR9X1tyzPiaT_Ay9XWVd9-nN4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -67,8 +67,8 @@ getActiveProviders(preferredProvider = null) {
 
     const request = this.buildRequest(message);
     const { preferredProvider } = options;
-    const providers = this.getActiveProviders();
-
+   const providers = this.getActiveProviders(preferredProvider);
+   
     for (const provider of providers) {
 
       if (!state.isAvailable(provider.id)) {
