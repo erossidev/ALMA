@@ -7,7 +7,23 @@ class AIManager {
 
   AIManager() : _provider = OpenAIProvider();
 
-  Future<AIResponse> getResponse(String message) async {
-    return await _provider.sendMessage(message);
+  // ==========================================
+  // CHAT
+  // ==========================================
+
+  Future<AIResponse> generateResponse(
+    String prompt,
+  ) async {
+    return await _provider.sendMessage(prompt);
+  }
+
+  // ==========================================
+  // ESTRAZIONE CONOSCENZA
+  // ==========================================
+
+  Future<AIResponse> extractKnowledge(
+    String prompt,
+  ) async {
+    return await _provider.sendMessage(prompt);
   }
 }

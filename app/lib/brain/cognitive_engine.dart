@@ -64,7 +64,7 @@ class CognitiveEngine {
     final prompt = buildContext(message);
 
     final response =
-        await aiManager.getResponse(prompt);
+    await aiManager.generateResponse(prompt);
 
     await learn(message, response);
 

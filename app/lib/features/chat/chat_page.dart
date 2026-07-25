@@ -49,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
       _focusNode.requestFocus();
     });
 
-    final response = await _chatService.getResponse(text);
+    final response = await _chatService.sendMessage(text);
 
     if (!mounted) return;
 
