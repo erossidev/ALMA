@@ -17,6 +17,8 @@ import 'repositories/brain_repository.dart';
 import 'retrieval/memory_retriever.dart';
 import 'retrieval/memory_result.dart';
 
+import 'semantics/semantic_pipeline.dart';
+
 class CognitiveEngine {
   final Brain brain;
   final WorkingMemory workingMemory;
@@ -30,6 +32,12 @@ class CognitiveEngine {
         brain: brain,
         repository: repository,
       );
+
+  late final SemanticPipeline _semanticPipeline =
+    SemanticPipeline(
+      aiManager: aiManager,
+      brainUpdater: _brainUpdater,
+    );
 
   final ConceptExtractor _conceptExtractor =
       ConceptExtractor();
@@ -87,23 +95,56 @@ class CognitiveEngine {
   /// MEMORIA
   /// =====================================================
 
-  Future<void> remember(String message) async {
-    final concepts =
-        _conceptExtractor.extract(message);
+  Future<void> remember(
+  String message,
+  ) async {
 
-    final relations =
-        _relationExtractor.extract(message);
+  // =====================================
+  // NUOVA PIPELINE SEMANTICA
+  // =====================================
 
-    await _brainUpdater.update(
-      concepts: concepts,
-      relations: relations,
+  try {
+
+    await _semanticPipeline.process(
+      message,
     );
 
-    for (final concept in concepts) {
-      brain.activateNeuron(concept.id);
-    }
+    return;
 
-    print(brain);
+  } catch (e) {
+
+    print(
+      "Semantic pipeline failed: $e",
+    );
+
+  }
+
+  // =====================================
+  // FALLBACK (TEMPORANEO)
+  // =====================================
+
+  final concepts =
+      _conceptExtractor.extract(
+    message,
+  );
+
+  final relations =
+      _relationExtractor.extract(
+    message,
+  );
+
+  await _brainUpdater.update(
+    concepts: concepts,
+    relations: relations,
+  );
+
+  for (final concept in concepts) {
+    brain.activateNeuron(
+      concept.id,
+    );
+  }
+
+  print(brain);
   }
 
   /// =====================================================

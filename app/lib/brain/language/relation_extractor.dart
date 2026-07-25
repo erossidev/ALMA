@@ -15,7 +15,7 @@ class RelationExtractor {
         ExtractedRelation(
           from: 'user',
           to: name.toLowerCase(),
-          relationship: RelationshipType.knows,
+          relationship: RelationshipType.hasName,
         ),
       );
     }

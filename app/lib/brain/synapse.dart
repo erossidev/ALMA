@@ -2,16 +2,72 @@ import 'brain.dart';
 import 'neuron.dart';
 
 enum RelationshipType {
+  // ==========================
+  // GENERICHE
+  // ==========================
+
   relatedTo,
+  similarTo,
   partOf,
+  causedBy,
+
+  // ==========================
+  // IDENTITÀ
+  // ==========================
+
+  hasName,
+  alias,
+
+  // ==========================
+  // FAMIGLIA
+  // ==========================
+
+  hasFather,
+  hasMother,
+  hasSon,
+  hasDaughter,
+  hasBrother,
+  hasSister,
+  marriedTo,
+
+  // ==========================
+  // PERSONA
+  // ==========================
+
+  bornIn,
+  livesIn,
+  worksAt,
+  studiedAt,
+
+  // ==========================
+  // POSSESSO
+  // ==========================
+
+  owns,
+  hasPet,
+
+  // ==========================
+  // PREFERENZE
+  // ==========================
+
+  likes,
+  dislikes,
+  loves,
+  hates,
+
+  // ==========================
+  // CONOSCENZA
+  // ==========================
+
+  knows,
+
+  // ==========================
+  // UTILIZZO
+  // ==========================
+
   uses,
   createdBy,
-  likes,
-  knows,
-  causedBy,
-  belongsTo,
-  similarTo,
-}
+  }
 
 class Synapse {
   /// Identificatore univoco

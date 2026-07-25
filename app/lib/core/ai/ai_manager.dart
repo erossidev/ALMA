@@ -7,9 +7,9 @@ class AIManager {
 
   AIManager() : _provider = OpenAIProvider();
 
-  // ==========================================
+  // =====================================================
   // CHAT
-  // ==========================================
+  // =====================================================
 
   Future<AIResponse> generateResponse(
     String prompt,
@@ -17,13 +17,16 @@ class AIManager {
     return await _provider.sendMessage(prompt);
   }
 
-  // ==========================================
-  // ESTRAZIONE CONOSCENZA
-  // ==========================================
+  // =====================================================
+  // ESTRAZIONE SEMANTICA
+  // =====================================================
 
-  Future<AIResponse> extractKnowledge(
+  Future<String> extractKnowledge(
     String prompt,
   ) async {
-    return await _provider.sendMessage(prompt);
+    final response =
+        await _provider.sendMessage(prompt);
+
+    return response.reply;
   }
 }

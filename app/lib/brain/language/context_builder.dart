@@ -14,7 +14,7 @@ class ContextBuilder {
 
       for (final synapse in memory.synapses) {
         switch (synapse.relationship) {
-          case RelationshipType.knows:
+          case RelationshipType.hasName:
             if (synapse.from.id == "user") {
               buffer.writeln(
                 "- L'utente si chiama ${synapse.to.label}.",
