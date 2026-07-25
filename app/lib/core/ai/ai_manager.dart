@@ -14,7 +14,9 @@ class AIManager {
   Future<AIResponse> generateResponse(
     String prompt,
   ) async {
-    return await _provider.sendMessage(prompt);
+    return await _provider.sendMessage(
+      prompt,
+    );
   }
 
   // =====================================================
@@ -25,7 +27,24 @@ class AIManager {
     String prompt,
   ) async {
     final response =
-        await _provider.sendMessage(prompt);
+        await _provider.sendMessage(
+      prompt,
+    );
+
+    return response.reply;
+  }
+
+  // =====================================================
+  // LEARNING CLASSIFICATION
+  // =====================================================
+
+  Future<String> classifyLearning(
+    String prompt,
+  ) async {
+    final response =
+        await _provider.sendMessage(
+      prompt,
+    );
 
     return response.reply;
   }

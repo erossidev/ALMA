@@ -2,25 +2,25 @@ import 'brain.dart';
 import 'neuron.dart';
 
 enum RelationshipType {
-  // ==========================
+  // ==========================================================
   // GENERICHE
-  // ==========================
+  // ==========================================================
 
   relatedTo,
   similarTo,
   partOf,
   causedBy,
 
-  // ==========================
+  // ==========================================================
   // IDENTITÀ
-  // ==========================
+  // ==========================================================
 
   hasName,
   alias,
 
-  // ==========================
+  // ==========================================================
   // FAMIGLIA
-  // ==========================
+  // ==========================================================
 
   hasFather,
   hasMother,
@@ -30,173 +30,226 @@ enum RelationshipType {
   hasSister,
   marriedTo,
 
-  // ==========================
+  // ==========================================================
   // PERSONA
-  // ==========================
+  // ==========================================================
 
   bornIn,
   livesIn,
   worksAt,
   studiedAt,
 
-  // ==========================
+  // ==========================================================
   // POSSESSO
-  // ==========================
+  // ==========================================================
 
   owns,
   hasPet,
 
-  // ==========================
+  // ==========================================================
   // PREFERENZE
-  // ==========================
+  // ==========================================================
 
   likes,
   dislikes,
   loves,
   hates,
 
-  // ==========================
+  // ==========================================================
   // CONOSCENZA
-  // ==========================
+  // ==========================================================
 
   knows,
 
-  // ==========================
+  // ==========================================================
   // UTILIZZO
-  // ==========================
+  // ==========================================================
 
   uses,
   createdBy,
-  }
+}
 
 class Synapse {
-  /// Identificatore univoco
+  // ==========================================================
+  // IDENTITÀ
+  // ==========================================================
+
   final String id;
 
-  /// Neurone di origine
   final Neuron from;
 
-  /// Neurone di destinazione
   final Neuron to;
 
-  /// Tipo di relazione
   final RelationshipType relationship;
 
-  /// Forza della connessione (0.0 - 1.0)
-  double strength;
+  // ==========================================================
+  // STATO
+  // ==========================================================
 
-  /// Capacità della sinapsi di modificarsi (0.0 - 1.0)
+  /// Peso della connessione
+  double weight;
+
+  /// Affidabilità della connessione
+  double confidence;
+
+  /// Capacità di modificarsi
   double plasticity;
 
-  /// Numero di volte che è stata utilizzata
+  /// Velocità di decadimento
+  double decayRate;
+
+  /// Attivazione corrente
+  double activation;
+
+  /// Peso emotivo
+  double emotionalWeight;
+
+  // ==========================================================
+  // STATISTICHE
+  // ==========================================================
+
   int activationCount;
 
-  /// Ultima attivazione
+  int usageCount;
+
+  // ==========================================================
+  // TEMPO
+  // ==========================================================
+
+  final DateTime createdAt;
+
   DateTime? lastActivated;
+
+  DateTime? lastUsed;
+
+  DateTime? lastUpdated;
+
+  // ==========================================================
+  // FLAGS
+  // ==========================================================
+
+  bool isPermanent;
+
+  bool isLocked;
 
   Synapse({
     required this.id,
     required this.from,
     required this.to,
     required this.relationship,
-    this.strength = 0.2,
+
+    this.weight = 0.2,
+    this.confidence = 0.5,
     this.plasticity = 1.0,
+    this.decayRate = 0.001,
+    this.activation = 0.0,
+    this.emotionalWeight = 0.0,
+
     this.activationCount = 0,
+    this.usageCount = 0,
+
+    DateTime? createdAt,
     this.lastActivated,
-  });
+    this.lastUsed,
+    this.lastUpdated,
 
-  /// Attiva la sinapsi
-  void activate() {
-    activationCount++;
-    lastActivated = DateTime.now();
-  }
+    this.isPermanent = false,
+    this.isLocked = false,
+  }) : createdAt = createdAt ?? DateTime.now();
 
-  /// Rafforza la connessione
-  void strengthen([double amount = 0.02]) {
-    strength += amount * plasticity;
-
-    if (strength > 1.0) {
-      strength = 1.0;
-    }
-  }
-
-  /// Indebolisce la connessione
-  void weaken([double amount = 0.01]) {
-    strength -= amount * plasticity;
-
-    if (strength < 0.0) {
-      strength = 0.0;
-    }
-  }
-
-  /// Consolidamento della connessione
-  void consolidate([double amount = 0.05]) {
-    plasticity -= amount;
-
-    if (plasticity < 0.1) {
-      plasticity = 0.1;
-    }
-  }
-
-  /// Dimenticanza naturale
-  void decay([double amount = 0.002]) {
-    strength -= amount;
-
-    if (strength < 0.0) {
-      strength = 0.0;
-    }
-  }
-
-  /// ==========================
-  /// SERIALIZZAZIONE
-  /// ==========================
+  // ==========================================================
+  // SERIALIZZAZIONE
+  // ==========================================================
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'from': from.id,
-      'to': to.id,
-      'relationship': relationship.name,
-      'strength': strength,
-      'plasticity': plasticity,
-      'activationCount': activationCount,
-      'lastActivated':
-          lastActivated?.millisecondsSinceEpoch,
+      "id": id,
+      "from": from.id,
+      "to": to.id,
+      "relationship": relationship.name,
+
+      "weight": weight,
+      "confidence": confidence,
+      "plasticity": plasticity,
+      "decayRate": decayRate,
+      "activation": activation,
+      "emotionalWeight": emotionalWeight,
+
+      "activationCount": activationCount,
+      "usageCount": usageCount,
+
+      "createdAt": createdAt.millisecondsSinceEpoch,
+      "lastActivated": lastActivated?.millisecondsSinceEpoch,
+      "lastUsed": lastUsed?.millisecondsSinceEpoch,
+      "lastUpdated": lastUpdated?.millisecondsSinceEpoch,
+
+      "isPermanent": isPermanent,
+      "isLocked": isLocked,
     };
   }
 
-  /// ==========================
-  /// DESERIALIZZAZIONE
-  /// ==========================
+  // ==========================================================
+  // DESERIALIZZAZIONE
+  // ==========================================================
 
   factory Synapse.fromJson({
     required Map<String, dynamic> json,
     required Brain brain,
   }) {
-    final from = brain.getNeuron(json['from']);
-    final to = brain.getNeuron(json['to']);
+    final from = brain.getNeuron(json["from"]);
+    final to = brain.getNeuron(json["to"]);
 
     if (from == null || to == null) {
       throw Exception(
-        'Impossibile ricostruire la sinapsi: neuroni mancanti.',
+        "Impossibile ricostruire la sinapsi: neuroni mancanti.",
       );
     }
 
     return Synapse(
-      id: json['id'],
+      id: json["id"],
       from: from,
       to: to,
       relationship: RelationshipType.values.firstWhere(
-        (e) => e.name == json['relationship'],
+        (e) => e.name == json["relationship"],
       ),
-      strength: (json['strength'] ?? 0.2).toDouble(),
-      plasticity: (json['plasticity'] ?? 1.0).toDouble(),
-      activationCount: json['activationCount'] ?? 0,
-      lastActivated: json['lastActivated'] != null
+
+      weight: (json["weight"] ?? 0.2).toDouble(),
+      confidence: (json["confidence"] ?? 0.5).toDouble(),
+      plasticity: (json["plasticity"] ?? 1.0).toDouble(),
+      decayRate: (json["decayRate"] ?? 0.001).toDouble(),
+      activation: (json["activation"] ?? 0.0).toDouble(),
+      emotionalWeight:
+          (json["emotionalWeight"] ?? 0.0).toDouble(),
+
+      activationCount: json["activationCount"] ?? 0,
+      usageCount: json["usageCount"] ?? 0,
+
+      createdAt: json["createdAt"] != null
           ? DateTime.fromMillisecondsSinceEpoch(
-              json['lastActivated'],
+              json["createdAt"],
+            )
+          : DateTime.now(),
+
+      lastActivated: json["lastActivated"] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              json["lastActivated"],
             )
           : null,
+
+      lastUsed: json["lastUsed"] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              json["lastUsed"],
+            )
+          : null,
+
+      lastUpdated: json["lastUpdated"] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              json["lastUpdated"],
+            )
+          : null,
+
+      isPermanent: json["isPermanent"] ?? false,
+      isLocked: json["isLocked"] ?? false,
     );
   }
 }

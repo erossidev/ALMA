@@ -10,6 +10,8 @@ import 'hippocampus/hippocampus.dart';
 import 'language/brain_updater.dart';
 import 'language/context_builder.dart';
 
+import 'learning/learning_pipeline.dart';
+
 import 'repositories/brain_repository.dart';
 
 import 'retrieval/memory_retriever.dart';
@@ -29,6 +31,11 @@ class CognitiveEngine {
       BrainUpdater(
         brain: brain,
         repository: repository,
+      );
+
+  late final LearningPipeline _learningPipeline =
+      LearningPipeline(
+        aiManager: aiManager,
       );
 
   late final SemanticPipeline _semanticPipeline =
@@ -99,6 +106,17 @@ class CognitiveEngine {
   Future<void> remember(
     String message,
   ) async {
+
+    final decision =
+        await _learningPipeline.process(
+      message,
+    );
+
+    if (!decision.shouldLearn) {
+      print(">>> Learning skipped");
+      return;
+    }
+
     await _semanticPipeline.process(
       message,
     );

@@ -40,7 +40,7 @@ class ActivationPropagator {
 
         final propagated =
             currentActivation *
-            synapse.strength;
+            synapse.weight;
 
         final previous =
             activation[target.id] ?? 0;

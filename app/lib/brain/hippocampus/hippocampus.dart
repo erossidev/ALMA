@@ -1,5 +1,6 @@
 import '../working_memory.dart';
 import 'consolidation_policy.dart';
+import '../dynamics/neuron_dynamics.dart';
 
 class Hippocampus {
 
@@ -14,9 +15,13 @@ class Hippocampus {
 
     for (final item in memory.items) {
 
-      item.neuron.state.reinforce();
+      NeuronDynamics.reinforce(
+        item.neuron,
+      );
 
-      item.neuron.state.consolidate();
+      NeuronDynamics.consolidate(
+        item.neuron,
+      );
 
     }
 

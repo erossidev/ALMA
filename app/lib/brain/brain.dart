@@ -1,5 +1,7 @@
 import 'neuron.dart';
 import 'synapse.dart';
+import 'dynamics/neuron_dynamics.dart';
+import 'dynamics/synapse_dynamics.dart';
 
 class Brain {
   /// ==========================
@@ -104,7 +106,9 @@ class Brain {
 
   void connect(Synapse synapse) {
     if (_synapses.containsKey(synapse.id)) {
-      _synapses[synapse.id]!.strengthen();
+      SynapseDynamics.reinforce(
+      _synapses[synapse.id]!,
+    );
       markDirty();
       return;
     }
@@ -148,31 +152,39 @@ class Brain {
 
     if (neuron == null) return;
 
-    neuron.state.activate(stimulus);
+    NeuronDynamics.activate(
+    neuron,
+    stimulus: stimulus,
+    );
     markDirty();
   }
 
   /// ==========================
-  /// PROPAGAZIONE (Versione 1)
-  /// ==========================
+/// PROPAGAZIONE (Versione 1)
+/// ==========================
 
-  void propagate(String neuronId) {
-    final connections = getConnections(neuronId);
+void propagate(String neuronId) {
+  final connections = getConnections(neuronId);
 
-    for (final synapse in connections) {
-      synapse.activate();
+  for (final synapse in connections) {
 
-      final target = synapse.from.id == neuronId
-          ? synapse.to
-          : synapse.from;
+    SynapseDynamics.activate(
+      synapse,
+    );
 
-      target.state.activate(
-        synapse.strength,
-      );
-    }
+    final target =
+        synapse.from.id == neuronId
+            ? synapse.to
+            : synapse.from;
 
-    markDirty();
+    NeuronDynamics.activate(
+      target,
+      stimulus: synapse.weight,
+    );
   }
+
+  markDirty();
+}
 
   /// ==========================
   /// RESET ATTIVAZIONE
@@ -180,11 +192,15 @@ class Brain {
 
   void decayAll() {
     for (final neuron in _neurons.values) {
-      neuron.state.decay();
+      NeuronDynamics.decay(
+      neuron,
+      );
     }
 
     for (final synapse in _synapses.values) {
-      synapse.decay();
+      SynapseDynamics.decay(
+        synapse,
+      );
     }
 
     markDirty();
