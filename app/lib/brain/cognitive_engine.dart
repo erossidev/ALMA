@@ -12,15 +12,21 @@ import 'language/concept_extractor.dart';
 import 'language/context_builder.dart';
 import 'language/relation_extractor.dart';
 
+import 'repositories/brain_repository.dart';
+
 class CognitiveEngine {
   final Brain brain;
   final WorkingMemory workingMemory;
   final AttentionEngine attentionEngine;
   final Hippocampus hippocampus;
   final AIManager aiManager;
+  final BrainRepository repository;
 
   late final BrainUpdater _brainUpdater =
-      BrainUpdater(brain);
+    BrainUpdater(
+      brain: brain,
+      repository: repository,
+    );
 
   final ConceptExtractor _conceptExtractor =
       ConceptExtractor();
@@ -32,11 +38,12 @@ class CognitiveEngine {
       ContextBuilder(brain);
 
   CognitiveEngine({
-    required this.brain,
-    required this.workingMemory,
-    required this.attentionEngine,
-    required this.hippocampus,
-    required this.aiManager,
+  required this.brain,
+  required this.workingMemory,
+  required this.attentionEngine,
+  required this.hippocampus,
+  required this.aiManager,
+  required this.repository,
   });
 
   /// =====================================================
@@ -81,7 +88,7 @@ class CognitiveEngine {
     final relations =
         _relationExtractor.extract(message);
 
-    _brainUpdater.update(
+    await _brainUpdater.update(
       concepts: concepts,
       relations: relations,
     );

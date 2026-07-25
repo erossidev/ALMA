@@ -38,11 +38,12 @@ class Alma {
   }
 
   late final CognitiveEngine cognitiveEngine =
-      CognitiveEngine(
-    brain: brain,
-    workingMemory: workingMemory,
-    attentionEngine: attentionEngine,
-    hippocampus: hippocampus,
-    aiManager: aiManager,
-  );
+    CognitiveEngine(
+      brain: brain,
+      workingMemory: workingMemory,
+      attentionEngine: attentionEngine,
+      hippocampus: hippocampus,
+      aiManager: aiManager,
+      repository: repository,
+    );
 }

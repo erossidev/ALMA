@@ -16,52 +16,112 @@ class FirebaseBrainRepository implements BrainRepository {
   String get _uid => _auth.currentUser!.uid;
 
   CollectionReference<Map<String, dynamic>>
-      get _neurons =>
-          _firestore
-              .collection('users')
-              .doc(_uid)
-              .collection('brain')
-              .doc('memory')
-              .collection('neurons');
+      get _neurons => _firestore
+          .collection('users')
+          .doc(_uid)
+          .collection('brain')
+          .doc('memory')
+          .collection('neurons');
 
   CollectionReference<Map<String, dynamic>>
-      get _synapses =>
-          _firestore
-              .collection('users')
-              .doc(_uid)
-              .collection('brain')
-              .doc('memory')
-              .collection('synapses');
+      get _synapses => _firestore
+          .collection('users')
+          .doc(_uid)
+          .collection('brain')
+          .doc('memory')
+          .collection('synapses');
+
+  // =====================================================
+  // SALVATAGGIO NEURONE
+  // =====================================================
 
   @override
   Future<void> saveNeuron(
     Neuron neuron,
   ) async {
+    print(">>> SALVO NEURONE: ${neuron.id}");
+
     await _neurons.doc(neuron.id).set(
           neuron.toJson(),
         );
   }
+  
+  // =====================================================
+  // SALVATAGGIO SINAPSI
+  // =====================================================
 
-  @override
+ @override
   Future<void> saveSynapse(
     Synapse synapse,
   ) async {
+    print(">>> SALVO SINAPSI: ${synapse.id}");
+
     await _synapses.doc(synapse.id).set(
           synapse.toJson(),
         );
   }
 
+  // =====================================================
+  // CARICAMENTO BRAIN
+  // =====================================================
+
   @override
   Future<Brain> loadBrain() async {
     final brain = Brain();
 
-    // IMPLEMENTEREMO QUESTO NELLO STEP SUCCESSIVO
+    // -----------------------------
+    // CARICA TUTTI I NEURONI
+    // -----------------------------
+
+    final neuronSnapshot = await _neurons.get();
+
+    for (final doc in neuronSnapshot.docs) {
+      final neuron = Neuron.fromJson(
+        doc.data(),
+      );
+
+      brain.addNeuron(neuron);
+    }
+
+    // -----------------------------
+    // CARICA TUTTE LE SINAPSI
+    // -----------------------------
+
+    final synapseSnapshot =
+        await _synapses.get();
+
+    for (final doc in synapseSnapshot.docs) {
+      final synapse = Synapse.fromJson(
+        json: doc.data(),
+        brain: brain,
+      );
+
+      brain.addSynapse(synapse);
+    }
+
+    brain.clearDirty();
 
     return brain;
   }
 
+  // =====================================================
+  // ELIMINA MEMORIA
+  // =====================================================
+
   @override
   Future<void> clearBrain() async {
-    // IMPLEMENTEREMO DOPO
+    final neuronSnapshot =
+        await _neurons.get();
+
+    for (final doc in neuronSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    final synapseSnapshot =
+        await _synapses.get();
+
+    for (final doc in synapseSnapshot.docs) {
+      await doc.reference.delete();
+    }
   }
 }
