@@ -4,6 +4,7 @@ import '../protocol/brain_executor.dart';
 import '../protocol/brain_instruction.dart';
 import '../protocol/brain_instruction_parser.dart';
 import '../protocol/brain_instruction_prompt.dart';
+import '../protocol/brain_result.dart';
 
 class KnowledgePipeline {
   final AIManager aiManager;
@@ -18,7 +19,7 @@ class KnowledgePipeline {
     required this.brainExecutor,
   });
 
-  Future<void> process(
+  Future<BrainResult> process(
     String message,
   ) async {
     // =====================================================
@@ -77,7 +78,7 @@ class KnowledgePipeline {
       print("Facts     : ${instruction.facts.length}");
       print("");
 
-      await brainExecutor.execute(
+      return await brainExecutor.execute(
         instruction,
       );
     } catch (e, stackTrace) {
@@ -87,6 +88,11 @@ class KnowledgePipeline {
       print(stackTrace);
       print("================================");
       print("");
+
+      return BrainResult.failure(
+        BrainOperation.ignore,
+        e.toString(),
+      );
     }
   }
 }

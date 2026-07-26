@@ -46,7 +46,10 @@ class BrainInstructionParser {
 
 
       reason:
-          data['reason'] ?? "",
+          data['reason'],
+
+      question:
+          data['question'],
 
 
       entities:

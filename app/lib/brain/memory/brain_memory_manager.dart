@@ -4,6 +4,7 @@ import '../neuron.dart';
 import '../synapse.dart';
 
 import '../protocol/brain_instruction.dart';
+import '../protocol/brain_result.dart';
 
 import '../repositories/brain_repository.dart';
 
@@ -21,7 +22,7 @@ class BrainMemoryManager {
   // STORE
   // =====================================================
 
-  Future<void> store(
+  Future<BrainResult> store(
     BrainInstruction instruction,
   ) async {
     print(">>> BrainMemoryManager.store()");
@@ -37,13 +38,17 @@ class BrainMemoryManager {
     _debugBrain();
 
     print(brain);
+
+    return _success(
+      BrainOperation.store,
+    );
   }
 
-   // =====================================================
+  // =====================================================
   // REPLACE
   // =====================================================
 
-  Future<void> replace(
+  Future<BrainResult> replace(
     BrainInstruction instruction,
   ) async {
     print(">>> BrainMemoryManager.replace()");
@@ -57,11 +62,10 @@ class BrainMemoryManager {
     );
 
     // -------------------------------------------------
-    // RIMUOVE LE VECCHIE RELAZIONI
+    // ELIMINA LE RELAZIONI PRECEDENTI
     // -------------------------------------------------
 
     for (final relation in instruction.relations) {
-
       final removed =
           brain.removeConnections(
         from: relation.from,
@@ -69,7 +73,6 @@ class BrainMemoryManager {
       );
 
       for (final synapse in removed) {
-
         await repository.deleteSynapse(
           synapse.id,
         );
@@ -91,13 +94,17 @@ class BrainMemoryManager {
     _debugBrain();
 
     print(brain);
+
+    return _success(
+      BrainOperation.replace,
+    );
   }
-  
+
   // =====================================================
   // MERGE
   // =====================================================
 
-  Future<void> merge(
+  Future<BrainResult> merge(
     BrainInstruction instruction,
   ) async {
     print(">>> BrainMemoryManager.merge()");
@@ -105,13 +112,17 @@ class BrainMemoryManager {
     // TODO
 
     _debugBrain();
+
+    return _success(
+      BrainOperation.merge,
+    );
   }
 
   // =====================================================
   // DELETE
   // =====================================================
 
-  Future<void> delete(
+  Future<BrainResult> delete(
     BrainInstruction instruction,
   ) async {
     print(">>> BrainMemoryManager.delete()");
@@ -119,13 +130,17 @@ class BrainMemoryManager {
     // TODO
 
     _debugBrain();
+
+    return _success(
+      BrainOperation.delete,
+    );
   }
 
   // =====================================================
   // REINFORCE
   // =====================================================
 
-  Future<void> reinforce(
+  Future<BrainResult> reinforce(
     BrainInstruction instruction,
   ) async {
     print(">>> BrainMemoryManager.reinforce()");
@@ -133,6 +148,27 @@ class BrainMemoryManager {
     // TODO
 
     _debugBrain();
+
+    return _success(
+      BrainOperation.reinforce,
+    );
+  }
+
+  // =====================================================
+  // CLARIFY
+  // =====================================================
+
+  Future<BrainResult> clarify(
+    BrainInstruction instruction,
+  ) async {
+    print(">>> BrainMemoryManager.clarify()");
+
+    return BrainResult.clarification(
+      question:
+          instruction.question ?? "",
+      reason:
+          instruction.reason,
+    );
   }
 
   // =====================================================
@@ -143,7 +179,9 @@ class BrainMemoryManager {
     BrainInstruction instruction,
   ) async {
     for (final entity in instruction.entities) {
-      if (brain.containsNeuron(entity.id)) {
+      if (brain.containsNeuron(
+        entity.id,
+      )) {
         continue;
       }
 
@@ -175,15 +213,18 @@ class BrainMemoryManager {
     BrainInstruction instruction,
   ) async {
     for (final relation in instruction.relations) {
-      final from = brain.getNeuron(
+      final from =
+          brain.getNeuron(
         relation.from,
       );
 
-      final to = brain.getNeuron(
+      final to =
+          brain.getNeuron(
         relation.to,
       );
 
-      if (from == null || to == null) {
+      if (from == null ||
+          to == null) {
         continue;
       }
 
@@ -192,7 +233,8 @@ class BrainMemoryManager {
             "${relation.from}_${relation.type.name}_${relation.to}",
         from: from,
         to: to,
-        relationship: relation.type,
+        relationship:
+            relation.type,
       );
 
       if (brain.containsSynapse(
@@ -216,6 +258,18 @@ class BrainMemoryManager {
   }
 
   // =====================================================
+  // SUCCESS
+  // =====================================================
+
+  BrainResult _success(
+    BrainOperation operation,
+  ) {
+    return BrainResult.success(
+      operation,
+    );
+  }
+
+  // =====================================================
   // DEBUG
   // =====================================================
 
@@ -224,7 +278,8 @@ class BrainMemoryManager {
 
     print("===== NEURONI =====");
 
-    for (final neuron in brain.neurons) {
+    for (final neuron
+        in brain.neurons) {
       print(
         "${neuron.id} (${neuron.type.name})",
       );
@@ -234,7 +289,8 @@ class BrainMemoryManager {
 
     print("===== SINAPSI =====");
 
-    for (final synapse in brain.synapses) {
+    for (final synapse
+        in brain.synapses) {
       print(
         "${synapse.id}"
         " -> ${synapse.relationship.name}"

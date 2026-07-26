@@ -20,7 +20,7 @@ import 'retrieval/memory_result.dart';
 import 'knowledge/knowledge_pipeline.dart';
 
 import 'protocol/brain_executor.dart';
-
+import 'protocol/brain_result.dart';
 
 class CognitiveEngine {
   final Brain brain;
@@ -35,25 +35,21 @@ class CognitiveEngine {
 
   final BrainRepository repository;
 
-
   late final BrainMemoryManager _brainMemoryManager =
       BrainMemoryManager(
         brain: brain,
         repository: repository,
       );
 
-
   late final LearningPipeline _learningPipeline =
       LearningPipeline(
         aiManager: aiManager,
       );
 
-
   late final BrainExecutor _brainExecutor =
       BrainExecutor(
         brainMemoryManager: _brainMemoryManager,
       );
-
 
   late final KnowledgePipeline _knowledgePipeline =
       KnowledgePipeline(
@@ -61,16 +57,13 @@ class CognitiveEngine {
         brainExecutor: _brainExecutor,
       );
 
-
   late final MemoryRetriever _memoryRetriever =
       MemoryRetriever(
         brain,
       );
 
-
   final ContextBuilder _contextBuilder =
       ContextBuilder();
-
 
   CognitiveEngine({
     required this.brain,
@@ -81,7 +74,6 @@ class CognitiveEngine {
     required this.repository,
   });
 
-
   // =====================================================
   // CICLO COGNITIVO
   // =====================================================
@@ -90,38 +82,61 @@ class CognitiveEngine {
     String message,
   ) async {
 
-   await perceive(message);
+    await perceive(
+      message,
+    );
 
     try {
-      await remember(message);
+
+      final brainResult =
+          await remember(
+        message,
+      );
+
+      // ==========================================
+      // IL BRAIN RICHIEDE UN CHIARIMENTO
+      // ==========================================
+
+      if (brainResult.requiresClarification) {
+
+        return AIResponse(
+          reply:
+              brainResult.question ??
+              "Puoi chiarire questa informazione?",
+          provider: "ALMA Brain",
+          model: "Clarification",
+        );
+
+      }
+
     } catch (e, stackTrace) {
+
       print("");
       print("===== MEMORY ERROR =====");
       print(e);
       print(stackTrace);
       print("========================");
       print("");
+
     }
 
     final prompt =
-        buildContext(message);
-
+        buildContext(
+      message,
+    );
 
     final response =
         await aiManager.generateResponse(
       prompt,
     );
 
-
     await learn(
       message,
       response,
     );
 
-
     return response;
   }
-
 
   // =====================================================
   // PERCEZIONE
@@ -138,12 +153,11 @@ class CognitiveEngine {
 
   }
 
-
   // =====================================================
   // MEMORIA
   // =====================================================
 
-  Future<void> remember(
+  Future<BrainResult> remember(
     String message,
   ) async {
 
@@ -152,23 +166,23 @@ class CognitiveEngine {
       message,
     );
 
-
     if (!decision.shouldLearn) {
 
       print(">>> Learning skipped");
 
-      return;
+      return BrainResult.ignored();
+
     }
 
-
-    await _knowledgePipeline.process(
+    final result =
+        await _knowledgePipeline.process(
       message,
     );
 
-
     print(brain);
-  }
 
+    return result;
+  }
 
   // =====================================================
   // COSTRUZIONE CONTESTO
@@ -185,13 +199,11 @@ class CognitiveEngine {
       ],
     );
 
-
     final prompt =
         _contextBuilder.build(
       message,
       memory,
     );
-
 
     print("");
 
@@ -201,10 +213,8 @@ class CognitiveEngine {
 
     print("");
 
-
     return prompt;
   }
-
 
   // =====================================================
   // APPRENDIMENTO
@@ -219,12 +229,11 @@ class CognitiveEngine {
       workingMemory,
     );
 
-
     hippocampus.consolidate(
       workingMemory,
     );
-  }
 
+  }
 
   // =====================================================
   // SONNO
@@ -236,7 +245,7 @@ class CognitiveEngine {
       workingMemory,
     );
 
-
     brain.decayAll();
+
   }
 }

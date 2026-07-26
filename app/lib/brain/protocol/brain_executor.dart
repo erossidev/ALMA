@@ -1,5 +1,7 @@
 import '../memory/brain_memory_manager.dart';
+
 import 'brain_instruction.dart';
+import 'brain_result.dart';
 
 class BrainExecutor {
   final BrainMemoryManager brainMemoryManager;
@@ -8,43 +10,42 @@ class BrainExecutor {
     required this.brainMemoryManager,
   });
 
-  Future<void> execute(
+  Future<BrainResult> execute(
     BrainInstruction instruction,
   ) async {
     switch (instruction.operation) {
       case BrainOperation.store:
-        await brainMemoryManager.store(
+        return await brainMemoryManager.store(
           instruction,
         );
-        break;
 
       case BrainOperation.replace:
-        await brainMemoryManager.replace(
+        return await brainMemoryManager.replace(
           instruction,
         );
-        break;
 
       case BrainOperation.merge:
-        await brainMemoryManager.merge(
+        return await brainMemoryManager.merge(
           instruction,
         );
-        break;
 
       case BrainOperation.delete:
-        await brainMemoryManager.delete(
+        return await brainMemoryManager.delete(
           instruction,
         );
-        break;
 
       case BrainOperation.reinforce:
-        await brainMemoryManager.reinforce(
+        return await brainMemoryManager.reinforce(
           instruction,
         );
-        break;
+
+      case BrainOperation.clarify:
+        return await brainMemoryManager.clarify(
+          instruction,
+        );
 
       case BrainOperation.ignore:
-        print(">>> Brain: ignore");
-        break;
+        return BrainResult.ignored();
     }
   }
 }

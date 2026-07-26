@@ -10,6 +10,7 @@ enum BrainOperation {
   merge,
   delete,
   reinforce,
+  clarify,
   ignore,
 }
 
@@ -33,6 +34,9 @@ enum MemoryType {
 /// ==========================================================
 
 class BrainInstruction {
+
+  final String? question;
+  
   /// Versione del protocollo
   final int version;
 
@@ -67,10 +71,11 @@ class BrainInstruction {
     this.confidence = 1.0,
     this.importance = 1.0,
     this.reason,
+    this.question,
     this.entities = const [],
     this.relations = const [],
     this.facts = const [],
-  });
+  }); 
 }
 
 /// ==========================================================
