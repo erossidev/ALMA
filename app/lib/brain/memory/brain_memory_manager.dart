@@ -8,10 +8,23 @@ import '../protocol/brain_result.dart';
 
 import '../repositories/brain_repository.dart';
 
+import '../conflict/brain_conflict.dart';
+import '../conflict/brain_conflict_detector.dart';
+
+import '../reasoning/brain_clarifier.dart';
+
 class BrainMemoryManager {
   final Brain brain;
 
   final BrainRepository repository;
+
+  final BrainConflictDetector
+      _conflictDetector =
+          const BrainConflictDetector();
+
+  final BrainClarifier
+    _clarifier =
+        const BrainClarifier();
 
   BrainMemoryManager({
     required this.brain,
@@ -27,9 +40,39 @@ class BrainMemoryManager {
   ) async {
     print(">>> BrainMemoryManager.store()");
 
-    await _storeEntities(
+ final conflict =
+    await _detectConflict(
+  instruction,
+  );
+
+  if (conflict != null) {
+    print(
+      ">>> CONFLITTO RILEVATO",
+    );
+
+    final question =
+        await _clarifier.generate(
+      conflict,
+    );
+
+    return BrainResult.clarification(
+      question: question,
+      reason: "Single relation conflict",
+    );
+  }
+
+  await _storeEntities(
+    instruction,
+  );
+
+  await _storeRelations(
+    instruction,
+  );
+
+    await _storeRelations(
       instruction,
     );
+    
 
     await _storeRelations(
       instruction,
@@ -170,6 +213,30 @@ class BrainMemoryManager {
           instruction.reason,
     );
   }
+
+// =====================================================
+// RILEVAMENTO CONFLITTI
+// =====================================================
+
+  Future<BrainConflict?> _detectConflict(
+  BrainInstruction instruction,
+) async {
+  for (final relation in instruction.relations) {
+    final conflict =
+        _conflictDetector.detect(
+      brain: brain,
+      fromId: relation.from,
+      relationship: relation.type,
+      toId: relation.to,
+    );
+
+if (conflict != null) {
+  return conflict;
+}
+  }
+
+  return null;
+}
 
   // =====================================================
   // CREA NEURONI

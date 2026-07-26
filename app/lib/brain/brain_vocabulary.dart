@@ -113,6 +113,26 @@ enum RelationshipType {
 }
 
 /// ==========================================================
+/// RELATIONSHIP CARDINALITY
+/// ==========================================================
+
+enum RelationshipCardinality {
+  single,
+  multiple,
+}
+
+class RelationshipDefinition {
+  final RelationshipType type;
+  final RelationshipCardinality cardinality;
+
+  const RelationshipDefinition({
+    required this.type,
+    required this.cardinality,
+  });
+}
+
+
+/// ==========================================================
 /// FACT TYPES
 ///
 /// Attributi di una singola entità.
@@ -167,6 +187,123 @@ enum DerivedFactType {
 
 class BrainVocabulary {
   const BrainVocabulary._();
+
+  static const Map<RelationshipType, RelationshipDefinition>
+    relationshipDefinitions = {
+  // Identità
+  RelationshipType.hasName: RelationshipDefinition(
+    type: RelationshipType.hasName,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.hasNickname: RelationshipDefinition(
+    type: RelationshipType.hasNickname,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+
+  // Famiglia
+  RelationshipType.spouse: RelationshipDefinition(
+    type: RelationshipType.spouse,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.hasFather: RelationshipDefinition(
+    type: RelationshipType.hasFather,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.hasMother: RelationshipDefinition(
+    type: RelationshipType.hasMother,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.hasBrother: RelationshipDefinition(
+    type: RelationshipType.hasBrother,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.hasSister: RelationshipDefinition(
+    type: RelationshipType.hasSister,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.hasSon: RelationshipDefinition(
+    type: RelationshipType.hasSon,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.hasDaughter: RelationshipDefinition(
+    type: RelationshipType.hasDaughter,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+
+  // Biografia
+  RelationshipType.birthDate: RelationshipDefinition(
+    type: RelationshipType.birthDate,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.birthPlace: RelationshipDefinition(
+    type: RelationshipType.birthPlace,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.livesIn: RelationshipDefinition(
+    type: RelationshipType.livesIn,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.worksAt: RelationshipDefinition(
+    type: RelationshipType.worksAt,
+    cardinality: RelationshipCardinality.single,
+  ),
+  RelationshipType.studiedAt: RelationshipDefinition(
+    type: RelationshipType.studiedAt,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+
+  // Possesso
+  RelationshipType.owns: RelationshipDefinition(
+    type: RelationshipType.owns,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.hasPet: RelationshipDefinition(
+    type: RelationshipType.hasPet,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+
+  // Preferenze
+  RelationshipType.likes: RelationshipDefinition(
+    type: RelationshipType.likes,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.dislikes: RelationshipDefinition(
+    type: RelationshipType.dislikes,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.loves: RelationshipDefinition(
+    type: RelationshipType.loves,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.hates: RelationshipDefinition(
+    type: RelationshipType.hates,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+
+  // Tecnologia
+  RelationshipType.uses: RelationshipDefinition(
+    type: RelationshipType.uses,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+  RelationshipType.createdBy: RelationshipDefinition(
+    type: RelationshipType.createdBy,
+    cardinality: RelationshipCardinality.single,
+  ),
+
+  // Generiche
+  RelationshipType.relatedTo: RelationshipDefinition(
+    type: RelationshipType.relatedTo,
+    cardinality: RelationshipCardinality.multiple,
+  ),
+};
+
+static bool isSingleRelation(
+  RelationshipType relation,
+) {
+  return relationshipDefinitions[relation]!
+          .cardinality ==
+      RelationshipCardinality.single;
+}
 
   static bool isFamilyRelation(
     RelationshipType relation,
