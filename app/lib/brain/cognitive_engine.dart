@@ -17,45 +17,60 @@ import 'repositories/brain_repository.dart';
 import 'retrieval/memory_retriever.dart';
 import 'retrieval/memory_result.dart';
 
-import 'semantics/semantic_pipeline.dart';
+import 'knowledge/knowledge_pipeline.dart';
 
 import 'protocol/brain_executor.dart';
 
+
 class CognitiveEngine {
   final Brain brain;
+
   final WorkingMemory workingMemory;
+
   final AttentionEngine attentionEngine;
+
   final Hippocampus hippocampus;
+
   final AIManager aiManager;
+
   final BrainRepository repository;
 
+
   late final BrainMemoryManager _brainMemoryManager =
-    BrainMemoryManager(
-      brain: brain,
-      repository: repository,
+      BrainMemoryManager(
+        brain: brain,
+        repository: repository,
       );
+
 
   late final LearningPipeline _learningPipeline =
       LearningPipeline(
         aiManager: aiManager,
       );
 
-  late final BrainExecutor _brainExecutor =
-    BrainExecutor(
-      brainMemoryManager: _brainMemoryManager,
-    );
 
-  late final SemanticPipeline _semanticPipeline =
-    SemanticPipeline(
-      aiManager: aiManager,
-      brainExecutor: _brainExecutor,
-    );
+  late final BrainExecutor _brainExecutor =
+      BrainExecutor(
+        brainMemoryManager: _brainMemoryManager,
+      );
+
+
+  late final KnowledgePipeline _knowledgePipeline =
+      KnowledgePipeline(
+        aiManager: aiManager,
+        brainExecutor: _brainExecutor,
+      );
+
 
   late final MemoryRetriever _memoryRetriever =
-      MemoryRetriever(brain);
+      MemoryRetriever(
+        brain,
+      );
+
 
   final ContextBuilder _contextBuilder =
       ContextBuilder();
+
 
   CognitiveEngine({
     required this.brain,
@@ -66,6 +81,7 @@ class CognitiveEngine {
     required this.repository,
   });
 
+
   // =====================================================
   // CICLO COGNITIVO
   // =====================================================
@@ -73,24 +89,39 @@ class CognitiveEngine {
   Future<AIResponse> think(
     String message,
   ) async {
-    await perceive(message);
 
-    await remember(message);
+   await perceive(message);
 
-    final prompt = buildContext(message);
+    try {
+      await remember(message);
+    } catch (e, stackTrace) {
+      print("");
+      print("===== MEMORY ERROR =====");
+      print(e);
+      print(stackTrace);
+      print("========================");
+      print("");
+    }
+
+    final prompt =
+        buildContext(message);
+
 
     final response =
         await aiManager.generateResponse(
       prompt,
     );
 
+
     await learn(
       message,
       response,
     );
 
+
     return response;
   }
+
 
   // =====================================================
   // PERCEZIONE
@@ -99,12 +130,14 @@ class CognitiveEngine {
   Future<void> perceive(
     String message,
   ) async {
-    // Versione 1
-    // In futuro:
+
+    // Futuro:
     // - Intent Detection
     // - Emotion Detection
-    // - NLP avanzato
+    // - Decision Layer
+
   }
+
 
   // =====================================================
   // MEMORIA
@@ -119,17 +152,23 @@ class CognitiveEngine {
       message,
     );
 
+
     if (!decision.shouldLearn) {
+
       print(">>> Learning skipped");
+
       return;
     }
 
-    await _semanticPipeline.process(
+
+    await _knowledgePipeline.process(
       message,
     );
 
+
     print(brain);
   }
+
 
   // =====================================================
   // COSTRUZIONE CONTESTO
@@ -138,10 +177,14 @@ class CognitiveEngine {
   String buildContext(
     String message,
   ) {
+
     final MemoryResult memory =
         _memoryRetriever.retrieve(
-      message,
+      [
+        "user",
+      ],
     );
+
 
     final prompt =
         _contextBuilder.build(
@@ -149,14 +192,19 @@ class CognitiveEngine {
       memory,
     );
 
+
     print("");
+
     print("========== PROMPT ==========");
     print(prompt);
     print("============================");
+
     print("");
+
 
     return prompt;
   }
+
 
   // =====================================================
   // APPRENDIMENTO
@@ -166,23 +214,28 @@ class CognitiveEngine {
     String message,
     AIResponse response,
   ) async {
+
     attentionEngine.update(
       workingMemory,
     );
+
 
     hippocampus.consolidate(
       workingMemory,
     );
   }
 
+
   // =====================================================
   // SONNO
   // =====================================================
 
   Future<void> sleep() async {
+
     hippocampus.consolidate(
       workingMemory,
     );
+
 
     brain.decayAll();
   }

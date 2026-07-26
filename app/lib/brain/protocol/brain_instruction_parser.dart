@@ -1,129 +1,262 @@
+import 'dart:convert';
+
 import '../brain_vocabulary.dart';
-import '../semantics/semantic_entity.dart';
-import '../semantics/semantic_result.dart';
 
 import 'brain_instruction.dart';
+
 
 class BrainInstructionParser {
   const BrainInstructionParser();
 
-  BrainInstruction fromSemantic(
-    SemanticResult semantic,
+
+  BrainInstruction parse(
+    String json,
   ) {
+
+    final Map<String, dynamic> data =
+        jsonDecode(json);
+
+
     return BrainInstruction(
-      operation: BrainOperation.store,
-      memoryType: MemoryType.semantic,
-      confidence: 1.0,
-      importance: 1.0,
-      reason: "semantic_import",
 
-      entities: semantic.entities
-          .map(
-            (e) => BrainEntity(
-              id: e.id,
-              label: e.label,
-              type: _mapEntityType(e.type),
-            ),
-          )
-          .toList(),
+      version:
+          data['version'] ?? 1,
 
-      relations: semantic.relations
-          .map(
-            (r) => BrainRelation(
-              from: r.from,
-              to: r.to,
-              type: _mapRelation(r.relation),
-            ),
-          )
-          .toList(),
 
-      facts: semantic.facts
-        .map(
-          (f) => BrainFact(
-            id: "${f.subject}_${f.predicate}",
-            entityId: f.subject,
-            type: _mapFact(f.predicate),
-            value: f.value.toString(),
-          ),
-        )
-        .toList(),
+      operation:
+          _parseOperation(
+        data['operation'],
+      ),
+
+
+      memoryType:
+          _parseMemoryType(
+        data['memoryType'],
+      ),
+
+
+      confidence:
+          (data['confidence'] ?? 1.0)
+              .toDouble(),
+
+
+      importance:
+          (data['importance'] ?? 1.0)
+              .toDouble(),
+
+
+      reason:
+          data['reason'] ?? "",
+
+
+      entities:
+          _parseEntities(
+        data['entities'],
+      ),
+
+
+      relations:
+          _parseRelations(
+        data['relations'],
+      ),
+
+
+      facts:
+          _parseFacts(
+        data['facts'],
+      ),
+
     );
   }
 
-  // ==========================================================
-  // ENTITY TYPE
-  // ==========================================================
 
-  EntityType _mapEntityType(
-    SemanticEntityType type,
+
+  // =====================================================
+  // ENUM
+  // =====================================================
+
+  BrainOperation _parseOperation(
+    String? value,
   ) {
-    switch (type) {
-      case SemanticEntityType.person:
-        return EntityType.person;
 
-      case SemanticEntityType.place:
-        return EntityType.place;
-
-      case SemanticEntityType.organization:
-        return EntityType.organization;
-
-      case SemanticEntityType.company:
-        return EntityType.company;
-
-      case SemanticEntityType.project:
-        return EntityType.project;
-
-      case SemanticEntityType.product:
-        return EntityType.product;
-
-      case SemanticEntityType.technology:
-        return EntityType.technology;
-
-      case SemanticEntityType.document:
-        return EntityType.document;
-
-      case SemanticEntityType.date:
-        return EntityType.date;
-
-      case SemanticEntityType.event:
-        return EntityType.event;
-
-      case SemanticEntityType.preference:
-        return EntityType.preference;
-
-      case SemanticEntityType.goal:
-        return EntityType.goal;
-
-      case SemanticEntityType.emotion:
-        return EntityType.emotion;
-
-      case SemanticEntityType.concept:
-        return EntityType.concept;
-    }
+    return BrainOperation.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => BrainOperation.ignore,
+    );
   }
 
-  // ==========================================================
-  // RELATION
-  // ==========================================================
 
-  RelationshipType _mapRelation(
-    String relation,
+
+  MemoryType _parseMemoryType(
+    String? value,
   ) {
+
+    return MemoryType.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => MemoryType.semantic,
+    );
+  }
+
+
+
+
+
+  // =====================================================
+  // ENTITIES
+  // =====================================================
+
+  List<BrainEntity> _parseEntities(
+    dynamic list,
+  ) {
+
+    if (list is! List) {
+      return [];
+    }
+
+
+    return list.map(
+      (item) {
+
+        return BrainEntity(
+
+          id:
+              item['id'],
+
+          label:
+              item['label'],
+
+          type:
+              _parseEntityType(
+            item['type'],
+          ),
+
+        );
+
+      },
+    ).toList();
+  }
+
+
+
+
+
+  // =====================================================
+  // RELATIONS
+  // =====================================================
+
+  List<BrainRelation> _parseRelations(
+    dynamic list,
+  ) {
+
+    if (list is! List) {
+      return [];
+    }
+
+
+    return list.map(
+      (item) {
+
+        return BrainRelation(
+
+          from:
+              item['from'],
+
+          to:
+              item['to'],
+
+          type:
+              _parseRelation(
+            item['type'],
+          ),
+
+        );
+
+      },
+    ).toList();
+  }
+
+
+
+
+
+  // =====================================================
+  // FACTS
+  // =====================================================
+
+  List<BrainFact> _parseFacts(
+    dynamic list,
+  ) {
+
+    if (list is! List) {
+      return [];
+    }
+
+
+    return list.map(
+      (item) {
+
+        return BrainFact(
+
+          id:
+              item['id'],
+
+          entityId:
+              item['entityId'],
+
+          type:
+              _parseFactType(
+            item['type'],
+          ),
+
+          value:
+              item['value'],
+
+        );
+
+      },
+    ).toList();
+  }
+
+
+
+
+
+  // =====================================================
+  // VOCABULARY
+  // =====================================================
+
+  EntityType _parseEntityType(
+    String? value,
+  ) {
+
+    return EntityType.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => EntityType.concept,
+    );
+  }
+
+
+
+
+  RelationshipType _parseRelation(
+    String? value,
+  ) {
+
     return RelationshipType.values.firstWhere(
-      (r) => r.name == relation,
+      (e) => e.name == value,
       orElse: () => RelationshipType.relatedTo,
     );
   }
 
-  // ==========================================================
-  // FACT
-  // ==========================================================
 
-  FactType _mapFact(
-    String type,
+
+
+  FactType _parseFactType(
+    String? value,
   ) {
+
     return FactType.values.firstWhere(
-      (f) => f.name == type,
+      (e) => e.name == value,
       orElse: () => FactType.note,
     );
   }
