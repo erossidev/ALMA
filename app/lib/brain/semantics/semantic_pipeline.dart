@@ -1,14 +1,20 @@
 import '../../core/ai/ai_manager.dart';
+
 import '../protocol/brain_executor.dart';
+import '../protocol/brain_instruction.dart';
+import '../protocol/brain_instruction_parser.dart';
+
 import 'semantic_extractor.dart';
 import 'semantic_normalizer.dart';
 import 'semantic_prompt.dart';
-
 
 class SemanticPipeline {
   final AIManager aiManager;
 
   final BrainExecutor brainExecutor;
+
+  final BrainInstructionParser instructionParser =
+      const BrainInstructionParser();
 
   final SemanticExtractor extractor =
       const SemanticExtractor();
@@ -17,8 +23,8 @@ class SemanticPipeline {
       const SemanticNormalizer();
 
   SemanticPipeline({
-  required this.aiManager,
-  required this.brainExecutor,
+    required this.aiManager,
+    required this.brainExecutor,
   });
 
   Future<void> process(
@@ -68,11 +74,20 @@ class SemanticPipeline {
     print("Facts    : ${normalized.facts.length}");
 
     // ==========================
-    // AGGIORNA IL BRAIN
+    // CONVERTE NEL PROTOCOLLO DEL BRAIN
     // ==========================
 
-    await brainExecutor.executeSemantic(
+    final BrainInstruction instruction =
+        instructionParser.fromSemantic(
       normalized,
+    );
+
+    // ==========================
+    // ESEGUE L'ISTRUZIONE
+    // ==========================
+
+    await brainExecutor.execute(
+      instruction,
     );
   }
 }

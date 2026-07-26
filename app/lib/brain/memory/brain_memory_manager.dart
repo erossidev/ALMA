@@ -1,21 +1,16 @@
 import '../brain.dart';
+import '../brain_vocabulary.dart';
 import '../neuron.dart';
 import '../synapse.dart';
 
+import '../protocol/brain_instruction.dart';
+
 import '../repositories/brain_repository.dart';
-
-import '../semantics/semantic_mapper.dart';
-import '../semantics/semantic_result.dart';
-
-import '../language/concept.dart';
-import '../language/extracted_relation.dart';
 
 class BrainMemoryManager {
   final Brain brain;
 
   final BrainRepository repository;
-
-  final SemanticMapper _mapper = SemanticMapper();
 
   BrainMemoryManager({
     required this.brain,
@@ -23,126 +18,94 @@ class BrainMemoryManager {
   });
 
   // =====================================================
-  // VECCHIO SISTEMA (TEMPORANEO)
+  // STORE
   // =====================================================
 
-  Future<void> update({
-    required List<Concept> concepts,
-    required List<ExtractedRelation> relations,
-  }) async {
-    print(">>> BrainMemoryManager.update()");
-
-    // ===================================
-    // CREA NEURONI
-    // ===================================
-
-    for (final concept in concepts) {
-      if (brain.containsNeuron(concept.id)) {
-        continue;
-      }
-
-      final neuron = Neuron(
-        id: concept.id,
-        label: concept.label,
-        type: concept.type,
-      );
-
-      brain.addNeuron(neuron);
-
-      await repository.saveNeuron(neuron);
-    }
-
-    // ===================================
-    // CREA SINAPSI
-    // ===================================
-
-    for (final relation in relations) {
-      final from = brain.getNeuron(relation.from);
-      final to = brain.getNeuron(relation.to);
-
-      if (from == null || to == null) {
-        continue;
-      }
-
-      final id =
-          '${relation.from}_${relation.relationship.name}_${relation.to}';
-
-      if (brain.containsSynapse(id)) {
-        continue;
-      }
-
-      final synapse = Synapse(
-        id: id,
-        from: from,
-        to: to,
-        relationship: relation.relationship,
-      );
-
-      brain.connect(synapse);
-
-      await repository.saveSynapse(synapse);
-    }
-
-    _debugBrain();
-
-    print(brain);
-  }
-
-  // =====================================================
-  // NUOVO SISTEMA SEMANTICO
-  // =====================================================
-
-  Future<void> updateSemantic(
-    SemanticResult semantic,
+  Future<void> store(
+    BrainInstruction instruction,
   ) async {
-    print(">>> BrainMemoryManager.updateSemantic()");
+    print(">>> BrainMemoryManager.store()");
 
     // ===================================
     // CREA NEURONI
     // ===================================
 
-    for (final entity in semantic.entities) {
+    for (final entity in instruction.entities) {
       if (brain.containsNeuron(entity.id)) {
         continue;
       }
 
-      final neuron = _mapper.toNeuron(entity);
+      final neuron = Neuron(
+        id: entity.id,
+        label: entity.label,
+        type: entity.type,
+      );
 
       brain.addNeuron(neuron);
 
-      await repository.saveNeuron(neuron);
+      await repository.saveNeuron(
+        neuron,
+      );
 
-      print(">>> SALVO NEURONE: ${neuron.id}");
+      print(
+        ">>> SALVO NEURONE: ${neuron.id}",
+      );
     }
 
     // ===================================
     // CREA SINAPSI
     // ===================================
 
-    for (final relation in semantic.relations) {
-      final from = brain.getNeuron(relation.from);
-      final to = brain.getNeuron(relation.to);
+    for (final relation in instruction.relations) {
+      final from = brain.getNeuron(
+        relation.from,
+      );
+
+      final to = brain.getNeuron(
+        relation.to,
+      );
 
       if (from == null || to == null) {
         continue;
       }
 
-      final synapse = _mapper.toSynapse(
-        relation: relation,
+      final synapse = Synapse(
+        id:
+            "${relation.from}_${relation.type.name}_${relation.to}",
         from: from,
         to: to,
+        relationship: relation.type,
       );
 
-      if (brain.containsSynapse(synapse.id)) {
+      if (brain.containsSynapse(
+        synapse.id,
+      )) {
         continue;
       }
 
-      brain.connect(synapse);
+      brain.connect(
+        synapse,
+      );
 
-      await repository.saveSynapse(synapse);
+      await repository.saveSynapse(
+        synapse,
+      );
 
-      print(">>> SALVO SINAPSI: ${synapse.id}");
+      print(
+        ">>> SALVO SINAPSI: ${synapse.id}",
+      );
     }
+
+    // ===================================
+    // TODO
+    // ===================================
+    //
+    // replace()
+    // merge()
+    // delete()
+    // reinforce()
+    //
+    // saranno implementati qui.
 
     _debugBrain();
 
@@ -155,13 +118,17 @@ class BrainMemoryManager {
 
   void _debugBrain() {
     print("");
+
     print("===== NEURONI =====");
 
     for (final neuron in brain.neurons) {
-      print("${neuron.id} (${neuron.type.name})");
+      print(
+        "${neuron.id} (${neuron.type.name})",
+      );
     }
 
     print("");
+
     print("===== SINAPSI =====");
 
     for (final synapse in brain.synapses) {

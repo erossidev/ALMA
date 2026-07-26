@@ -1,97 +1,130 @@
+import '../brain_vocabulary.dart';
+import '../semantics/semantic_entity.dart';
+import '../semantics/semantic_result.dart';
+
 import 'brain_instruction.dart';
 
 class BrainInstructionParser {
   const BrainInstructionParser();
 
-  BrainInstruction parse(
-    Map<String, dynamic> json,
+  BrainInstruction fromSemantic(
+    SemanticResult semantic,
   ) {
     return BrainInstruction(
-      version: json["version"] ?? 1,
+      operation: BrainOperation.store,
+      memoryType: MemoryType.semantic,
+      confidence: 1.0,
+      importance: 1.0,
+      reason: "semantic_import",
 
-      operation: _parseOperation(
-        json["operation"],
-      ),
+      entities: semantic.entities
+          .map(
+            (e) => BrainEntity(
+              id: e.id,
+              label: e.label,
+              type: _mapEntityType(e.type),
+            ),
+          )
+          .toList(),
 
-      memoryType: _parseMemoryType(
-        json["memoryType"],
-      ),
+      relations: semantic.relations
+          .map(
+            (r) => BrainRelation(
+              from: r.from,
+              to: r.to,
+              type: _mapRelation(r.relation),
+            ),
+          )
+          .toList(),
 
-      confidence:
-          (json["confidence"] ?? 1.0).toDouble(),
-
-      importance:
-          (json["importance"] ?? 1.0).toDouble(),
-
-      replaceExisting:
-          json["replaceExisting"] ?? false,
-
-      reason:
-          json["reason"] ?? "",
-
-      entities:
-          List<Map<String, dynamic>>.from(
-        json["entities"] ?? [],
-      ),
-
-      relations:
-          List<Map<String, dynamic>>.from(
-        json["relations"] ?? [],
-      ),
-
-      facts:
-          List<Map<String, dynamic>>.from(
-        json["facts"] ?? [],
-      ),
+      facts: semantic.facts
+        .map(
+          (f) => BrainFact(
+            id: "${f.subject}_${f.predicate}",
+            entityId: f.subject,
+            type: _mapFact(f.predicate),
+            value: f.value.toString(),
+          ),
+        )
+        .toList(),
     );
   }
 
-  BrainOperation _parseOperation(
-    String? value,
+  // ==========================================================
+  // ENTITY TYPE
+  // ==========================================================
+
+  EntityType _mapEntityType(
+    SemanticEntityType type,
   ) {
-    switch (value) {
-      case "store":
-        return BrainOperation.store;
+    switch (type) {
+      case SemanticEntityType.person:
+        return EntityType.person;
 
-      case "replace":
-        return BrainOperation.replace;
+      case SemanticEntityType.place:
+        return EntityType.place;
 
-      case "merge":
-        return BrainOperation.merge;
+      case SemanticEntityType.organization:
+        return EntityType.organization;
 
-      case "delete":
-        return BrainOperation.delete;
+      case SemanticEntityType.company:
+        return EntityType.company;
 
-      case "reinforce":
-        return BrainOperation.reinforce;
+      case SemanticEntityType.project:
+        return EntityType.project;
 
-      case "ignore":
-      default:
-        return BrainOperation.ignore;
+      case SemanticEntityType.product:
+        return EntityType.product;
+
+      case SemanticEntityType.technology:
+        return EntityType.technology;
+
+      case SemanticEntityType.document:
+        return EntityType.document;
+
+      case SemanticEntityType.date:
+        return EntityType.date;
+
+      case SemanticEntityType.event:
+        return EntityType.event;
+
+      case SemanticEntityType.preference:
+        return EntityType.preference;
+
+      case SemanticEntityType.goal:
+        return EntityType.goal;
+
+      case SemanticEntityType.emotion:
+        return EntityType.emotion;
+
+      case SemanticEntityType.concept:
+        return EntityType.concept;
     }
   }
 
-  MemoryType _parseMemoryType(
-    String? value,
+  // ==========================================================
+  // RELATION
+  // ==========================================================
+
+  RelationshipType _mapRelation(
+    String relation,
   ) {
-    switch (value) {
-      case "semantic":
-        return MemoryType.semantic;
+    return RelationshipType.values.firstWhere(
+      (r) => r.name == relation,
+      orElse: () => RelationshipType.relatedTo,
+    );
+  }
 
-      case "episodic":
-        return MemoryType.episodic;
+  // ==========================================================
+  // FACT
+  // ==========================================================
 
-      case "working":
-        return MemoryType.working;
-
-      case "temporary":
-        return MemoryType.temporary;
-
-      case "derived":
-        return MemoryType.derived;
-
-      default:
-        return MemoryType.semantic;
-    }
+  FactType _mapFact(
+    String type,
+  ) {
+    return FactType.values.firstWhere(
+      (f) => f.name == type,
+      orElse: () => FactType.note,
+    );
   }
 }
