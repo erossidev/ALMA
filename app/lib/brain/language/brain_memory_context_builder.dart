@@ -7,7 +7,7 @@ class BrainMemoryContextBuilder {
   String build(
     MemoryResult memory,
   ) {
-    if (memory.relations.isEmpty) {
+    if (memory.synapses.isEmpty) {
       return "Nessuna memoria presente.";
     }
 
@@ -17,7 +17,7 @@ class BrainMemoryContextBuilder {
       "Conoscenze già presenti nel Brain:\n",
     );
 
-    for (final relation in memory.relations) {
+    for (final relation in memory.synapses) {
       switch (relation.relationship) {
         case RelationshipType.hasName:
           buffer.writeln(

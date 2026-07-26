@@ -1,6 +1,7 @@
 import '../brain.dart';
 import '../neuron.dart';
 import '../synapse.dart';
+import '../brain_vocabulary.dart';
 
 class BrainSerializer {
   /// ==========================
@@ -67,31 +68,31 @@ class BrainSerializer {
         continue;
       }
 
-      final synapse = Synapse(
-        id: map['id'],
-        from: from,
-        to: to,
-        relationship:
-            RelationshipType.values.firstWhere(
-          (e) =>
-              e.name ==
-              map['relationship'],
-        ),
-        strength:
-            (map['strength'] ?? 0.2)
-                .toDouble(),
-        plasticity:
-            (map['plasticity'] ?? 1.0)
-                .toDouble(),
-        activationCount:
-            map['activationCount'] ?? 0,
-        lastActivated:
-            map['lastActivated'] != null
-                ? DateTime.fromMillisecondsSinceEpoch(
-                    map['lastActivated'],
-                  )
-                : null,
-      );
+     final synapse = Synapse(
+      id: map['id'],
+      from: from,
+      to: to,
+      relationship:
+          RelationshipType.values.firstWhere(
+        (e) =>
+            e.name ==
+            map['relationship'],
+      ),
+      weight:
+          (map['strength'] ?? 0.2)
+              .toDouble(),
+      plasticity:
+          (map['plasticity'] ?? 1.0)
+              .toDouble(),
+      activationCount:
+          map['activationCount'] ?? 0,
+      lastActivated:
+          map['lastActivated'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(
+                  map['lastActivated'],
+                )
+              : null,
+);
 
       brain.addSynapse(synapse);
     }
