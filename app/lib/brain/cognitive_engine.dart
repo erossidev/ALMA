@@ -7,7 +7,7 @@ import 'working_memory.dart';
 import 'attention/attention_engine.dart';
 import 'hippocampus/hippocampus.dart';
 
-import 'language/brain_updater.dart';
+import 'memory/brain_memory_manager.dart';
 import 'language/context_builder.dart';
 
 import 'learning/learning_pipeline.dart';
@@ -19,6 +19,8 @@ import 'retrieval/memory_result.dart';
 
 import 'semantics/semantic_pipeline.dart';
 
+import 'protocol/brain_executor.dart';
+
 class CognitiveEngine {
   final Brain brain;
   final WorkingMemory workingMemory;
@@ -27,10 +29,10 @@ class CognitiveEngine {
   final AIManager aiManager;
   final BrainRepository repository;
 
-  late final BrainUpdater _brainUpdater =
-      BrainUpdater(
-        brain: brain,
-        repository: repository,
+  late final BrainMemoryManager _brainMemoryManager =
+    BrainMemoryManager(
+      brain: brain,
+      repository: repository,
       );
 
   late final LearningPipeline _learningPipeline =
@@ -38,11 +40,16 @@ class CognitiveEngine {
         aiManager: aiManager,
       );
 
+  late final BrainExecutor _brainExecutor =
+    BrainExecutor(
+      brainMemoryManager: _brainMemoryManager,
+    );
+
   late final SemanticPipeline _semanticPipeline =
-      SemanticPipeline(
-        aiManager: aiManager,
-        brainUpdater: _brainUpdater,
-      );
+    SemanticPipeline(
+      aiManager: aiManager,
+      brainExecutor: _brainExecutor,
+    );
 
   late final MemoryRetriever _memoryRetriever =
       MemoryRetriever(brain);

@@ -7,17 +7,17 @@ import '../repositories/brain_repository.dart';
 import '../semantics/semantic_mapper.dart';
 import '../semantics/semantic_result.dart';
 
-import 'concept.dart';
-import 'extracted_relation.dart';
+import '../language/concept.dart';
+import '../language/extracted_relation.dart';
 
-class BrainUpdater {
+class BrainMemoryManager {
   final Brain brain;
 
   final BrainRepository repository;
 
   final SemanticMapper _mapper = SemanticMapper();
 
-  BrainUpdater({
+  BrainMemoryManager({
     required this.brain,
     required this.repository,
   });
@@ -30,7 +30,7 @@ class BrainUpdater {
     required List<Concept> concepts,
     required List<ExtractedRelation> relations,
   }) async {
-    print(">>> BrainUpdater.update()");
+    print(">>> BrainMemoryManager.update()");
 
     // ===================================
     // CREA NEURONI
@@ -83,10 +83,6 @@ class BrainUpdater {
       await repository.saveSynapse(synapse);
     }
 
-    // ===================================
-    // DEBUG
-    // ===================================
-
     _debugBrain();
 
     print(brain);
@@ -99,7 +95,7 @@ class BrainUpdater {
   Future<void> updateSemantic(
     SemanticResult semantic,
   ) async {
-    print(">>> BrainUpdater.updateSemantic()");
+    print(">>> BrainMemoryManager.updateSemantic()");
 
     // ===================================
     // CREA NEURONI
@@ -125,7 +121,6 @@ class BrainUpdater {
 
     for (final relation in semantic.relations) {
       final from = brain.getNeuron(relation.from);
-
       final to = brain.getNeuron(relation.to);
 
       if (from == null || to == null) {
@@ -138,24 +133,16 @@ class BrainUpdater {
         to: to,
       );
 
-      if (brain.containsSynapse(
-        synapse.id,
-      )) {
+      if (brain.containsSynapse(synapse.id)) {
         continue;
       }
 
       brain.connect(synapse);
 
-      await repository.saveSynapse(
-        synapse,
-      );
+      await repository.saveSynapse(synapse);
 
       print(">>> SALVO SINAPSI: ${synapse.id}");
     }
-
-    // ===================================
-    // DEBUG COMPLETO DEL BRAIN
-    // ===================================
 
     _debugBrain();
 
@@ -171,13 +158,10 @@ class BrainUpdater {
     print("===== NEURONI =====");
 
     for (final neuron in brain.neurons) {
-      print(
-        "${neuron.id} (${neuron.type.name})",
-      );
+      print("${neuron.id} (${neuron.type.name})");
     }
 
     print("");
-
     print("===== SINAPSI =====");
 
     for (final synapse in brain.synapses) {
