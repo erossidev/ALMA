@@ -26,10 +26,122 @@ class BrainMemoryManager {
   ) async {
     print(">>> BrainMemoryManager.store()");
 
-    // ===================================
-    // CREA NEURONI
-    // ===================================
+    await _storeEntities(
+      instruction,
+    );
 
+    await _storeRelations(
+      instruction,
+    );
+
+    _debugBrain();
+
+    print(brain);
+  }
+
+   // =====================================================
+  // REPLACE
+  // =====================================================
+
+  Future<void> replace(
+    BrainInstruction instruction,
+  ) async {
+    print(">>> BrainMemoryManager.replace()");
+
+    // -------------------------------------------------
+    // CREA EVENTUALI NUOVI NEURONI
+    // -------------------------------------------------
+
+    await _storeEntities(
+      instruction,
+    );
+
+    // -------------------------------------------------
+    // RIMUOVE LE VECCHIE RELAZIONI
+    // -------------------------------------------------
+
+    for (final relation in instruction.relations) {
+
+      final removed =
+          brain.removeConnections(
+        from: relation.from,
+        relationship: relation.type,
+      );
+
+      for (final synapse in removed) {
+
+        await repository.deleteSynapse(
+          synapse.id,
+        );
+
+        print(
+          ">>> RIMOSSA SINAPSI: ${synapse.id}",
+        );
+      }
+    }
+
+    // -------------------------------------------------
+    // CREA LE NUOVE RELAZIONI
+    // -------------------------------------------------
+
+    await _storeRelations(
+      instruction,
+    );
+
+    _debugBrain();
+
+    print(brain);
+  }
+  
+  // =====================================================
+  // MERGE
+  // =====================================================
+
+  Future<void> merge(
+    BrainInstruction instruction,
+  ) async {
+    print(">>> BrainMemoryManager.merge()");
+
+    // TODO
+
+    _debugBrain();
+  }
+
+  // =====================================================
+  // DELETE
+  // =====================================================
+
+  Future<void> delete(
+    BrainInstruction instruction,
+  ) async {
+    print(">>> BrainMemoryManager.delete()");
+
+    // TODO
+
+    _debugBrain();
+  }
+
+  // =====================================================
+  // REINFORCE
+  // =====================================================
+
+  Future<void> reinforce(
+    BrainInstruction instruction,
+  ) async {
+    print(">>> BrainMemoryManager.reinforce()");
+
+    // TODO
+
+    _debugBrain();
+  }
+
+  // =====================================================
+  // CREA NEURONI
+  // =====================================================
+
+  Future<void> _storeEntities(
+    BrainInstruction instruction,
+  ) async {
     for (final entity in instruction.entities) {
       if (brain.containsNeuron(entity.id)) {
         continue;
@@ -41,7 +153,9 @@ class BrainMemoryManager {
         type: entity.type,
       );
 
-      brain.addNeuron(neuron);
+      brain.addNeuron(
+        neuron,
+      );
 
       await repository.saveNeuron(
         neuron,
@@ -51,11 +165,15 @@ class BrainMemoryManager {
         ">>> SALVO NEURONE: ${neuron.id}",
       );
     }
+  }
 
-    // ===================================
-    // CREA SINAPSI
-    // ===================================
+  // =====================================================
+  // CREA SINAPSI
+  // =====================================================
 
+  Future<void> _storeRelations(
+    BrainInstruction instruction,
+  ) async {
     for (final relation in instruction.relations) {
       final from = brain.getNeuron(
         relation.from,
@@ -95,21 +213,6 @@ class BrainMemoryManager {
         ">>> SALVO SINAPSI: ${synapse.id}",
       );
     }
-
-    // ===================================
-    // TODO
-    // ===================================
-    //
-    // replace()
-    // merge()
-    // delete()
-    // reinforce()
-    //
-    // saranno implementati qui.
-
-    _debugBrain();
-
-    print(brain);
   }
 
   // =====================================================

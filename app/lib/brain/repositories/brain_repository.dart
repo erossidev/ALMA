@@ -3,11 +3,35 @@ import '../neuron.dart';
 import '../synapse.dart';
 
 abstract class BrainRepository {
-  Future<void> saveNeuron(Neuron neuron);
+  // =====================================================
+  // SALVATAGGIO
+  // =====================================================
 
-  Future<void> saveSynapse(Synapse synapse);
+  Future<void> saveNeuron(
+    Neuron neuron,
+  );
+
+  Future<void> saveSynapse(
+    Synapse synapse,
+  );
+
+  // =====================================================
+  // ELIMINAZIONE
+  // =====================================================
+
+  Future<void> deleteSynapse(
+    String synapseId,
+  );
+
+  // =====================================================
+  // CARICAMENTO
+  // =====================================================
 
   Future<Brain> loadBrain();
+
+  // =====================================================
+  // RESET
+  // =====================================================
 
   Future<void> clearBrain();
 }

@@ -42,23 +42,36 @@ class FirebaseBrainRepository implements BrainRepository {
     print(">>> SALVO NEURONE: ${neuron.id}");
 
     await _neurons.doc(neuron.id).set(
-          neuron.toJson(),
-        );
+      neuron.toJson(),
+    );
   }
-  
+
   // =====================================================
   // SALVATAGGIO SINAPSI
   // =====================================================
 
- @override
+  @override
   Future<void> saveSynapse(
     Synapse synapse,
   ) async {
     print(">>> SALVO SINAPSI: ${synapse.id}");
 
     await _synapses.doc(synapse.id).set(
-          synapse.toJson(),
-        );
+      synapse.toJson(),
+    );
+  }
+
+  // =====================================================
+  // ELIMINA SINAPSI
+  // =====================================================
+
+  @override
+  Future<void> deleteSynapse(
+    String synapseId,
+  ) async {
+    print(">>> ELIMINO SINAPSI: $synapseId");
+
+    await _synapses.doc(synapseId).delete();
   }
 
   // =====================================================
@@ -69,11 +82,8 @@ class FirebaseBrainRepository implements BrainRepository {
   Future<Brain> loadBrain() async {
     final brain = Brain();
 
-    // -----------------------------
-    // CARICA TUTTI I NEURONI
-    // -----------------------------
-
-    final neuronSnapshot = await _neurons.get();
+    final neuronSnapshot =
+        await _neurons.get();
 
     for (final doc in neuronSnapshot.docs) {
       final neuron = Neuron.fromJson(
@@ -82,10 +92,6 @@ class FirebaseBrainRepository implements BrainRepository {
 
       brain.addNeuron(neuron);
     }
-
-    // -----------------------------
-    // CARICA TUTTE LE SINAPSI
-    // -----------------------------
 
     final synapseSnapshot =
         await _synapses.get();

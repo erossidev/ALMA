@@ -1,5 +1,8 @@
+import 'brain_vocabulary.dart';
+
 import 'neuron.dart';
 import 'synapse.dart';
+
 import 'dynamics/neuron_dynamics.dart';
 import 'dynamics/synapse_dynamics.dart';
 
@@ -43,12 +46,16 @@ class Brain {
   /// GESTIONE NEURONI
   /// ==========================
 
-  void addNeuron(Neuron neuron) {
+  void addNeuron(
+    Neuron neuron,
+  ) {
     _neurons[neuron.id] = neuron;
     markDirty();
   }
 
-  void removeNeuron(String id) {
+  void removeNeuron(
+    String id,
+  ) {
     _neurons.remove(id);
 
     _synapses.removeWhere(
@@ -60,18 +67,26 @@ class Brain {
     markDirty();
   }
 
-  bool containsNeuron(String id) {
+  bool containsNeuron(
+    String id,
+  ) {
     return _neurons.containsKey(id);
   }
 
-  Neuron? getNeuron(String id) {
+  Neuron? getNeuron(
+    String id,
+  ) {
     return _neurons[id];
   }
 
-  Neuron? findNeuronByLabel(String label) {
+  Neuron? findNeuronByLabel(
+    String label,
+  ) {
     try {
       return _neurons.values.firstWhere(
-        (n) => n.label.toLowerCase() == label.toLowerCase(),
+        (n) =>
+            n.label.toLowerCase() ==
+            label.toLowerCase(),
       );
     } catch (_) {
       return null;
@@ -82,58 +97,126 @@ class Brain {
   /// GESTIONE SINAPSI
   /// ==========================
 
-  void addSynapse(Synapse synapse) {
+  void addSynapse(
+    Synapse synapse,
+  ) {
     _synapses[synapse.id] = synapse;
     markDirty();
   }
 
-  void removeSynapse(String id) {
+  void removeSynapse(
+    String id,
+  ) {
     _synapses.remove(id);
     markDirty();
   }
 
-  bool containsSynapse(String id) {
+  bool containsSynapse(
+    String id,
+  ) {
     return _synapses.containsKey(id);
   }
 
-  Synapse? getSynapse(String id) {
+  Synapse? getSynapse(
+    String id,
+  ) {
     return _synapses[id];
+  }
+
+  /// ==========================
+  /// REMOVE CONNECTIONS
+  /// (Per replace)
+  /// ==========================
+
+  List<Synapse> removeConnections({
+    required String from,
+    required RelationshipType relationship,
+  }) {
+    final removed = <Synapse>[];
+
+    final ids = _synapses.values
+        .where(
+          (synapse) =>
+              synapse.from.id == from &&
+              synapse.relationship ==
+                  relationship,
+        )
+        .map(
+          (e) => e.id,
+        )
+        .toList();
+
+    for (final id in ids) {
+      final synapse =
+          _synapses.remove(id);
+
+      if (synapse != null) {
+        removed.add(synapse);
+      }
+    }
+
+    if (removed.isNotEmpty) {
+      markDirty();
+    }
+
+    return removed;
   }
 
   /// ==========================
   /// CONNESSIONI
   /// ==========================
 
-  void connect(Synapse synapse) {
-    if (_synapses.containsKey(synapse.id)) {
+  void connect(
+    Synapse synapse,
+  ) {
+    if (_synapses.containsKey(
+      synapse.id,
+    )) {
       SynapseDynamics.reinforce(
-      _synapses[synapse.id]!,
-    );
+        _synapses[synapse.id]!,
+      );
+
       markDirty();
+
       return;
     }
 
     _synapses[synapse.id] = synapse;
+
     markDirty();
   }
 
-  List<Synapse> getConnections(String neuronId) {
-    return _synapses.values.where((synapse) {
-      return synapse.from.id == neuronId ||
-          synapse.to.id == neuronId;
-    }).toList();
+  List<Synapse> getConnections(
+    String neuronId,
+  ) {
+    return _synapses.values.where(
+      (synapse) {
+        return synapse.from.id ==
+                neuronId ||
+            synapse.to.id ==
+                neuronId;
+      },
+    ).toList();
   }
 
-  List<Neuron> getRelatedNeurons(String neuronId) {
-    final List<Neuron> result = [];
+  List<Neuron> getRelatedNeurons(
+    String neuronId,
+  ) {
+    final result = <Neuron>[];
 
     for (final synapse in _synapses.values) {
-      if (synapse.from.id == neuronId) {
-        result.add(synapse.to);
+      if (synapse.from.id ==
+          neuronId) {
+        result.add(
+          synapse.to,
+        );
       }
 
-      if (synapse.to.id == neuronId) {
-        result.add(synapse.from);
+      if (synapse.to.id ==
+          neuronId) {
+        result.add(
+          synapse.from,
+        );
       }
     }
 
@@ -148,56 +231,67 @@ class Brain {
     String neuronId, [
     double stimulus = 1.0,
   ]) {
-    final neuron = getNeuron(neuronId);
+    final neuron =
+        getNeuron(neuronId);
 
-    if (neuron == null) return;
+    if (neuron == null) {
+      return;
+    }
 
     NeuronDynamics.activate(
-    neuron,
-    stimulus: stimulus,
+      neuron,
+      stimulus: stimulus,
     );
+
     markDirty();
   }
 
   /// ==========================
-/// PROPAGAZIONE (Versione 1)
-/// ==========================
-
-void propagate(String neuronId) {
-  final connections = getConnections(neuronId);
-
-  for (final synapse in connections) {
-
-    SynapseDynamics.activate(
-      synapse,
-    );
-
-    final target =
-        synapse.from.id == neuronId
-            ? synapse.to
-            : synapse.from;
-
-    NeuronDynamics.activate(
-      target,
-      stimulus: synapse.weight,
-    );
-  }
-
-  markDirty();
-}
-
-  /// ==========================
-  /// RESET ATTIVAZIONE
+  /// PROPAGAZIONE
   /// ==========================
 
-  void decayAll() {
-    for (final neuron in _neurons.values) {
-      NeuronDynamics.decay(
-      neuron,
+  void propagate(
+    String neuronId,
+  ) {
+    final connections =
+        getConnections(neuronId);
+
+    for (final synapse
+        in connections) {
+      SynapseDynamics.activate(
+        synapse,
+      );
+
+      final target =
+          synapse.from.id ==
+                  neuronId
+              ? synapse.to
+              : synapse.from;
+
+      NeuronDynamics.activate(
+        target,
+        stimulus:
+            synapse.weight,
       );
     }
 
-    for (final synapse in _synapses.values) {
+    markDirty();
+  }
+
+  /// ==========================
+  /// DECAY
+  /// ==========================
+
+  void decayAll() {
+    for (final neuron
+        in _neurons.values) {
+      NeuronDynamics.decay(
+        neuron,
+      );
+    }
+
+    for (final synapse
+        in _synapses.values) {
       SynapseDynamics.decay(
         synapse,
       );
@@ -206,29 +300,33 @@ void propagate(String neuronId) {
     markDirty();
   }
 
-
   /// ==========================
-  /// COPIA
+  /// COPY
   /// ==========================
 
-  void copyFrom(Brain other) {
+  void copyFrom(
+    Brain other,
+  ) {
     _neurons.clear();
     _synapses.clear();
 
-    for (final neuron in other.neurons) {
-      _neurons[neuron.id] = neuron;
+    for (final neuron
+        in other.neurons) {
+      _neurons[neuron.id] =
+          neuron;
     }
 
-    for (final synapse in other.synapses) {
-      _synapses[synapse.id] = synapse;
+    for (final synapse
+        in other.synapses) {
+      _synapses[synapse.id] =
+          synapse;
     }
 
     clearDirty();
   }
 
-
   /// ==========================
-  /// STATISTICHE
+  /// DEBUG
   /// ==========================
 
   @override

@@ -19,26 +19,31 @@ class BrainExecutor {
         break;
 
       case BrainOperation.replace:
-        throw UnimplementedError(
-          "replace not implemented",
+        await brainMemoryManager.replace(
+          instruction,
         );
+        break;
 
       case BrainOperation.merge:
-        throw UnimplementedError(
-          "merge not implemented",
+        await brainMemoryManager.merge(
+          instruction,
         );
+        break;
 
       case BrainOperation.delete:
-        throw UnimplementedError(
-          "delete not implemented",
+        await brainMemoryManager.delete(
+          instruction,
         );
+        break;
 
       case BrainOperation.reinforce:
-        throw UnimplementedError(
-          "reinforce not implemented",
+        await brainMemoryManager.reinforce(
+          instruction,
         );
+        break;
 
       case BrainOperation.ignore:
+        print(">>> Brain: ignore");
         break;
     }
   }
