@@ -8,12 +8,16 @@ class BrainConflict {
 
   final String toId;
 
+  // <-- nuovo
+  final String newLabel;
+
   final RelationshipType relationship;
 
   const BrainConflict({
     required this.existing,
     required this.fromId,
     required this.toId,
+    required this.newLabel,
     required this.relationship,
   });
 }

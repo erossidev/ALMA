@@ -1,3 +1,4 @@
+import '../conflict/brain_conflict.dart';
 import 'brain_instruction.dart';
 
 class BrainResult {
@@ -11,12 +12,15 @@ class BrainResult {
 
   final String? reason;
 
+  final BrainConflict? conflict;
+
   const BrainResult({
     required this.operation,
     required this.success,
     this.requiresClarification = false,
     this.question,
     this.reason,
+    this.conflict,
   });
 
   factory BrainResult.success(
@@ -38,6 +42,7 @@ class BrainResult {
   factory BrainResult.clarification({
     required String question,
     String? reason,
+    BrainConflict? conflict,
   }) {
     return BrainResult(
       operation: BrainOperation.clarify,
@@ -45,6 +50,7 @@ class BrainResult {
       requiresClarification: true,
       question: question,
       reason: reason,
+      conflict: conflict,
     );
   }
 

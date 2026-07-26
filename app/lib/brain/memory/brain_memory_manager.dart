@@ -58,6 +58,7 @@ class BrainMemoryManager {
     return BrainResult.clarification(
       question: question,
       reason: "Single relation conflict",
+      conflict: conflict,
     );
   }
 
@@ -65,14 +66,7 @@ class BrainMemoryManager {
     instruction,
   );
 
-  await _storeRelations(
-    instruction,
-  );
-
-    await _storeRelations(
-      instruction,
-    );
-    
+   
 
     await _storeRelations(
       instruction,
@@ -230,8 +224,18 @@ class BrainMemoryManager {
       toId: relation.to,
     );
 
-if (conflict != null) {
-  return conflict;
+  if (conflict != null) {
+    final to = brain.getNeuron(
+        relation.to,
+      );
+
+    return BrainConflict(
+      existing: conflict.existing,
+      fromId: conflict.fromId,
+      toId: conflict.toId,
+      newLabel: to?.label ?? relation.to,
+      relationship: conflict.relationship,
+    );
 }
   }
 

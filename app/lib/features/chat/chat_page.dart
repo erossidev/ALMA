@@ -21,6 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   final FocusNode _focusNode = FocusNode();
   final ChatService _chatService = ChatService();
 
+
   final List<ChatMessage> _messages = [];
 
   bool _isTyping = false;
@@ -50,6 +51,13 @@ class _ChatPageState extends State<ChatPage> {
     });
 
     final response = await _chatService.sendMessage(text);
+
+      print("===== CHAT RESPONSE =====");
+      print(response.reply);
+      print(response.provider);
+      print(response.model);
+      print("=========================");
+
 
     if (!mounted) return;
 

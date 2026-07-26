@@ -22,6 +22,9 @@ import 'knowledge/knowledge_pipeline.dart';
 import 'protocol/brain_executor.dart';
 import 'protocol/brain_result.dart';
 
+import 'clarification/pending_clarification.dart';
+import 'clarification/clarification_resolver.dart';
+
 class CognitiveEngine {
   final Brain brain;
 
@@ -65,6 +68,12 @@ class CognitiveEngine {
   final ContextBuilder _contextBuilder =
       ContextBuilder();
 
+      PendingClarification? _pendingClarification;
+
+      final ClarificationResolver
+          _clarificationResolver =
+              const ClarificationResolver();
+
   CognitiveEngine({
     required this.brain,
     required this.workingMemory,
@@ -79,46 +88,66 @@ class CognitiveEngine {
   // =====================================================
 
   Future<AIResponse> think(
+    
     String message,
   ) async {
 
+  if (_pendingClarification != null) {
+
+    final instruction =
+        _clarificationResolver.resolve(
+      conflict:
+          _pendingClarification!.conflict,
+      answer: message,
+    );
+
+    final result =
+        await _brainExecutor.execute(
+      instruction,
+    );
+
+    _pendingClarification = null;
+
+    return AIResponse(
+      reply: result.success
+          ? "Perfetto, ho aggiornato la memoria."
+          : "Va bene, mantengo l'informazione precedente.",
+      provider: "ALMA Brain",
+      model: "Clarification",
+    );
+
+}
+  
     await perceive(
       message,
     );
 
-    try {
+    final brainResult =
+        await remember(
+      message,
+    );
 
-      final brainResult =
-          await remember(
-        message,
+  if (brainResult.requiresClarification) {
+
+      _pendingClarification =
+          PendingClarification(
+        conflict: brainResult.conflict!,
+        question:
+            brainResult.question ??
+            "Puoi chiarire questa informazione?",
+        createdAt: DateTime.now(),
       );
 
-      // ==========================================
-      // IL BRAIN RICHIEDE UN CHIARIMENTO
-      // ==========================================
-
-      if (brainResult.requiresClarification) {
-
-        return AIResponse(
-          reply:
-              brainResult.question ??
-              "Puoi chiarire questa informazione?",
-          provider: "ALMA Brain",
-          model: "Clarification",
-        );
-
-      }
-
-    } catch (e, stackTrace) {
-
-      print("");
-      print("===== MEMORY ERROR =====");
-      print(e);
-      print(stackTrace);
-      print("========================");
-      print("");
+      return AIResponse(
+        reply:
+            brainResult.question ??
+            "Puoi chiarire questa informazione?",
+        provider: "ALMA Brain",
+        model: "Clarification",
+      );
 
     }
+
 
     final prompt =
         buildContext(

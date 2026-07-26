@@ -30,12 +30,13 @@ class BrainConflictDetector {
           return null;
         }
 
-        return BrainConflict(
-          existing: synapse,
-          fromId: fromId,
-          toId: toId,
-          relationship: relationship,
-        );
+      return BrainConflict(
+        existing: synapse,
+        fromId: fromId,
+        toId: toId,
+        newLabel: "",
+        relationship: relationship,
+      );
       }
 
   return null;
