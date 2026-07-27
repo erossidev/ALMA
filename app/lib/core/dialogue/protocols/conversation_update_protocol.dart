@@ -10,6 +10,16 @@ class ConversationUpdateProtocol {
   factory ConversationUpdateProtocol.fromJson(
     Map<String, dynamic> json,
   ) {
-    throw UnimplementedError();
+    return ConversationUpdateProtocol(
+      conversation: ConversationModel.fromJson(
+        json["conversation"] as Map<String, dynamic>,
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "conversation": conversation.toJson(),
+    };
   }
 }

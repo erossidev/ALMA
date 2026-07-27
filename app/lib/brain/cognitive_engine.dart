@@ -25,6 +25,9 @@ import 'protocol/brain_result.dart';
 import 'clarification/pending_clarification.dart';
 import 'clarification/clarification_resolver.dart';
 
+import '../core/dialogue/builders/ai_conversation_builder.dart';
+import '../core/dialogue/models/conversation_model.dart';
+
 class CognitiveEngine {
   final Brain brain;
 
@@ -37,6 +40,15 @@ class CognitiveEngine {
   final AIManager aiManager;
 
   final BrainRepository repository;
+
+  late final AIConversationBuilder _conversationBuilder =
+    AIConversationBuilder(
+      ai: aiManager,
+    );
+
+
+    ConversationModel _conversation =
+        ConversationModel.empty;
 
   late final BrainMemoryManager _brainMemoryManager =
       BrainMemoryManager(
@@ -91,6 +103,16 @@ class CognitiveEngine {
     
     String message,
   ) async {
+
+    _conversation =
+        await _conversationBuilder.update(
+      conversation: _conversation,
+      message: message,
+      );
+
+      print("========== CONVERSATION ==========");
+      print(_conversation.toJson());
+      print("==================================");
 
   if (_pendingClarification != null) {
 
@@ -232,6 +254,7 @@ class CognitiveEngine {
         _contextBuilder.build(
       message,
       memory,
+      _conversation,
     );
 
     print("");

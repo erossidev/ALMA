@@ -1,13 +1,40 @@
 import '../synapse.dart';
 import '../retrieval/memory_result.dart';
 import '../brain_vocabulary.dart';
+import '../../core/dialogue/models/conversation_model.dart';
 
 class ContextBuilder {
   String build(
     String userMessage,
     MemoryResult memory,
+    ConversationModel conversation,
   ) {
     final buffer = StringBuffer();
+
+    if (conversation.entities.isNotEmpty) {
+      buffer.writeln("Stato della conversazione:");
+      buffer.writeln();
+
+      if (conversation.activeEntityId != null) {
+        final entity = conversation.entities.where(
+          (e) => e.id == conversation.activeEntityId,
+        );
+
+        if (entity.isNotEmpty) {
+          buffer.writeln(
+            "- Entità attiva: ${entity.first.label}.",
+          );
+        }
+      }
+
+      if (conversation.currentTopic != null) {
+        buffer.writeln(
+          "- Argomento corrente: ${conversation.currentTopic}.",
+        );
+      }
+
+  buffer.writeln();
+}
 
     if (memory.isNotEmpty) {
       buffer.writeln("Conoscenze di ALMA:");

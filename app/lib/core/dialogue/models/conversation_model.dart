@@ -6,14 +6,14 @@ class ConversationModel {
 
   final List<ConversationRelation> relations;
 
-  final String? currentFocus;
+  final String? activeEntityId;
 
   final String? currentTopic;
 
   const ConversationModel({
     this.entities = const [],
     this.relations = const [],
-    this.currentFocus,
+    this.activeEntityId,
     this.currentTopic,
   });
 
@@ -22,13 +22,13 @@ class ConversationModel {
   ConversationModel copyWith({
     List<ConversationEntity>? entities,
     List<ConversationRelation>? relations,
-    String? currentFocus,
+    String? activeEntityId,
     String? currentTopic,
   }) {
     return ConversationModel(
       entities: entities ?? this.entities,
       relations: relations ?? this.relations,
-      currentFocus: currentFocus ?? this.currentFocus,
+      activeEntityId: activeEntityId ?? this.activeEntityId,
       currentTopic: currentTopic ?? this.currentTopic,
     );
   }
@@ -53,7 +53,7 @@ class ConversationModel {
           )
           .toList(),
 
-      currentFocus: json["currentFocus"] as String?,
+      activeEntityId: json["activeEntityId"] as String?,
 
       currentTopic: json["currentTopic"] as String?,
     );
@@ -63,7 +63,7 @@ class ConversationModel {
     return {
       "entities": entities.map((e) => e.toJson()).toList(),
       "relations": relations.map((e) => e.toJson()).toList(),
-      "currentFocus": currentFocus,
+      "activeEntityId": activeEntityId,
       "currentTopic": currentTopic,
     };
   }
