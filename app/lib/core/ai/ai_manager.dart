@@ -1,11 +1,20 @@
-import 'ai_provider.dart';
+import 'ai_orchestrator.dart';
+import 'ai_provider_registry.dart';
+import 'ai_registry.dart';
+import 'ai_request.dart';
 import 'ai_response.dart';
-import 'providers/openai_provider.dart';
+import 'ai_resource_resolver.dart';
+import 'backend_ai_registry.dart';
 
 class AIManager {
-  final AIProvider _provider;
+  final AIOrchestrator _orchestrator;
 
-  AIManager() : _provider = OpenAIProvider();
+  AIManager()
+      : _orchestrator = AIOrchestrator(
+          registry: BackendAIRegistry(),
+          resolver: const AIResourceResolver(),
+          providerRegistry: AIProviderRegistry(),
+        );
 
   // =====================================================
   // CHAT
@@ -14,8 +23,13 @@ class AIManager {
   Future<AIResponse> generateResponse(
     String prompt,
   ) async {
-    return await _provider.sendMessage(
-      prompt,
+    return await _orchestrator.execute(
+      AIRequest(
+        prompt: prompt,
+        requiredCapabilities: const [
+          "conversation",
+        ],
+      ),
     );
   }
 
@@ -27,8 +41,14 @@ class AIManager {
     String prompt,
   ) async {
     final response =
-        await _provider.sendMessage(
-      prompt,
+        await _orchestrator.execute(
+      AIRequest(
+        prompt: prompt,
+        requiredCapabilities: const [
+          "reasoning",
+          "json",
+        ],
+      ),
     );
 
     return response.reply;
@@ -42,8 +62,13 @@ class AIManager {
     String prompt,
   ) async {
     final response =
-        await _provider.sendMessage(
-      prompt,
+        await _orchestrator.execute(
+      AIRequest(
+        prompt: prompt,
+        requiredCapabilities: const [
+          "reasoning",
+        ],
+      ),
     );
 
     return response.reply;

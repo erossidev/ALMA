@@ -4,7 +4,7 @@ import 'ai_resource.dart';
 class AIResourceResolver {
   const AIResourceResolver();
 
-  AIResource? resolve({
+  List<AIResource> resolveCandidates({
     required AIRequest request,
     required List<AIResource> resources,
   }) {
@@ -18,14 +18,10 @@ class AIResourceResolver {
       );
     }).toList();
 
-    if (compatible.isEmpty) {
-      return null;
-    }
-
     compatible.sort(
       (a, b) => a.priority.compareTo(b.priority),
     );
 
-    return compatible.first;
+    return compatible;
   }
 }

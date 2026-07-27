@@ -2,7 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+
 const aiRouter = require("./ai/router");
+const providers = require("./ai/config/providers");
 
 const app = express();
 
@@ -19,7 +21,8 @@ app.get("/", (req, res) => {
 
 app.post("/chat", async (req, res) => {
   try {
-      const {
+
+    const {
       message,
       provider,
       model,
@@ -34,11 +37,13 @@ app.post("/chat", async (req, res) => {
     res.json(result);
 
   } catch (error) {
+
     console.error(error);
 
     res.status(500).json({
       error: error.message,
     });
+
   }
 });
 
@@ -48,28 +53,39 @@ app.post("/chat", async (req, res) => {
 
 app.get("/resources", (req, res) => {
 
-  res.json([
-    {
-      id: "default",
+  const resources = [];
 
-      providerId: "openrouter",
+  for (const provider of providers) {
 
-      modelId: "openai/gpt-5",
-
-      displayName: "GPT-5",
-
-      enabled: true,
-
-      priority: 1,
-
-      capabilities: [
-        "conversation",
-        "reasoning",
-        "json",
-        "coding"
-      ]
+    if (!provider.enabled) {
+      continue;
     }
-  ]);
+
+    for (const resource of provider.resources) {
+
+     resources.push({
+
+        id: resource.id,
+
+        providerId: provider.id,
+
+        modelId: resource.modelId,
+
+        displayName: resource.displayName,
+
+        enabled: provider.enabled,
+
+        priority: resource.priority,
+
+        capabilities: resource.capabilities,
+
+      });
+
+    }
+
+  }
+
+  res.json(resources);
 
 });
 

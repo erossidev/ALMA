@@ -3,20 +3,25 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../ai_provider.dart';
+import '../ai_request.dart';
+import '../ai_resource.dart';
 import '../ai_response.dart';
 
-class OpenAIProvider implements AIProvider {
+class BackendAIProvider implements AIProvider {
   @override
-  Future<AIResponse> sendMessage(
-    String prompt,
-  ) async {
+  Future<AIResponse> sendMessage({
+    required AIRequest request,
+    required AIResource resource,
+  }) async {
     final response = await http.post(
       Uri.parse("http://localhost:3000/chat"),
       headers: {
         "Content-Type": "application/json",
       },
       body: jsonEncode({
-        "message": prompt,
+        "message": request.prompt,
+        "provider": resource.providerId,
+        "model": resource.modelId,
       }),
     );
 

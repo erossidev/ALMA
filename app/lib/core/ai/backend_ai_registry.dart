@@ -27,6 +27,9 @@ class BackendAIRegistry implements AIRegistry {
     final List<dynamic> json =
         jsonDecode(response.body);
 
+
+    print(response.body);
+    
     return json
         .map(
           (e) =>

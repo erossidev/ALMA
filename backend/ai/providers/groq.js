@@ -8,7 +8,7 @@ const groq = new Groq({
 
 module.exports = async function (request) {
   const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: request.model,
     messages: [
       {
         role: "system",

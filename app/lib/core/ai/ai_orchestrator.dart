@@ -4,6 +4,7 @@ import 'ai_registry.dart';
 import 'ai_request.dart';
 import 'ai_resource.dart';
 import 'ai_resource_resolver.dart';
+import 'ai_response.dart';
 
 class AIOrchestrator {
   final AIRegistry registry;
@@ -18,47 +19,68 @@ class AIOrchestrator {
     required this.providerRegistry,
   });
 
-  Future<AIProvider> resolveProvider(
+  Future<AIResponse> execute(
     AIRequest request,
   ) async {
+
+    // Carica il catalogo AI dal backend
     final resources =
         await registry.loadResources();
 
-    final resource =
-        resolver.resolve(
+    // Ottiene tutte le risorse compatibili,
+    // ordinate dalla migliore alla peggiore
+    final candidates =
+        resolver.resolveCandidates(
       request: request,
       resources: resources,
     );
 
-    if (resource == null) {
+    if (candidates.isEmpty) {
       throw Exception(
         "Nessuna risorsa AI disponibile.",
       );
     }
 
-    return providerRegistry.getProvider(
-      resource.providerId,
-    );
-  }
+    Exception? lastError;
 
-  Future<AIResource> resolveResource(
-    AIRequest request,
-  ) async {
-    final resources =
-        await registry.loadResources();
+    // Prova una risorsa alla volta
+    for (final AIResource resource in candidates) {
 
-    final resource =
-        resolver.resolve(
-      request: request,
-      resources: resources,
-    );
-
-    if (resource == null) {
-      throw Exception(
-        "Nessuna risorsa AI disponibile.",
+      final AIProvider provider =
+          providerRegistry.getProvider(
+        resource.providerId,
       );
+
+      try {
+
+        print(
+          "🧠 Provo ${resource.displayName}"
+          " (${resource.providerId})",
+        );
+
+        final response =
+            await provider.sendMessage(
+          request: request,
+          resource: resource,
+        );
+
+        return response;
+
+      } catch (e) {
+
+        print(
+          "❌ ${resource.displayName}: $e",
+        );
+
+        lastError = Exception(e);
+
+      }
+
     }
 
-    return resource;
+    throw lastError ??
+        Exception(
+          "Nessun provider AI disponibile.",
+        );
   }
 }
