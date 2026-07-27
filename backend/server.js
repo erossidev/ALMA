@@ -19,9 +19,17 @@ app.get("/", (req, res) => {
 
 app.post("/chat", async (req, res) => {
   try {
-    const { message } = req.body;
+      const {
+      message,
+      provider,
+      model,
+    } = req.body;
 
-    const result = await aiRouter(message);
+    const result = await aiRouter({
+      message,
+      provider,
+      model,
+    });
 
     res.json(result);
 

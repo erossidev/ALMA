@@ -14,12 +14,16 @@ function withTimeout(promise, ms) {
 
 class ProviderManager {
 
-  buildRequest(message) {
-    return {
-      system: require("./prompts/systemPrompt"),
-      user: message,
-    };
-  }
+      buildRequest(
+      message,
+      preferredModel,
+    ) {
+      return {
+        system: require("./prompts/systemPrompt"),
+        user: message,
+        model: preferredModel,
+      };
+    }
 
 getActiveProviders(preferredProvider = null) {
 
@@ -65,8 +69,16 @@ getActiveProviders(preferredProvider = null) {
 
   async handle(message, options = {}) {
 
-    const request = this.buildRequest(message);
-    const { preferredProvider } = options;
+    const {
+          preferredProvider,
+          preferredModel,
+        } = options;
+
+        const request = this.buildRequest(
+          message,
+          preferredModel,
+        );;
+        
    const providers = this.getActiveProviders(preferredProvider);
    
     for (const provider of providers) {

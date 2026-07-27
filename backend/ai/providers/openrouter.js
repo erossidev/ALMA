@@ -7,7 +7,7 @@ module.exports = async function (request) {
         "https://openrouter.ai/api/v1/chat/completions",
 
         {
-            model: "openrouter/auto",
+            model: request.model || "openrouter/auto",
 
             messages: [
                 {
