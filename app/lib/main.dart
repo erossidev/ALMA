@@ -5,6 +5,9 @@ import 'app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+import 'core/ai/backend_ai_registry.dart';
+import 'package:app/core/ai/backend_ai_registry.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -14,5 +17,26 @@ Future<void> main() async {
   options: DefaultFirebaseOptions.currentPlatform,
 );
 
+
+  ///Script di test
+  final registry = BackendAIRegistry();
+
+final resources =
+    await registry.loadResources();
+
+print("");
+print("===== AI RESOURCES =====");
+
+  for (final r in resources) {
+    print(r.displayName);
+    print(r.providerId);
+    print(r.modelId);
+    print(r.capabilities);
+    print("------");
+  }
+
+  print("========================");
+  print("");
+  
   runApp(const AlmaApp());
 }

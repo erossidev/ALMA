@@ -13,14 +13,18 @@ app.get("/", (req, res) => {
   res.send("ALMA Backend Online");
 });
 
+// ==============================
+// CHAT
+// ==============================
+
 app.post("/chat", async (req, res) => {
   try {
-   const { message } = req.body;
+    const { message } = req.body;
 
-   const result = await aiRouter(message);
+    const result = await aiRouter(message);
 
-   res.json(result);
-        
+    res.json(result);
+
   } catch (error) {
     console.error(error);
 
@@ -30,6 +34,41 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+// ==============================
+// AI RESOURCES
+// ==============================
+
+app.get("/resources", (req, res) => {
+
+  res.json([
+    {
+      id: "default",
+
+      providerId: "openrouter",
+
+      modelId: "openai/gpt-5",
+
+      displayName: "GPT-5",
+
+      enabled: true,
+
+      priority: 1,
+
+      capabilities: [
+        "conversation",
+        "reasoning",
+        "json",
+        "coding"
+      ]
+    }
+  ]);
+
+});
+
+// ==============================
+
 app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server avviato sulla porta ${process.env.PORT || 3000}`);
+  console.log(
+    `Server avviato sulla porta ${process.env.PORT || 3000}`,
+  );
 });
