@@ -5,6 +5,7 @@ import 'ai_request.dart';
 import 'ai_resource.dart';
 import 'ai_resource_resolver.dart';
 import 'ai_response.dart';
+import '../cognition/profiler/cognitive_profiler.dart';
 
 class AIOrchestrator {
   final AIRegistry registry;
@@ -23,28 +24,47 @@ class AIOrchestrator {
     AIRequest request,
   ) async {
 
-    // Carica il catalogo AI dal backend
+    // Carica il catalogo AI
     final resources =
         await registry.loadResources();
 
-    // Ottiene tutte le risorse compatibili,
-    // ordinate dalla migliore alla peggiore
+    // Ottiene i candidati ordinati
     final candidates =
         resolver.resolveCandidates(
       request: request,
       resources: resources,
     );
 
-    if (candidates.isEmpty) {
+    // Doppia sicurezza
+    final activeCandidates =
+        candidates
+            .where((e) => e.enabled)
+            .toList();
+
+    if (activeCandidates.isEmpty) {
       throw Exception(
         "Nessuna risorsa AI disponibile.",
       );
     }
 
+    print("");
+    print("===== MODEL SELECTION =====");
+
+    for (final model in activeCandidates) {
+      print(
+        "${model.priority}. "
+        "${model.displayName}"
+        " (${model.providerId})",
+      );
+    }
+
+    print("==========================");
+    print("");
+
     Exception? lastError;
 
-    // Prova una risorsa alla volta
-    for (final AIResource resource in candidates) {
+    for (final AIResource resource
+        in activeCandidates) {
 
       final AIProvider provider =
           providerRegistry.getProvider(
@@ -54,7 +74,8 @@ class AIOrchestrator {
       try {
 
         print(
-          "🧠 Provo ${resource.displayName}"
+          "🧠 Provo "
+          "${resource.displayName}"
           " (${resource.providerId})",
         );
 
@@ -62,6 +83,10 @@ class AIOrchestrator {
             await provider.sendMessage(
           request: request,
           resource: resource,
+        );
+
+        print(
+          "✅ ${resource.displayName}",
         );
 
         return response;

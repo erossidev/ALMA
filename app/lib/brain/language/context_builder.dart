@@ -2,13 +2,16 @@ import '../synapse.dart';
 import '../retrieval/memory_result.dart';
 import '../brain_vocabulary.dart';
 import '../../core/dialogue/models/conversation_model.dart';
+import '../../core/cognition/thought.dart';
 
 class ContextBuilder {
   String build(
+    Thought thought,
     String userMessage,
     MemoryResult memory,
-    ConversationModel conversation,
   ) {
+    final conversation = thought.conversation;
+    
     final buffer = StringBuffer();
 
     if (conversation.entities.isNotEmpty) {

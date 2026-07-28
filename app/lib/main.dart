@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'core/ai/backend_ai_registry.dart';
-import 'package:app/core/ai/backend_ai_registry.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

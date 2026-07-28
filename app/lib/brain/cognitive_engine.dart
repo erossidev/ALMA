@@ -28,8 +28,15 @@ import 'clarification/clarification_resolver.dart';
 import '../core/dialogue/builders/ai_conversation_builder.dart';
 import '../core/dialogue/models/conversation_model.dart';
 
+import '../core/cognition/profiler/cognitive_profiler.dart';
+
+import '../core/cognition/cognitive_workspace.dart';
+
 class CognitiveEngine {
   final Brain brain;
+
+  final CognitiveWorkspace workspace =
+    CognitiveWorkspace();
 
   final WorkingMemory workingMemory;
 
@@ -104,15 +111,30 @@ class CognitiveEngine {
     String message,
   ) async {
 
+    final profiler = CognitiveProfiler();
+    profiler.start();
+
+    profiler.begin("Dialogue");
+    
+
     _conversation =
-        await _conversationBuilder.update(
+    await _conversationBuilder.update(
       conversation: _conversation,
       message: message,
-      );
+    );
 
-      print("========== CONVERSATION ==========");
-      print(_conversation.toJson());
-      print("==================================");
+    final thought = workspace.getOrCreateThought(
+      conversation: _conversation,
+      workingMemory: workingMemory,
+    );
+
+    print(thought);
+
+    print("========== CONVERSATION ==========");
+    print(_conversation.toJson());
+    print("==================================");
+
+    profiler.end("Dialogue");
 
   if (_pendingClarification != null) {
 
@@ -139,15 +161,22 @@ class CognitiveEngine {
     );
 
 }
-  
+    profiler.begin("Perception");
+
     await perceive(
       message,
     );
+
+    profiler.end("Perception");
+
+    profiler.begin("Brain");
 
     final brainResult =
         await remember(
       message,
     );
+
+      profiler.end("Brain");
 
   if (brainResult.requiresClarification) {
 
@@ -170,21 +199,34 @@ class CognitiveEngine {
 
     }
 
+    profiler.begin("Context");
 
     final prompt =
         buildContext(
       message,
     );
 
+    profiler.end("Context");
+
+    profiler.begin("Chat");
+
     final response =
         await aiManager.generateResponse(
       prompt,
     );
 
+    profiler.end("Chat");
+
+    profiler.begin("Learn");
+
     await learn(
       message,
       response,
     );
+
+    profiler.end("Learn");
+
+    profiler.printReport();
 
     return response;
   }
@@ -250,13 +292,14 @@ class CognitiveEngine {
       ],
     );
 
+    final thought = workspace.activeThought!;
+
     final prompt =
         _contextBuilder.build(
+      thought,
       message,
       memory,
-      _conversation,
     );
-
     print("");
 
     print("========== PROMPT ==========");
