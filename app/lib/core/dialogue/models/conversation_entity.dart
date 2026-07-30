@@ -41,17 +41,18 @@ class ConversationEntity {
     Map<String, dynamic> json,
   ) {
     return ConversationEntity(
-      id: json["id"] as String,
+      id: json["id"].toString(),
 
-      label: json["label"] as String,
+      label: json["label"]?.toString() ?? "",
 
       type: ConversationEntityType.values.firstWhere(
-        (e) => e.name == json["type"],
+        (e) => e.name == json["type"]?.toString(),
         orElse: () => ConversationEntityType.unknown,
       ),
 
       aliases: (json["aliases"] as List<dynamic>? ?? [])
-          .cast<String>(),
+          .map((e) => e.toString())
+          .toList(),
     );
   }
 

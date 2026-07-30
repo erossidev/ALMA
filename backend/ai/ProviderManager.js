@@ -3,55 +3,84 @@ const providers = require("./config/providers");
 class ProviderManager {
 
   buildRequest(message, preferredModel) {
+
     return {
+
       system: require("./prompts/systemPrompt"),
+
       user: message,
+
       model: preferredModel,
+
     };
+
   }
 
   async handle(message, options = {}) {
 
     const {
+
       preferredProvider,
+
       preferredModel,
+
     } = options;
 
     const provider = providers.find(
+
       p => p.id === preferredProvider && p.enabled,
+
     );
 
     if (!provider) {
+
       throw new Error(
+
         `Provider '${preferredProvider}' non trovato.`,
+
       );
+
     }
 
     const request = this.buildRequest(
+
       message,
+
       preferredModel,
+
     );
+
+    console.log("");
+
+    console.log("===== PROVIDER =====");
+
+    console.log(provider.name);
+
+    console.log(preferredModel);
+
+    console.log("====================");
 
     try {
 
-      console.log(
-        `🧠 ${provider.name} (${preferredModel})`,
-      );
+      const response =
 
-      return await provider.handler(request);
+          await provider.handler(request);
+
+      return response;
 
     } catch (err) {
 
+      console.error("");
+
+      console.error("===== PROVIDER ERROR =====");
+
       console.error(err);
 
-      throw new Error(
-        JSON.stringify({
-          provider: provider.id,
-          model: preferredModel,
-          code: err.code || "provider_error",
-          message: err.message,
-        }),
-      );
+      console.error("==========================");
+
+      console.error("");
+
+      throw err;
 
     }
 

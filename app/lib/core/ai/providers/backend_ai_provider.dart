@@ -24,9 +24,14 @@ class BackendAIProvider implements AIProvider {
         "model": resource.modelId,
       }),
     );
-
     if (response.statusCode != 200) {
-      throw Exception("Errore AI");
+
+      print(response.body);
+
+      throw Exception(
+        response.body,
+      );
+
     }
 
     final json = jsonDecode(response.body);

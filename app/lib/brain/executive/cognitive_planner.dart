@@ -12,38 +12,62 @@ class CognitivePlanner {
     final intent =
         context.perception?.intent;
 
+    print("");
+    print("===== PLANNER =====");
+    print("Intent: $intent");
+
     switch (intent) {
+
       case "greeting":
-        return const CognitivePlan(
-        tasks: [
-          CognitiveTask(type: TaskType.dialogue),
-          CognitiveTask(type: TaskType.learning),
-          CognitiveTask(type: TaskType.language),
-          CognitiveTask(type: TaskType.memory),
-        ],
-      );
 
-      case "new_person":
-        return const CognitivePlan(
-        tasks: [
-          CognitiveTask(type: TaskType.dialogue),
-          CognitiveTask(type: TaskType.learning),
-          CognitiveTask(type: TaskType.knowledge),
-          CognitiveTask(type: TaskType.language),
-          CognitiveTask(type: TaskType.memory),
-        ],
-      );
+        print("Planner -> greeting");
 
-      default:
         return const CognitivePlan(
           tasks: [
-            
             CognitiveTask(type: TaskType.dialogue),
             CognitiveTask(type: TaskType.learning),
             CognitiveTask(type: TaskType.language),
             CognitiveTask(type: TaskType.memory),
-            ],
-        
+          ],
+        );
+
+      case "question":
+
+        print("Planner -> question");
+
+        return const CognitivePlan(
+          tasks: [
+            CognitiveTask(type: TaskType.dialogue),
+            CognitiveTask(type: TaskType.language),
+            CognitiveTask(type: TaskType.memory),
+          ],
+        );
+
+      case "conversation":
+
+        print("Planner -> conversation");
+
+        return const CognitivePlan(
+          tasks: [
+            CognitiveTask(type: TaskType.dialogue),
+            CognitiveTask(type: TaskType.learning),
+            CognitiveTask(type: TaskType.knowledge),
+            CognitiveTask(type: TaskType.language),
+            CognitiveTask(type: TaskType.memory),
+          ],
+        );
+
+      default:
+
+        print("Planner -> default");
+
+        return const CognitivePlan(
+          tasks: [
+            CognitiveTask(type: TaskType.dialogue),
+            CognitiveTask(type: TaskType.learning),
+            CognitiveTask(type: TaskType.language),
+            CognitiveTask(type: TaskType.memory),
+          ],
         );
     }
   }

@@ -159,7 +159,11 @@ print("");
 
   
     final brainResult =
-    context.brainResult!;
+    context.brainResult;
+
+    if (brainResult == null) {
+      return context.response!;
+    }
 
   if (brainResult.requiresClarification) {
 

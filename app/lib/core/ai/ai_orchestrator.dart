@@ -5,7 +5,7 @@ import 'ai_request.dart';
 import 'ai_resource.dart';
 import 'ai_resource_resolver.dart';
 import 'ai_response.dart';
-import '../cognition/profiler/cognitive_profiler.dart';
+import 'ai_router.dart';
 
 class AIOrchestrator {
   final AIRegistry registry;
@@ -13,6 +13,8 @@ class AIOrchestrator {
   final AIResourceResolver resolver;
 
   final AIProviderRegistry providerRegistry;
+
+  final AIRouter router = const AIRouter();
 
   const AIOrchestrator({
     required this.registry,
@@ -24,18 +26,18 @@ class AIOrchestrator {
     AIRequest request,
   ) async {
 
-    // Carica il catalogo AI
+    // Carica tutte le AI disponibili
     final resources =
         await registry.loadResources();
 
-    // Ottiene i candidati ordinati
+    // Filtra quelle compatibili con il task
     final candidates =
         resolver.resolveCandidates(
       request: request,
       resources: resources,
     );
 
-    // Doppia sicurezza
+    // Tiene solo quelle abilitate
     final activeCandidates =
         candidates
             .where((e) => e.enabled)
@@ -47,65 +49,38 @@ class AIOrchestrator {
       );
     }
 
+    // Il Router sceglie direttamente la migliore
+    final AIResource resource =
+        router.route(
+      request.task,
+      activeCandidates,
+    );
+
     print("");
     print("===== MODEL SELECTION =====");
-
-    for (final model in activeCandidates) {
-      print(
-        "${model.priority}. "
-        "${model.displayName}"
-        " (${model.providerId})",
-      );
-    }
-
+    print(resource.displayName);
     print("==========================");
     print("");
 
-    Exception? lastError;
+    final AIProvider provider =
+        providerRegistry.getProvider(
+      resource.providerId,
+    );
 
-    for (final AIResource resource
-        in activeCandidates) {
+    print(
+      "🧠 ${resource.displayName}",
+    );
 
-      final AIProvider provider =
-          providerRegistry.getProvider(
-        resource.providerId,
-      );
+    final AIResponse response =
+        await provider.sendMessage(
+      request: request,
+      resource: resource,
+    );
 
-      try {
+    print(
+      "✅ ${resource.displayName}",
+    );
 
-        print(
-          "🧠 Provo "
-          "${resource.displayName}"
-          " (${resource.providerId})",
-        );
-
-        final response =
-            await provider.sendMessage(
-          request: request,
-          resource: resource,
-        );
-
-        print(
-          "✅ ${resource.displayName}",
-        );
-
-        return response;
-
-      } catch (e) {
-
-        print(
-          "❌ ${resource.displayName}: $e",
-        );
-
-        lastError = Exception(e);
-
-      }
-
-    }
-
-    throw lastError ??
-        Exception(
-          "Nessun provider AI disponibile.",
-        );
+    return response;
   }
 }

@@ -18,17 +18,39 @@ class LearningHandler implements TaskHandler {
 
     print(">>> LearningHandler EXECUTED");
 
-    final decision =
-        await learningPipeline.process(
-      context.input,
-    );
+    try {
 
-    context.shouldLearn =
-        decision.shouldLearn;
+      final decision =
+          await learningPipeline.process(
+        context.input,
+      );
 
-    if (!decision.shouldLearn) {
+      context.shouldLearn =
+          decision.shouldLearn;
+
+      if (!decision.shouldLearn) {
+        context.brainResult =
+            BrainResult.ignored();
+      }
+
+    } catch (e, stackTrace) {
+
+      print("");
+      print("===== LEARNING ERROR =====");
+      print(e);
+      print(stackTrace);
+      print("==========================");
+      print("");
+
+      // Se il sistema di apprendimento fallisce,
+      // ALMA continua comunque la conversazione.
+
+      context.shouldLearn = false;
+
       context.brainResult =
           BrainResult.ignored();
+
     }
+
   }
 }

@@ -2,42 +2,98 @@ const axios = require("axios");
 
 module.exports = async function (request) {
 
-    const response = await axios.post(
+    try {
 
-        "https://openrouter.ai/api/v1/chat/completions",
+        const response = await axios.post(
 
-        {
-            model: request.model || "openrouter/auto",
+            "https://openrouter.ai/api/v1/chat/completions",
 
-            messages: [
-                {
-                    role: "system",
-                    content: request.system
+            {
+                model: request.model || "openrouter/auto",
+
+                messages: [
+                    {
+                        role: "system",
+                        content: request.system,
+                    },
+                    {
+                        role: "user",
+                        content: request.user,
+                    },
+                ],
+            },
+
+            {
+                timeout: 8000,
+
+                headers: {
+                    Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json",
                 },
-                {
-                    role: "user",
-                    content: request.user
-                }
-            ]
-        },
-
-        {
-            headers: {
-                Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                "Content-Type": "application/json"
             }
+
+        );
+
+        if (
+            !response.data ||
+            !response.data.choices ||
+            response.data.choices.length === 0
+        ) {
+
+            console.error(
+                "===== OPENROUTER INVALID RESPONSE ====="
+            );
+
+            console.error(response.data);
+
+            throw new Error(
+                "OpenRouter non ha restituito alcuna risposta."
+            );
+
         }
 
-    );
+        return {
 
-    return {
+            success: true,
 
-        provider: "OpenRouter",
+            provider: "OpenRouter",
 
-        model: response.data.model,
+            model:
+                response.data.model ??
+                request.model,
 
-        reply: response.data.choices[0].message.content
+            reply:
+                response.data.choices[0].message.content,
 
-    };
+        };
+
+    } catch (err) {
+
+        if (err.response) {
+
+            console.error("");
+            console.error("===== OPENROUTER ERROR =====");
+            console.error("Status :", err.response.status);
+            console.error("Data   :", err.response.data);
+            console.error("============================");
+            console.error("");
+
+            throw new Error(JSON.stringify({
+
+                provider: "openrouter",
+
+                status: err.response.status,
+
+                data: err.response.data,
+
+            }));
+
+        }
+
+        console.error(err);
+
+        throw err;
+
+    }
 
 };

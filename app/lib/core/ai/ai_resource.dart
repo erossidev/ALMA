@@ -1,13 +1,10 @@
 class AIResource {
   final String id;
 
-  /// Es: openrouter, ollama, azure...
   final String providerId;
 
-  /// Es: openai/gpt-5
   final String modelId;
 
-  /// Nome leggibile
   final String displayName;
 
   final bool enabled;

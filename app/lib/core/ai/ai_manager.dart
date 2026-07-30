@@ -5,6 +5,7 @@ import 'ai_request.dart';
 import 'ai_response.dart';
 import 'ai_resource_resolver.dart';
 import 'backend_ai_registry.dart';
+import 'ai_task.dart';
 
 class AIManager {
   final AIOrchestrator _orchestrator;
@@ -24,8 +25,9 @@ class AIManager {
     String prompt,
   ) async {
     return await _orchestrator.execute(
-      AIRequest(
-        prompt: prompt,
+         AIRequest(
+         prompt: prompt,
+         task: AITask.language,
         requiredCapabilities: const [
           "conversation",
         ],
@@ -44,6 +46,7 @@ class AIManager {
         await _orchestrator.execute(
       AIRequest(
         prompt: prompt,
+        task: AITask.knowledge,
         requiredCapabilities: const [
           "reasoning",
           "json",
@@ -65,6 +68,7 @@ class AIManager {
         await _orchestrator.execute(
       AIRequest(
         prompt: prompt,
+        task: AITask.learning,
         requiredCapabilities: const [
           "reasoning",
         ],
