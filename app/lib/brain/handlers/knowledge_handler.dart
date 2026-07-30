@@ -11,36 +11,34 @@ class KnowledgeHandler implements TaskHandler {
   });
 
   @override
-Future<void> execute(
-  ExecutionContext context,
-) async {
+  Future<void> execute(
+    ExecutionContext context,
+  ) async {
 
-  print(">>> KnowledgeHandler EXECUTED");
+    print(">>> KnowledgeHandler EXECUTED");
 
-  if (!context.shouldLearn) {
-    return;
+    try {
+
+      context.brainResult =
+          await knowledgePipeline.process(
+        context.input,
+      );
+
+    } catch (e, stackTrace) {
+
+      print("");
+      print("===== KNOWLEDGE ERROR =====");
+      print(e);
+      print(stackTrace);
+      print("===========================");
+      print("");
+
+      // Non interrompere la pipeline.
+      // Sarà il Brain Protocol a decidere se
+      // ignorare, memorizzare o chiedere chiarimenti.
+
+    }
+
   }
 
-  try {
-
-    context.brainResult =
-        await knowledgePipeline.process(
-      context.input,
-    );
-
-  } catch (e, stackTrace) {
-
-    print("");
-    print("===== KNOWLEDGE ERROR =====");
-    print(e);
-    print(stackTrace);
-    print("===========================");
-    print("");
-
-    // Non interrompe la pipeline.
-    // Il LanguageHandler continuerà comunque.
-
-  }
-
-}
 }

@@ -10,6 +10,17 @@ RELATIONS
 Le relations rappresentano
 le sinapsi del Brain.
 
+NON usare le Relations per rappresentare:
+
+- età
+- email
+- telefono
+- professione
+- lingua
+- nazionalità
+
+Queste devono essere rappresentate tramite Facts.
+
 Formato:
 
 {

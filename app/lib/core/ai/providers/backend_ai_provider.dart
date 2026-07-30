@@ -22,6 +22,9 @@ class BackendAIProvider implements AIProvider {
         "message": request.prompt,
         "provider": resource.providerId,
         "model": resource.modelId,
+        "maxTokens": request.maxTokens,
+          "temperature": request.temperature,
+          "timeout": request.timeout?.inMilliseconds,
       }),
     );
     if (response.statusCode != 200) {

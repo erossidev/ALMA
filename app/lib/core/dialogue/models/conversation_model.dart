@@ -34,30 +34,32 @@ class ConversationModel {
   }
 
   factory ConversationModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
-    return ConversationModel(
-      entities: (json["entities"] as List<dynamic>? ?? [])
-          .map(
-            (e) => ConversationEntity.fromJson(
-              e as Map<String, dynamic>,
-            ),
-          )
-          .toList(),
+  Map<String, dynamic> json,
+) {
+  return ConversationModel(
+    entities: (json["entities"] as List<dynamic>? ?? [])
+        .map(
+          (e) => ConversationEntity.fromJson(
+            e as Map<String, dynamic>,
+          ),
+        )
+        .toList(),
 
-      relations: (json["relations"] as List<dynamic>? ?? [])
-          .map(
-            (e) => ConversationRelation.fromJson(
-              e as Map<String, dynamic>,
-            ),
-          )
-          .toList(),
+    relations: (json["relations"] as List<dynamic>? ?? [])
+        .map(
+          (e) => ConversationRelation.fromJson(
+            e as Map<String, dynamic>,
+          ),
+        )
+        .toList(),
 
-      activeEntityId: json["activeEntityId"] as String?,
+    activeEntityId:
+        json["activeEntityId"]?.toString(),
 
-      currentTopic: json["currentTopic"] as String?,
-    );
-  }
+    currentTopic:
+        json["currentTopic"]?.toString(),
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {

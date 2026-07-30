@@ -19,6 +19,9 @@ enum EntityType {
   // Persone
   person,
 
+  // Animali
+  animal,
+
   // Luoghi
   place,
 
@@ -41,6 +44,9 @@ enum EntityType {
   preference,
   goal,
   emotion,
+
+  // Fallback
+  unknown,
 }
 
 /// ==========================================================
@@ -141,6 +147,8 @@ class RelationshipDefinition {
 
 enum FactType {
   birthday,
+
+  age,
 
   email,
 

@@ -2,7 +2,11 @@ const providers = require("./config/providers");
 
 class ProviderManager {
 
-  buildRequest(message, preferredModel) {
+  buildRequest(
+    message,
+    preferredModel,
+    options = {},
+  ) {
 
     return {
 
@@ -11,6 +15,12 @@ class ProviderManager {
       user: message,
 
       model: preferredModel,
+
+      maxTokens: options.maxTokens,
+
+      temperature: options.temperature,
+
+      timeout: options.timeout,
 
     };
 
@@ -23,6 +33,12 @@ class ProviderManager {
       preferredProvider,
 
       preferredModel,
+
+      maxTokens,
+
+      temperature,
+
+      timeout,
 
     } = options;
 
@@ -48,6 +64,12 @@ class ProviderManager {
 
       preferredModel,
 
+      {
+        maxTokens,
+        temperature,
+        timeout,
+      },
+
     );
 
     console.log("");
@@ -58,12 +80,17 @@ class ProviderManager {
 
     console.log(preferredModel);
 
+    console.log("Temperature:", request.temperature);
+
+    console.log("Max Tokens:", request.maxTokens);
+
+    console.log("Timeout:", request.timeout);
+
     console.log("====================");
 
     try {
 
       const response =
-
           await provider.handler(request);
 
       return response;

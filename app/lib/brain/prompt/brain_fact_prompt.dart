@@ -46,6 +46,32 @@ Esempio:
   "type":"email",
 
   "value":"mario@email.it"
+
+  Usa i Facts per proprietà come:
+
+- age
+- birthday
+- email
+- phone
+- profession
+- language
+- nationality
+- gender
+- website
+- note
+
+NON rappresentare queste informazioni come Relations.
+
+Una Relation collega due entità.
+
+Un Fact rappresenta una proprietà di una singola entità.
+
+{
+  "id":"michela_age",
+  "entityId":"michela",
+  "type":"age",
+  "value":"40"
+}
 }
 ''';
   }

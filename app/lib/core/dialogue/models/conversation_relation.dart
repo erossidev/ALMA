@@ -13,14 +13,14 @@ class ConversationRelation {
   });
 
   factory ConversationRelation.fromJson(
-    Map<String, dynamic> json,
-  ) {
-    return ConversationRelation(
-      sourceId: json["sourceId"] as String,
-      relation: json["relation"] as String,
-      targetId: json["targetId"] as String,
-    );
-  }
+  Map<String, dynamic> json,
+) {
+  return ConversationRelation(
+    sourceId: json["sourceId"]?.toString() ?? "",
+    relation: json["relation"]?.toString() ?? "",
+    targetId: json["targetId"]?.toString() ?? "",
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {

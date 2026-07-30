@@ -6,6 +6,9 @@ module.exports = async function ({
   message,
   provider,
   model,
+  maxTokens,
+  temperature,
+  timeout,
 }) {
 
   return await manager.handle(
@@ -13,6 +16,10 @@ module.exports = async function ({
     {
       preferredProvider: provider,
       preferredModel: model,
+
+      maxTokens,
+      temperature,
+      timeout,
     },
   );
 

@@ -26,12 +26,18 @@ app.post("/chat", async (req, res) => {
       message,
       provider,
       model,
+      maxTokens,
+      temperature,
+      timeout,
     } = req.body;
 
     const result = await aiRouter({
       message,
       provider,
       model,
+      maxTokens,
+      temperature,
+      timeout,
     });
 
     res.json(result);

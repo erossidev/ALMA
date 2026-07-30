@@ -25,7 +25,7 @@ class CognitivePlanner {
         return const CognitivePlan(
           tasks: [
             CognitiveTask(type: TaskType.dialogue),
-            CognitiveTask(type: TaskType.learning),
+            CognitiveTask(type: TaskType.knowledge),
             CognitiveTask(type: TaskType.language),
             CognitiveTask(type: TaskType.memory),
           ],
@@ -38,6 +38,7 @@ class CognitivePlanner {
         return const CognitivePlan(
           tasks: [
             CognitiveTask(type: TaskType.dialogue),
+            CognitiveTask(type: TaskType.knowledge),
             CognitiveTask(type: TaskType.language),
             CognitiveTask(type: TaskType.memory),
           ],
@@ -50,7 +51,6 @@ class CognitivePlanner {
         return const CognitivePlan(
           tasks: [
             CognitiveTask(type: TaskType.dialogue),
-            CognitiveTask(type: TaskType.learning),
             CognitiveTask(type: TaskType.knowledge),
             CognitiveTask(type: TaskType.language),
             CognitiveTask(type: TaskType.memory),
@@ -64,7 +64,7 @@ class CognitivePlanner {
         return const CognitivePlan(
           tasks: [
             CognitiveTask(type: TaskType.dialogue),
-            CognitiveTask(type: TaskType.learning),
+            CognitiveTask(type: TaskType.knowledge),
             CognitiveTask(type: TaskType.language),
             CognitiveTask(type: TaskType.memory),
           ],

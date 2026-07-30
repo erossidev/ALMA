@@ -21,10 +21,15 @@ module.exports = async function (request) {
                         content: request.user,
                     },
                 ],
+
+                temperature: request.temperature ?? 0,
+
+                max_tokens: request.maxTokens ?? 600,
+
             },
 
             {
-                timeout: 8000,
+                timeout: request.timeout ?? 15000,
 
                 headers: {
                     Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
@@ -40,11 +45,11 @@ module.exports = async function (request) {
             response.data.choices.length === 0
         ) {
 
-            console.error(
-                "===== OPENROUTER INVALID RESPONSE ====="
-            );
-
+            console.error("");
+            console.error("===== OPENROUTER INVALID RESPONSE =====");
             console.error(response.data);
+            console.error("=======================================");
+            console.error("");
 
             throw new Error(
                 "OpenRouter non ha restituito alcuna risposta."
@@ -78,19 +83,27 @@ module.exports = async function (request) {
             console.error("============================");
             console.error("");
 
-            throw new Error(JSON.stringify({
+            throw new Error(
+                JSON.stringify({
 
-                provider: "openrouter",
+                    provider: "openrouter",
 
-                status: err.response.status,
+                    model: request.model,
 
-                data: err.response.data,
+                    status: err.response.status,
 
-            }));
+                    data: err.response.data,
+
+                })
+            );
 
         }
 
+        console.error("");
+        console.error("===== OPENROUTER EXCEPTION =====");
         console.error(err);
+        console.error("================================");
+        console.error("");
 
         throw err;
 

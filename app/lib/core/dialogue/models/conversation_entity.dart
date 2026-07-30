@@ -1,18 +1,11 @@
-enum ConversationEntityType {
-  person,
-  place,
-  object,
-  organization,
-  concept,
-  unknown,
-}
+import '../../../brain/brain_vocabulary.dart';
 
 class ConversationEntity {
   final String id;
 
   final String label;
 
-  final ConversationEntityType type;
+  final EntityType type;
 
   final List<String> aliases;
 
@@ -26,7 +19,7 @@ class ConversationEntity {
   ConversationEntity copyWith({
     String? id,
     String? label,
-    ConversationEntityType? type,
+    EntityType? type,
     List<String>? aliases,
   }) {
     return ConversationEntity(
@@ -45,9 +38,9 @@ class ConversationEntity {
 
       label: json["label"]?.toString() ?? "",
 
-      type: ConversationEntityType.values.firstWhere(
+      type: EntityType.values.firstWhere(
         (e) => e.name == json["type"]?.toString(),
-        orElse: () => ConversationEntityType.unknown,
+        orElse: () => EntityType.unknown,
       ),
 
       aliases: (json["aliases"] as List<dynamic>? ?? [])
