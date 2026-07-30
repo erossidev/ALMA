@@ -1,0 +1,602 @@
+# ALMA Cognitive Cycle Specification (ACCS)
+
+**Version:** 1.0  
+**Status:** Draft  
+**Author:** ALMA Project
+
+---
+
+# 1. Visione
+
+ALMA non è una semplice chat con memoria.
+
+ALMA è un sistema cognitivo composto da organi specializzati che collaborano tra loro attraverso un unico ciclo cognitivo.
+
+L'obiettivo dell'architettura non è aumentare la quantità di prompt inviati ad un LLM, ma costruire una rappresentazione interna del mondo sulla quale tutti gli organi possano lavorare.
+
+L'LLM rappresenta esclusivamente la componente linguistica e di ragionamento.
+
+La cognizione appartiene ad ALMA.
+
+---
+
+# 2. Filosofia
+
+L'intero sistema si basa su un principio fondamentale.
+
+> Il linguaggio viene interpretato una sola volta.
+
+Ogni organo lavora successivamente sulla rappresentazione cognitiva prodotta da quella interpretazione.
+
+Nessun organo deve reinterpretare il testo originale.
+
+---
+
+# 3. Obiettivi
+
+Il sistema deve essere in grado di:
+
+- comprendere il contesto;
+- mantenere il focus della conversazione;
+- seguire riferimenti impliciti;
+- eseguire ragionamenti multi-step;
+- mantenere risultati temporanei;
+- decidere autonomamente quali organi attivare;
+- evitare elaborazioni inutili;
+- ridurre il numero di chiamate ai modelli AI.
+
+---
+
+# 4. Principi Fondamentali
+
+## 4.1 Comprendere prima di memorizzare
+
+Mai salvare informazioni non comprese.
+
+---
+
+## 4.2 Una sola interpretazione
+
+Il linguaggio naturale viene interpretato esclusivamente dal Dialogue Engine.
+
+---
+
+## 4.3 Stato cognitivo condiviso
+
+Ogni organo legge e modifica lo stesso Cognitive State.
+
+---
+
+## 4.4 Organi indipendenti
+
+Ogni organo possiede una sola responsabilità.
+
+Gli organi non duplicano funzioni.
+
+---
+
+## 4.5 Attivazione intelligente
+
+Gli organi vengono attivati solo se realmente necessari.
+
+---
+
+## 4.6 Il Brain non comprende il linguaggio
+
+Il Brain non interpreta frasi.
+
+Riceve esclusivamente informazioni già strutturate.
+
+---
+
+## 4.7 Working Memory prima del Brain
+
+La memoria di lavoro rappresenta il pensiero corrente.
+
+Il Brain rappresenta esclusivamente la conoscenza permanente.
+
+---
+
+# 5. Architettura
+
+```
+Utente
+
+↓
+
+Perception
+
+↓
+
+Dialogue Engine
+
+↓
+
+Conversation Model
+
+↓
+
+Working Memory
+
+↓
+
+Central Executive
+
+↓
+
+Planner
+
+↓
+
+Brain
+
+↓
+
+Retriever
+
+↓
+
+Reasoning
+
+↓
+
+Response
+
+↓
+
+Utente
+```
+
+---
+
+# 6. Cognitive State
+
+Il Cognitive State rappresenta l'intera mente di ALMA in un determinato istante.
+
+Ogni organo legge e modifica questo oggetto.
+
+Mai il messaggio originale.
+
+## Contenuto
+
+- messaggio originale
+- messaggio risolto
+- Conversation
+- Working Memory
+- Memory Retrieval
+- Focus
+- Goal
+- Intent
+- Topic
+- Cognitive Plan
+- Pending Clarifications
+- Current Task
+- AI Context
+
+---
+
+# 7. Conversation
+
+La Conversation rappresenta esclusivamente il contesto linguistico.
+
+Contiene:
+
+- entità
+- relazioni
+- focus corrente
+- argomento corrente
+- riferimenti
+- alias
+
+La Conversation NON è memoria permanente.
+
+---
+
+# 8. Working Memory
+
+La Working Memory rappresenta il pensiero attivo.
+
+Contiene informazioni temporanee.
+
+Esempi:
+
+- ultimo risultato matematico
+- persona attualmente osservata
+- oggetto della conversazione
+- variabili temporanee
+- task corrente
+- domande aperte
+- risultati intermedi
+
+La Working Memory può essere modificata continuamente.
+
+Può essere dimenticata.
+
+---
+
+# 9. Brain
+
+Il Brain rappresenta esclusivamente la memoria permanente.
+
+Non interpreta.
+
+Non dialoga.
+
+Non comprende il linguaggio.
+
+Riceve soltanto informazioni già risolte.
+
+---
+
+# 10. Dialogue Engine
+
+Il Dialogue Engine rappresenta il sistema di comprensione linguistica.
+
+È l'unico organo autorizzato a:
+
+- interpretare pronomi
+- interpretare riferimenti
+- aggiornare la Conversation
+- determinare il focus
+- determinare il topic
+
+Output:
+
+Conversation aggiornata.
+
+---
+
+# 11. Reference Resolution
+
+Prima che qualsiasi organo lavori sul messaggio, tutti i riferimenti vengono risolti.
+
+Esempio.
+
+Input
+
+```
+Marco è mio fratello.
+
+Lui è alto.
+```
+
+Output interno
+
+```
+Marco è mio fratello.
+
+Marco è alto.
+```
+
+Da questo momento il pronome non esiste più.
+
+---
+
+# 12. Central Executive
+
+Il Central Executive rappresenta il Sistema Nervoso di ALMA.
+
+Non ragiona.
+
+Non memorizza.
+
+Coordina.
+
+È l'unico componente che decide quali organi devono essere attivati.
+
+---
+
+## Responsabilità
+
+- leggere il Cognitive State
+- valutare la situazione
+- costruire il piano cognitivo
+- coordinare gli organi
+
+---
+
+# 13. Cognitive Planner
+
+Il Planner costruisce una sequenza ordinata di operazioni.
+
+Esempio.
+
+```
+Dialogue
+
+↓
+
+Working Memory
+
+↓
+
+Memory Retrieval
+
+↓
+
+Reasoning
+
+↓
+
+Response
+```
+
+Oppure.
+
+```
+Dialogue
+
+↓
+
+Learning
+
+↓
+
+Brain
+
+↓
+
+Response
+```
+
+---
+
+# 14. Cognitive Cycle
+
+Ogni input segue sempre lo stesso ciclo.
+
+```
+Ricezione
+
+↓
+
+Percezione
+
+↓
+
+Comprensione
+
+↓
+
+Aggiornamento Conversation
+
+↓
+
+Aggiornamento Working Memory
+
+↓
+
+Costruzione Piano
+
+↓
+
+Attivazione Organi
+
+↓
+
+Aggiornamento Stato Cognitivo
+
+↓
+
+Risposta
+```
+
+---
+
+# 15. Classificazione dell'Input
+
+Ogni messaggio viene classificato.
+
+Esempi.
+
+- domanda
+- nuova conoscenza
+- follow-up
+- chiarimento
+- calcolo
+- comando
+- conversazione libera
+
+Questa classificazione determina il piano cognitivo.
+
+---
+
+# 16. Task Cognitivi
+
+Ogni conversazione genera un Task.
+
+Esempio.
+
+```
+Marco è mio fratello.
+
+↓
+
+Task
+
+TalkingAboutMarco
+```
+
+Oppure.
+
+```
+1 + 1
+
+↓
+
+Task
+
+Math
+```
+
+Finché il Task rimane attivo, la Working Memory mantiene il contesto.
+
+---
+
+# 17. Ragionamento Multi-Step
+
+Esempio.
+
+```
+1+1
+
+↓
+
+2
+```
+
+Working Memory
+
+```
+lastResult = 2
+```
+
+Messaggio successivo
+
+```
++3
+```
+
+Working Memory
+
+```
+lastResult = 5
+```
+
+Messaggio successivo
+
+```
+x2
+```
+
+Working Memory
+
+```
+lastResult = 10
+```
+
+Il Brain non viene coinvolto.
+
+---
+
+# 18. Attivazione degli Organi
+
+Il Sistema Nervoso attiva soltanto gli organi necessari.
+
+Esempio.
+
+Domanda semplice.
+
+```
+Dialogue
+
+↓
+
+Retriever
+
+↓
+
+Response
+```
+
+Nuova conoscenza.
+
+```
+Dialogue
+
+↓
+
+Learning
+
+↓
+
+Brain
+
+↓
+
+Response
+```
+
+Calcolo.
+
+```
+Dialogue
+
+↓
+
+Working Memory
+
+↓
+
+Reasoning
+
+↓
+
+Response
+```
+
+---
+
+# 19. Regole Fondamentali
+
+## Regola 1
+
+Comprendere prima di imparare.
+
+---
+
+## Regola 2
+
+Mai reinterpretare il testo.
+
+---
+
+## Regola 3
+
+Gli organi leggono il Cognitive State.
+
+Mai il messaggio originale.
+
+---
+
+## Regola 4
+
+Solo il Dialogue interpreta il linguaggio.
+
+---
+
+## Regola 5
+
+Solo il Brain contiene memoria permanente.
+
+---
+
+## Regola 6
+
+Solo il Central Executive decide quali organi lavorano.
+
+---
+
+## Regola 7
+
+La Working Memory rappresenta il pensiero corrente.
+
+---
+
+## Regola 8
+
+Ogni organo possiede una sola responsabilità.
+
+---
+
+# 20. Visione Finale
+
+L'obiettivo finale di ALMA non è costruire un chatbot.
+
+L'obiettivo è costruire un sistema cognitivo composto da organi indipendenti coordinati da un unico ciclo cognitivo.
+
+Ogni nuova capacità futura dovrà essere aggiunta come nuovo organo.
+
+Mai modificando il funzionamento degli organi esistenti.
+
+Il Cognitive Cycle rappresenta quindi il principio fondamentale sul quale si basa l'intera architettura di ALMA.

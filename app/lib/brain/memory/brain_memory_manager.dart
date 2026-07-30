@@ -39,6 +39,7 @@ class BrainMemoryManager {
     BrainInstruction instruction,
   ) async {
     print(">>> BrainMemoryManager.store()");
+    print(">>> PRIMA DI _storeEntities");
 
  final conflict =
     await _detectConflict(
@@ -66,11 +67,15 @@ class BrainMemoryManager {
     instruction,
   );
 
+  print(">>> DOPO _storeEntities");
+
    
 
     await _storeRelations(
       instruction,
     );
+
+   print(">>> DOPO _storeRelations");
 
     _debugBrain();
 
