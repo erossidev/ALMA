@@ -1,23 +1,25 @@
-import '../protocol/brain_instruction.dart';
+import 'knowledge_entity.dart';
+import 'knowledge_relation.dart';
+import 'knowledge_fact.dart';
 
 /// ==========================================================
 /// KNOWLEDGE MODEL
 ///
-/// Rappresenta la conoscenza estratta dall'LLM.
-/// Non contiene decisioni cognitive.
-/// Non contiene operazioni del Brain.
-/// Contiene solamente:
-/// - entità
-/// - relazioni
-/// - facts
+/// Contiene ESATTAMENTE quello che estrae l'LLM.
+///
+/// Nessuna decisione.
+/// Nessuna logica.
+/// Nessun tipo del Brain.
+///
+/// È il livello intermedio tra AI e Brain.
 /// ==========================================================
 
 class KnowledgeModel {
-  final List<BrainEntity> entities;
+  final List<KnowledgeEntity> entities;
 
-  final List<BrainRelation> relations;
+  final List<KnowledgeRelation> relations;
 
-  final List<BrainFact> facts;
+  final List<KnowledgeFact> facts;
 
   const KnowledgeModel({
     this.entities = const [],

@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import '../protocol/brain_instruction.dart';
+import 'knowledge_entity.dart';
+import 'knowledge_fact.dart';
 import 'knowledge_model.dart';
-import '../brain_vocabulary.dart';
+import 'knowledge_relation.dart';
 
 class KnowledgeParser {
   const KnowledgeParser();
@@ -26,60 +27,51 @@ class KnowledgeParser {
     );
   }
 
-  List<BrainEntity> _parseEntities(
+  List<KnowledgeEntity> _parseEntities(
     dynamic list,
   ) {
     if (list is! List) {
       return [];
     }
 
-    return list.map<BrainEntity>((item) {
-      return BrainEntity(
-        id: item['id'],
-        label: item['label'],
-        type: EntityType.values.firstWhere(
-          (e) => e.name == item['type'],
-          orElse: () => EntityType.concept,
-        ),
+    return list.map<KnowledgeEntity>((item) {
+      return KnowledgeEntity(
+        id: (item['id'] ?? '').toString(),
+        label: (item['label'] ?? '').toString(),
+        type: (item['type'] ?? '').toString(),
       );
     }).toList();
   }
 
-  List<BrainRelation> _parseRelations(
+  List<KnowledgeRelation> _parseRelations(
     dynamic list,
   ) {
     if (list is! List) {
       return [];
     }
 
-    return list.map<BrainRelation>((item) {
-      return BrainRelation(
-        from: item['from'],
-        to: item['to'],
-        type: RelationshipType.values.firstWhere(
-          (e) => e.name == item['type'],
-          orElse: () => RelationshipType.relatedTo,
-        ),
+    return list.map<KnowledgeRelation>((item) {
+      return KnowledgeRelation(
+        from: (item['from'] ?? '').toString(),
+        to: (item['to'] ?? '').toString(),
+        type: (item['type'] ?? '').toString(),
       );
     }).toList();
   }
 
-  List<BrainFact> _parseFacts(
+  List<KnowledgeFact> _parseFacts(
     dynamic list,
   ) {
     if (list is! List) {
       return [];
     }
 
-    return list.map<BrainFact>((item) {
-      return BrainFact(
-        id: item['id'],
-        entityId: item['entityId'],
-        type: FactType.values.firstWhere(
-          (e) => e.name == item['type'],
-          orElse: () => FactType.note,
-        ),
-        value: item['value'],
+    return list.map<KnowledgeFact>((item) {
+      return KnowledgeFact(
+        id: (item['id'] ?? '').toString(),
+        entityId: (item['entityId'] ?? '').toString(),
+        type: (item['type'] ?? '').toString(),
+        value: (item['value'] ?? '').toString(),
       );
     }).toList();
   }

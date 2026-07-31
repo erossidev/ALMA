@@ -1,9 +1,9 @@
-class OntologyEntityType {
+class OntologyFactType {
   final String id;
 
   final List<String> aliases;
 
-  const OntologyEntityType({
+  const OntologyFactType({
     required this.id,
     this.aliases = const [],
   });

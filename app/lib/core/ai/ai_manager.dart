@@ -78,5 +78,26 @@ class AIManager {
     return response.reply;
   }
 
+// =====================================================
+// ONTOLOGY NORMALIZATION
+// =====================================================
+
+Future<String> normalizeOntology(
+  String prompt,
+) async {
+  final response =
+      await _orchestrator.execute(
+    AIRequest(
+      prompt: prompt,
+      task: AITask.ontologyNormalization,
+      requiredCapabilities: const [
+        "reasoning",
+        "json",
+      ],
+    ),
+  );
+
+  return response.reply;
+}
 
 }

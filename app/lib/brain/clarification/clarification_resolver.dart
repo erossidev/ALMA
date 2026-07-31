@@ -6,9 +6,23 @@ class ClarificationResolver {
   const ClarificationResolver();
 
   BrainInstruction resolve({
-    required BrainConflict conflict,
+    required BrainConflict? conflict,
     required String answer,
   }) {
+    // =====================================================
+    // Chiarimento Ontologia
+    // =====================================================
+
+    if (conflict == null) {
+      return const BrainInstruction(
+        operation: BrainOperation.ignore,
+      );
+    }
+
+    // =====================================================
+    // Chiarimento Conflitto Memoria
+    // =====================================================
+
     final normalized =
         answer.trim().toLowerCase();
 

@@ -20,6 +20,7 @@ import '../attention/attention_engine.dart';
 import '../hippocampus/hippocampus.dart';
 import '../working_memory.dart';
 import '../brain.dart';
+import '../retrieval/brain_retriever.dart';
 
 class NervousSystemFactory {
   const NervousSystemFactory();
@@ -60,11 +61,14 @@ final contextBuilder = ContextBuilder();
       aiManager: aiManager,
     );
 
-    final memoryHandler = MemoryHandler(
-    attentionEngine: attentionEngine,
-    hippocampus: hippocampus,
-    workingMemory: workingMemory,
-    );
+   final memoryHandler = MemoryHandler(
+      attentionEngine: attentionEngine,
+      hippocampus: hippocampus,
+      workingMemory: workingMemory,
+      brainRetriever: BrainRetriever(
+        brain,
+      ),
+);
 
     final handlers = <TaskType, TaskHandler>{
       TaskType.dialogue: dialogueHandler,

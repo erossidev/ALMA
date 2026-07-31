@@ -45,6 +45,9 @@ class BrainSerializer {
       );
 
       brain.addNeuron(neuron);
+
+      print("ADD ${neuron.id}");
+      print(brain);
     }
 
     // --------------------------

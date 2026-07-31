@@ -2,6 +2,7 @@ enum AITask {
   dialogue,
   learning,
   knowledge,
+  ontologyNormalization,
   language,
   reasoning,
   planning,

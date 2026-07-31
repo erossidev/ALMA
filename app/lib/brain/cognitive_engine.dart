@@ -18,6 +18,9 @@ import '../brain/bootstrap/nervous_system_factory.dart';
 import '../brain/nervous_system/nervous_system.dart';
 import '../core/dialogue/builders/ai_conversation_builder.dart';
 import 'executive/execution_context.dart';
+import 'knowledge/knowledge_json_mapper.dart';
+import 'knowledge/knowledge_parser.dart';
+import '../core/ai/services/ai_ontology_normalizer.dart';
 
 class CognitiveEngine {
 
@@ -73,11 +76,15 @@ class CognitiveEngine {
       );
 
   late final KnowledgePipeline _knowledgePipeline =
-      KnowledgePipeline(
+    KnowledgePipeline(
+      aiManager: aiManager,
+      brainExecutor: _brainExecutor,
+      ontologyNormalizer: OntologyNormalizerService(
         aiManager: aiManager,
-        brainExecutor: _brainExecutor,
-      );
-
+        parser: const KnowledgeParser(),
+        codec: const KnowledgeJsonMapper(),
+      ),
+    );
       PendingClarification? _pendingClarification;
 
       final ClarificationResolver
@@ -167,8 +174,8 @@ print("");
 
   if (brainResult.requiresClarification) {
 
-      _pendingClarification = PendingClarification(
-        conflict: brainResult.conflict!,
+     _pendingClarification = PendingClarification(
+        conflict: brainResult.conflict,
         question: brainResult.question ??
             "Puoi chiarire questa informazione?",
         createdAt: DateTime.now(),

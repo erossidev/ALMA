@@ -24,25 +24,33 @@ class AIRouter {
       case AITask.learning:
         return _find(
           resources,
-          (r) => r.modelId == "openrouter/auto",
+          (r) => r.providerId == "groq",
         );
 
       case AITask.knowledge:
+        print("USO GROQ");
         return _find(
           resources,
-          (r) => r.modelId == "openrouter/auto",
+          (r) => r.providerId == "groq",
         );
+
+        case AITask.ontologyNormalization:
+          print("USO GROQ (ONTOLOGY NORMALIZATION)");
+          return _find(
+            resources,
+            (r) => r.providerId == "groq",
+          );
 
       case AITask.reasoning:
         return _find(
           resources,
-          (r) => r.modelId == "openrouter/auto",
+          (r) => r.providerId == "groq",
         );
 
       case AITask.planning:
         return _find(
           resources,
-          (r) => r.modelId == "openrouter/auto",
+          (r) => r.providerId == "groq",
         );
 
       case AITask.coding:
@@ -66,7 +74,7 @@ class AIRouter {
       case AITask.tool:
         return _find(
           resources,
-          (r) => r.modelId == "openrouter/auto",
+          (r) => r.providerId == "openrouter",
         );
     }
   }
@@ -81,7 +89,8 @@ class AIRouter {
       }
     }
 
-    // Fallback: restituisce la prima risorsa disponibile
-    return resources.first;
+    throw Exception(
+      "Nessuna AI compatibile trovata.",
+    );
   }
 }

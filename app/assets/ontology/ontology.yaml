@@ -1,5 +1,52 @@
 version: 1
 
+entityTypes:
+
+  - id: person
+  - id: animal
+  - id: place
+  - id: organization
+  - id: company
+  - id: project
+  - id: product
+  - id: technology
+  - id: document
+  - id: event
+  - id: concept
+  - id: preference
+  - id: goal
+  - id: emotion
+
+factTypes:
+
+  - id: hasName
+  - id: hasSurname
+  - id: hasNickname
+  - id: hasTitle
+  - id: hasRole
+  - id: hasUsername
+  - id: hasEmail
+  - id: hasPhone
+  - id: hasIdentifier
+  - id: hasAge
+  - id: birthDate
+  - id: birthPlace
+  - id: gender
+  - id: nationality
+  - id: citizenship
+  - id: speaksLanguage
+  - id: maritalStatus
+  - id: educationLevel
+  - id: profession
+  - id: occupation
+  - id: religion
+  - id: belief
+  - id: personalityTrait
+  - id: hasSkill
+  - id: hasHobby
+  - id: hasInterest
+  - id: hasGoal
+
 categories:
 
   identity:

@@ -246,40 +246,54 @@ class BrainMemoryManager {
 
   return null;
 }
+// =====================================================
+// CREA NEURONI
+// =====================================================
 
-  // =====================================================
-  // CREA NEURONI
-  // =====================================================
+Future<void> _storeEntities(
+  BrainInstruction instruction,
+) async {
+  for (final entity in instruction.entities) {
 
-  Future<void> _storeEntities(
-    BrainInstruction instruction,
-  ) async {
-    for (final entity in instruction.entities) {
-      if (brain.containsNeuron(
-        entity.id,
-      )) {
-        continue;
-      }
+    print("");
+    print("===== STORE ENTITY =====");
+    print("ID      : ${entity.id}");
+    print("LABEL   : ${entity.label}");
+    print("TYPE    : ${entity.type.name}");
+    print(
+      "ESISTE? : ${brain.containsNeuron(entity.id)}",
+    );
 
-      final neuron = Neuron(
-        id: entity.id,
-        label: entity.label,
-        type: entity.type,
-      );
-
-      brain.addNeuron(
-        neuron,
-      );
-
-      await repository.saveNeuron(
-        neuron,
-      );
-
-      print(
-        ">>> SALVO NEURONE: ${neuron.id}",
-      );
+    if (brain.containsNeuron(
+      entity.id,
+    )) {
+      print(">>> NEURONE GIÀ PRESENTE");
+      continue;
     }
+
+    final neuron = Neuron(
+      id: entity.id,
+      label: entity.label,
+      type: entity.type,
+    );
+
+    brain.addNeuron(
+      neuron,
+    );
+
+    print("");
+    print(">>> DOPO brain.addNeuron()");
+    print(brain);
+
+    await repository.saveNeuron(
+      neuron,
+    );
+
+    print(
+      ">>> SALVO NEURONE: ${neuron.id}",
+    );
   }
+}
 
   // =====================================================
   // CREA SINAPSI

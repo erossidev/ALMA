@@ -1,30 +1,50 @@
+import 'ontology_entity_type.dart';
+import 'ontology_fact_type.dart';
 import 'ontology_relation.dart';
 
 class Ontology {
-  /// Versione dell'ontologia.
   final int version;
 
-  /// Tutte le relazioni conosciute.
+  final List<OntologyEntityType> entityTypes;
+
   final List<OntologyRelation> relations;
+
+  final List<OntologyFactType> factTypes;
 
   const Ontology({
     required this.version,
-    required this.relations,
+    this.entityTypes = const [],
+    this.relations = const [],
+    this.factTypes = const [],
   });
 
-  /// Restituisce una relazione tramite ID.
-  OntologyRelation? findById(String id) {
-    try {
-      return relations.firstWhere(
-        (relation) => relation.id == id,
-      );
-    } catch (_) {
-      return null;
-    }
+  bool containsEntityType(
+    String id,
+  ) {
+    final target = id.trim().toLowerCase();
+
+    return entityTypes.any(
+      (e) => e.id.trim().toLowerCase() == target,
+    );
   }
 
-  /// Verifica se una relazione esiste.
-  bool contains(String id) {
-    return findById(id) != null;
+  bool containsRelation(
+    String id,
+  ) {
+    final target = id.trim().toLowerCase();
+
+    return relations.any(
+      (r) => r.id.trim().toLowerCase() == target,
+    );
+  }
+
+  bool containsFactType(
+    String id,
+  ) {
+    final target = id.trim().toLowerCase();
+
+    return factTypes.any(
+      (f) => f.id.trim().toLowerCase() == target,
+    );
   }
 }
