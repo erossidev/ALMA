@@ -1,0 +1,247 @@
+version: 1
+
+categories:
+
+  identity:
+
+    - id: hasName
+    - id: hasSurname
+    - id: hasNickname
+    - id: hasTitle
+    - id: hasRole
+    - id: hasUsername
+    - id: hasEmail
+    - id: hasPhone
+    - id: hasIdentifier
+    - id: aliasOf
+    - id: sameAs
+    - id: isA
+
+  family:
+
+    - id: spouse
+    - id: partner
+    - id: hasFather
+    - id: hasMother
+    - id: hasParent
+    - id: hasChild
+    - id: hasSon
+    - id: hasDaughter
+    - id: hasBrother
+    - id: hasSister
+    - id: hasGrandfather
+    - id: hasGrandmother
+    - id: hasGrandchild
+    - id: hasRelative
+
+  personal:
+
+    - id: hasAge
+    - id: birthDate
+    - id: birthPlace
+    - id: gender
+    - id: nationality
+    - id: citizenship
+    - id: speaksLanguage
+    - id: livesIn
+    - id: livedIn
+    - id: maritalStatus
+    - id: educationLevel
+    - id: profession
+    - id: occupation
+    - id: religion
+    - id: belief
+    - id: personalityTrait
+    - id: hasSkill
+    - id: hasHobby
+    - id: hasInterest
+    - id: hasGoal
+
+  work:
+
+    - id: worksAt
+    - id: workedAt
+    - id: studiedAt
+    - id: memberOf
+    - id: ownerOf
+    - id: manages
+    - id: reportsTo
+    - id: collaboratesWith
+    - id: created
+    - id: createdBy
+    - id: develops
+    - id: developedBy
+    - id: maintains
+    - id: maintainedBy
+    - id: uses
+    - id: usedBy
+    - id: produces
+    - id: producedBy
+    - id: sells
+    - id: soldBy
+    - id: buysFrom
+    - id: worksWith
+
+  project:
+
+    - id: partOf
+    - id: contains
+    - id: dependsOn
+    - id: implements
+    - id: extends
+    - id: supports
+    - id: references
+    - id: relatedProject
+    - id: startedBy
+    - id: completedBy
+    - id: assignedTo
+    - id: managedBy
+    - id: usesTechnology
+    - id: hasRequirement
+    - id: hasTask
+    - id: hasMilestone
+
+  technology:
+
+    - id: runsOn
+    - id: connectsTo
+    - id: reads
+    - id: writes
+    - id: imports
+    - id: exports
+    - id: calls
+    - id: calledBy
+    - id: stores
+    - id: storedIn
+    - id: controls
+    - id: controlledBy
+    - id: poweredBy
+    - id: compatibleWith
+    - id: installedOn
+    - id: hosts
+    - id: communicatesWith
+    - id: requires
+
+  place:
+
+    - id: locatedIn
+    - id: near
+    - id: inside
+    - id: outside
+    - id: northOf
+    - id: southOf
+    - id: eastOf
+    - id: westOf
+    - id: belongsToPlace
+    - id: visited
+    - id: bornIn
+    - id: diedIn
+    - id: worksIn
+    - id: studiesIn
+    - id: travelsTo
+
+  health:
+
+    - id: hasDisease
+    - id: hasSymptom
+    - id: takesMedicine
+    - id: allergicTo
+    - id: treatedWith
+    - id: hasCondition
+    - id: hasDisability
+    - id: hasBloodType
+    - id: hasHeight
+    - id: hasWeight
+    - id: hasDiagnosis
+    - id: visitedDoctor
+    - id: hospitalizedAt
+    - id: vaccinatedAgainst
+    - id: underTreatment
+
+  preference:
+
+    - id: likes
+    - id: dislikes
+    - id: loves
+    - id: hates
+    - id: prefers
+    - id: avoids
+    - id: wants
+    - id: needs
+    - id: dreamsOf
+    - id: isInterestedIn
+    - id: fears
+    - id: enjoys
+    - id: supportsIdea
+    - id: rejectsIdea
+
+  object:
+
+    - id: owns
+    - id: ownedBy
+    - id: containsObject
+    - id: usedFor
+    - id: madeOf
+    - id: createdFrom
+    - id: hasPart
+    - id: partOfObject
+    - id: storedAt
+    - id: belongsTo
+    - id: lost
+    - id: found
+
+  event:
+
+    - id: attended
+    - id: organized
+    - id: participatedIn
+    - id: won
+    - id: lostEvent
+    - id: scheduledFor
+    - id: startedOn
+    - id: endedOn
+    - id: celebrated
+    - id: occurredAt
+    - id: causedBy
+    - id: resultedIn
+
+  time:
+
+    - id: before
+    - id: after
+    - id: during
+    - id: simultaneousWith
+    - id: expiresOn
+    - id: validFrom
+    - id: validUntil
+    - id: createdOn
+    - id: updatedOn
+    - id: rememberedOn
+
+  conversation:
+
+    - id: asks
+    - id: answers
+    - id: clarifies
+    - id: confirms
+    - id: corrects
+    - id: mentions
+    - id: refersTo
+    - id: suggests
+    - id: requests
+    - id: thanks
+    - id: greets
+    - id: says
+
+  generic:
+
+    - id: relatedTo
+    - id: associatedWith
+    - id: connectedTo
+    - id: describes
+    - id: represents
+    - id: identifies
+    - id: involves
+    - id: affects
+    - id: influences
+    - id: unknownRelation

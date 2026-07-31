@@ -5,7 +5,11 @@ import 'app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+import 'brain/ontology/ontology_loader.dart';
+
 import 'core/ai/backend_ai_registry.dart';
+
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +19,18 @@ Future<void> main() async {
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
 );
+
+// ============================================
+// TEST ONTOLOGY
+// ============================================
+
+final ontology = await OntologyLoader.load();
+
+print("");
+print("===== ONTOLOGY =====");
+print(ontology);
+print("====================");
+print("");
 
 
   ///Script di test

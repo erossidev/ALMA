@@ -7,10 +7,16 @@ class BrainFactPrompt {
 FACTS
 ==========================
 
-I facts rappresentano proprietà
-associate ad una entity.
+I Facts rappresentano proprietà
+associate ad una singola entità.
 
-Formato:
+Un Fact NON rappresenta una relazione
+tra due entità.
+
+Usa i Facts solamente per proprietà
+intrinseche dell'entità.
+
+Formato obbligatorio:
 
 {
   "id":"",
@@ -21,33 +27,22 @@ Formato:
 
 Regole:
 
-- entityId deve riferirsi
-  ad una entity esistente.
+- entityId deve riferirsi ad una entity esistente.
 
-- type deve appartenere
-  al vocabolario.
+- type deve appartenere esclusivamente
+  al vocabolario dei FactType.
 
-- value contiene
-  il valore della proprietà.
+- value contiene il valore della proprietà.
 
-- Non creare facts inutili.
+- Non creare Facts duplicati.
 
-- Non duplicare
-  informazioni già espresse
-  tramite relations.
+- Non creare Facts inutili.
 
-Esempio:
+- Non usare Facts per rappresentare
+  relazioni tra entità.
 
-{
-  "id":"email_user",
-
-  "entityId":"user",
-
-  "type":"email",
-
-  "value":"mario@email.it"
-
-  Usa i Facts per proprietà come:
+Le seguenti informazioni devono essere
+rappresentate come Facts:
 
 - age
 - birthday
@@ -60,18 +55,40 @@ Esempio:
 - website
 - note
 
-NON rappresentare queste informazioni come Relations.
+NON utilizzare i Facts per:
 
-Una Relation collega due entità.
+- parentela
+- matrimonio
+- amicizia
+- luogo di nascita
+- luogo di lavoro
+- possesso
+- preferenze
 
-Un Fact rappresenta una proprietà di una singola entità.
+Queste devono essere rappresentate
+tramite Relations.
+
+Esempi corretti:
 
 {
   "id":"michela_age",
   "entityId":"michela",
   "type":"age",
-  "value":"40"
+  "value":"49"
 }
+
+{
+  "id":"user_email",
+  "entityId":"user",
+  "type":"email",
+  "value":"mario@email.it"
+}
+
+{
+  "id":"user_profession",
+  "entityId":"user",
+  "type":"profession",
+  "value":"Ingegnere"
 }
 ''';
   }
