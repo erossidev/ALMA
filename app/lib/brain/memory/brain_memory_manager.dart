@@ -13,10 +13,20 @@ import '../conflict/brain_conflict_detector.dart';
 
 import '../reasoning/brain_clarifier.dart';
 
+import '../compiler/execution_compiler.dart';
+import '../executor/brain_instruction_executor.dart';
+import '../context/brain_context.dart';
+
 class BrainMemoryManager {
   final Brain brain;
 
   final BrainRepository repository;
+
+  final ExecutionCompiler _compiler =
+    const ExecutionCompiler();
+
+  final BrainInstructionExecutor _executor =
+      const BrainInstructionExecutor();
 
   final BrainConflictDetector
       _conflictDetector =
@@ -35,15 +45,14 @@ class BrainMemoryManager {
   // STORE
   // =====================================================
 
-  Future<BrainResult> store(
-    BrainInstruction instruction,
-  ) async {
-    print(">>> BrainMemoryManager.store()");
-    print(">>> PRIMA DI _storeEntities");
+Future<BrainResult> store(
+  BrainInstruction instruction,
+) async {
+  print(">>> BrainMemoryManager.store()");
+  print(">>> PRIMA DI EXECUTION PLAN");
 
- final conflict =
-    await _detectConflict(
-  instruction,
+  final conflict = await _detectConflict(
+    instruction,
   );
 
   if (conflict != null) {
@@ -63,28 +72,32 @@ class BrainMemoryManager {
     );
   }
 
-  await _storeEntities(
+  final plan = _compiler.compileStore(
     instruction,
   );
 
-  print(">>> DOPO _storeEntities");
+  final context = BrainContext(
+    brain: brain,
+    repository: repository,
+  );
 
-   
+  await _executor.execute(
+    plan,
+    context,
+  );
 
-    await _storeRelations(
-      instruction,
-    );
+  print(
+    ">>> DOPO EXECUTION PLAN",
+  );
 
-   print(">>> DOPO _storeRelations");
+  _debugBrain();
 
-    _debugBrain();
+  print(brain);
 
-    print(brain);
-
-    return _success(
-      BrainOperation.store,
-    );
-  }
+  return _success(
+    BrainOperation.store,
+  );
+}
 
   // =====================================================
   // REPLACE
@@ -102,6 +115,7 @@ class BrainMemoryManager {
     await _storeEntities(
       instruction,
     );
+    
 
     // -------------------------------------------------
     // ELIMINA LE RELAZIONI PRECEDENTI

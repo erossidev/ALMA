@@ -24,6 +24,10 @@ class StoreNeuronInstruction extends BrainInstruction {
       await context.repository.saveNeuron(
         neuron,
       );
+
+      print(
+        ">>> EXECUTOR SALVA NEURONE: ${neuron.id}",
+      );
     }
 
     return InstructionResult.success();

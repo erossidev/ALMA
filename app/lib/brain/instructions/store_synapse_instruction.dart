@@ -21,9 +21,13 @@ class StoreSynapseInstruction extends BrainInstruction {
         synapse,
       );
 
-      await context.repository.saveSynapse(
-        synapse,
-      );
+     await context.repository.saveSynapse(
+      synapse,
+    );
+
+    print(
+      ">>> EXECUTOR SALVA SINAPSI: ${synapse.id}",
+    );
     }
 
     return InstructionResult.success();
