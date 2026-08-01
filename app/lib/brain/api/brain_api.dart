@@ -17,7 +17,7 @@ abstract interface class BrainAPI {
   });
 
   InstructionResult<void> execute(
-    Instruction instruction,
-  );
+    BrainInstruction instruction,
+);
 
 }

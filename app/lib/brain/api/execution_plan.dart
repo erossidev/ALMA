@@ -1,7 +1,7 @@
 import 'instruction.dart';
 
 class ExecutionPlan {
-  final List<Instruction> instructions;
+  final List<BrainInstruction> instructions;
 
   const ExecutionPlan({
     required this.instructions,

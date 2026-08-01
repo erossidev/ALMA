@@ -1,27 +1,15 @@
-import '../api/brain_api.dart';
 import '../api/execution_plan.dart';
+import '../context/brain_context.dart';
 
 class BrainInstructionExecutor {
-
-  final BrainAPI api;
-
-  const BrainInstructionExecutor({
-    required this.api,
-  });
+  const BrainInstructionExecutor();
 
   void execute(
     ExecutionPlan plan,
+    BrainContext context,
   ) {
-
-    for (final instruction
-        in plan.instructions) {
-
-      api.execute(
-        instruction,
-      );
-
+    for (final instruction in plan.instructions) {
+      instruction.execute(context);
     }
-
   }
-
 }
