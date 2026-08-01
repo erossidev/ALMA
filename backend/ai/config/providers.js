@@ -96,16 +96,16 @@ module.exports = [
     resources: [
 
       {
-        id: "llama70b",
-        modelId: "llama-3.3-70b-versatile",
-        displayName: "Llama 70B",
-        priority: 5,
-        capabilities: [
-          "conversation",
-          "reasoning"
-        ]
-      }
-
+          id: "llama70b",
+          modelId: "llama-3.3-70b-versatile",
+          displayName: "Llama 70B",
+          priority: 5,
+          capabilities: [
+            "conversation",
+            "reasoning",
+            "json"
+          ]
+        }
     ]
   }
 
