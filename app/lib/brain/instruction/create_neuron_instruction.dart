@@ -7,9 +7,9 @@ class CreateNeuronInstruction extends BrainInstruction {
   const CreateNeuronInstruction();
 
   @override
-  InstructionResult<void> execute(
-    BrainContext context,
-  ) {
-    throw UnimplementedError();
-  }
+    Future<InstructionResult<void>> execute(
+      BrainContext context,
+    ) async {
+      throw UnimplementedError();
+    }
 }

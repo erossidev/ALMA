@@ -1,13 +1,12 @@
 import '../brain.dart';
-import '../memory/brain_memory_manager.dart';
+import '../repositories/brain_repository.dart';
 
 class BrainContext {
   final Brain brain;
-
-  final BrainMemoryManager memoryManager;
+  final BrainRepository repository;
 
   const BrainContext({
     required this.brain,
-    required this.memoryManager,
+    required this.repository,
   });
 }
