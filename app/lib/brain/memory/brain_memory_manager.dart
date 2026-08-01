@@ -104,57 +104,37 @@ Future<BrainResult> store(
   // =====================================================
 
   Future<BrainResult> replace(
-    BrainInstruction instruction,
-  ) async {
-    print(">>> BrainMemoryManager.replace()");
+  BrainInstruction instruction,
+) async {
+  print(">>> BrainMemoryManager.replace()");
+  print(">>> PRIMA DI EXECUTION PLAN");
 
-    // -------------------------------------------------
-    // CREA EVENTUALI NUOVI NEURONI
-    // -------------------------------------------------
+  final plan = _compiler.compileReplace(
+    instruction,
+  );
 
-    await _storeEntities(
-      instruction,
-    );
-    
+  final context = BrainContext(
+    brain: brain,
+    repository: repository,
+  );
 
-    // -------------------------------------------------
-    // ELIMINA LE RELAZIONI PRECEDENTI
-    // -------------------------------------------------
+  await _executor.execute(
+    plan,
+    context,
+  );
 
-    for (final relation in instruction.relations) {
-      final removed =
-          brain.removeConnections(
-        from: relation.from,
-        relationship: relation.type,
-      );
+  print(
+    ">>> DOPO EXECUTION PLAN",
+  );
 
-      for (final synapse in removed) {
-        await repository.deleteSynapse(
-          synapse.id,
-        );
+  _debugBrain();
 
-        print(
-          ">>> RIMOSSA SINAPSI: ${synapse.id}",
-        );
-      }
-    }
+  print(brain);
 
-    // -------------------------------------------------
-    // CREA LE NUOVE RELAZIONI
-    // -------------------------------------------------
-
-    await _storeRelations(
-      instruction,
-    );
-
-    _debugBrain();
-
-    print(brain);
-
-    return _success(
-      BrainOperation.replace,
-    );
-  }
+  return _success(
+    BrainOperation.replace,
+  );
+}
 
   // =====================================================
   // MERGE
@@ -260,107 +240,8 @@ Future<BrainResult> store(
 
   return null;
 }
-// =====================================================
-// CREA NEURONI
-// =====================================================
 
-  Future<void> _storeEntities(
-  BrainInstruction instruction,
-) async {
-  for (final entity in instruction.entities) {
-
-    print("");
-    print("===== STORE ENTITY =====");
-    print("ID      : ${entity.id}");
-    print("LABEL   : ${entity.label}");
-    print("TYPE    : ${entity.type.name}");
-    print(
-      "ESISTE? : ${brain.containsNeuron(entity.id)}",
-    );
-
-    if (brain.containsNeuron(
-      entity.id,
-    )) {
-      print(">>> NEURONE GIÀ PRESENTE");
-      continue;
-    }
-
-    final neuron = Neuron(
-      id: entity.id,
-      label: entity.label,
-      type: entity.type,
-    );
-
-    brain.addNeuron(
-      neuron,
-    );
-
-    print("");
-    print(">>> DOPO brain.addNeuron()");
-    print(brain);
-
-    await repository.saveNeuron(
-      neuron,
-    );
-
-    print(
-      ">>> SALVO NEURONE: ${neuron.id}",
-    );
-  }
-}
-
-  // =====================================================
-  // CREA SINAPSI
-  // =====================================================
-
-  Future<void> _storeRelations(
-    BrainInstruction instruction,
-  ) async {
-    for (final relation in instruction.relations) {
-      final from =
-          brain.getNeuron(
-        relation.from,
-      );
-
-      final to =
-          brain.getNeuron(
-        relation.to,
-      );
-
-      if (from == null ||
-          to == null) {
-        continue;
-      }
-
-      final synapse = Synapse(
-        id:
-            "${relation.from}_${relation.type.name}_${relation.to}",
-        from: from,
-        to: to,
-        relationship:
-            relation.type,
-      );
-
-      if (brain.containsSynapse(
-        synapse.id,
-      )) {
-        continue;
-      }
-
-      brain.connect(
-        synapse,
-      );
-
-      await repository.saveSynapse(
-        synapse,
-      );
-
-      print(
-        ">>> SALVO SINAPSI: ${synapse.id}",
-      );
-    }
-  }
-
+  
   // =====================================================
   // SUCCESS
   // =====================================================
