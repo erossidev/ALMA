@@ -9,6 +9,9 @@ import 'brain/ontology/ontology_loader.dart';
 
 import 'core/ai/backend_ai_registry.dart';
 
+import 'brain/semantic/yaml_semantic_loader.dart';
+import 'brain/semantic/yaml_semantic_parser.dart';
+
 
 
 Future<void> main() async {
@@ -52,6 +55,30 @@ print("===== AI RESOURCES =====");
 
   print("========================");
   print("");
+
+  //TEST SEMANTIC
   
+  const loader = YamlSemanticLoader();
+
+    const parser = YamlSemanticParser();
+
+    final text = await loader.load(
+      "assets/semantic/entities.yaml",
+    );
+
+    final nodes = await parser.parse(
+      text,
+    );
+
+    print("=== SEMANTIC TEST ===");
+
+    for (final node in nodes) {
+      print("${node.id} -> ${node.label}");
+    }
+
+    print("=====================");
+
+    //FINE TEST
+
   runApp(const AlmaApp());
 }

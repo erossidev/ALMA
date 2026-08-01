@@ -1,18 +1,32 @@
 import 'brain_vocabulary.dart';
-
 import 'neuron.dart';
 import 'synapse.dart';
-
 import 'dynamics/neuron_dynamics.dart';
 import 'dynamics/synapse_dynamics.dart';
+import 'semantic/semantic_cortex.dart';
 
 class Brain {
+
+ 
+  /// ==========================
+  /// SEMANTIC CORTEX
+  /// ==========================
+
+  final SemanticCortex semantic;
+
   /// ==========================
   /// RETE COGNITIVA
   /// ==========================
 
   final Map<String, Neuron> _neurons = {};
   final Map<String, Synapse> _synapses = {};
+
+
+    Brain({
+    SemanticCortex? semantic,
+  }) : semantic =
+          semantic ??
+          SemanticCortex();
 
   /// ==========================
   /// STATO

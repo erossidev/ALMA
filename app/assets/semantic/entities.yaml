@@ -1,0 +1,19 @@
+document: entities
+
+version: 1
+
+language: en
+
+entities:
+
+  - id: person
+    label: Person
+    description: Human being
+
+  - id: organization
+    label: Organization
+    description: Group of people acting as a single entity
+
+  - id: place
+    label: Place
+    description: Physical or virtual location
