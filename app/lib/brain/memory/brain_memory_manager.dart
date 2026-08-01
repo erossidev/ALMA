@@ -250,7 +250,7 @@ class BrainMemoryManager {
 // CREA NEURONI
 // =====================================================
 
-Future<void> _storeEntities(
+  Future<void> _storeEntities(
   BrainInstruction instruction,
 ) async {
   for (final entity in instruction.entities) {

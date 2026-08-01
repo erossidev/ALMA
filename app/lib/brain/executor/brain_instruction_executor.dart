@@ -4,12 +4,14 @@ import '../context/brain_context.dart';
 class BrainInstructionExecutor {
   const BrainInstructionExecutor();
 
-  void execute(
+  Future<void> execute(
     ExecutionPlan plan,
     BrainContext context,
-  ) {
+  ) async {
     for (final instruction in plan.instructions) {
-      instruction.execute(context);
+      await instruction.execute(
+        context,
+      );
     }
   }
 }

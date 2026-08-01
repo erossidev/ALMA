@@ -1,12 +1,28 @@
 import 'instruction.dart';
 
 class ExecutionPlan {
-  final List<BrainInstruction> instructions;
+  final List<BrainInstruction> _instructions = [];
 
-  const ExecutionPlan({
-    required this.instructions,
-  });
+  ExecutionPlan();
 
-  bool get isEmpty =>
-      instructions.isEmpty;
+  List<BrainInstruction> get instructions =>
+      List.unmodifiable(_instructions);
+
+  bool get isEmpty => _instructions.isEmpty;
+
+  bool get isNotEmpty => _instructions.isNotEmpty;
+
+  int get length => _instructions.length;
+
+  void add(
+    BrainInstruction instruction,
+  ) {
+    _instructions.add(instruction);
+  }
+
+  void addAll(
+    Iterable<BrainInstruction> instructions,
+  ) {
+    _instructions.addAll(instructions);
+  }
 }

@@ -13,4 +13,34 @@ class InstructionResult<T> {
 
   bool get success =>
       status == InstructionStatus.success;
+
+  factory InstructionResult.success([
+    T? value,
+  ]) {
+    return InstructionResult(
+      status: InstructionStatus.success,
+      value: value,
+    );
+  }
+
+  factory InstructionResult.failed(
+    String message,
+  ) {
+    return InstructionResult(
+      status: InstructionStatus.failed,
+      message: message,
+    );
+  }
+
+  factory InstructionResult.notFound() {
+    return InstructionResult(
+      status: InstructionStatus.notFound,
+    );
+  }
+
+  factory InstructionResult.alreadyExists() {
+    return InstructionResult(
+      status: InstructionStatus.alreadyExists,
+    );
+  }
 }
