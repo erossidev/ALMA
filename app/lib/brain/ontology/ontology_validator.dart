@@ -21,10 +21,9 @@ class OntologyValidator {
       if (!ontology.containsEntityType(
         entity.type,
       )) {
-        unknown.add(entity.type);
+        unknown.add(entity.label);
       }
     }
-
     // ==========================
     // RELATION TYPES
     // ==========================

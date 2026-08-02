@@ -66,6 +66,47 @@ NON aggiungere spiegazioni.
 NON usare markdown.
 
 ================================================================
+GESTIONE DI "unknown"
+================================================================
+
+Se entities.type è uguale a "unknown":
+
+- NON modificarlo.
+- NON inferire il tipo corretto.
+- NON usare conoscenza generale.
+- NON sostituirlo con company, product, person, place o qualsiasi altro tipo.
+
+"unknown" è un valore valido e deve rimanere invariato.
+
+La classificazione semantica verrà eseguita successivamente dal Brain di ALMA.
+
+Qualsiasi modifica di "unknown" costituisce un errore.
+
+ESEMPIO
+
+INPUT
+
+{
+  "entities": [
+    {
+      "label": "Tesla",
+      "type": "unknown"
+    }
+  ]
+}
+
+OUTPUT
+
+{
+  "entities": [
+    {
+      "label": "Tesla",
+      "type": "unknown"
+    }
+  ]
+}
+
+================================================================
 JSON DA NORMALIZZARE
 ================================================================
 

@@ -28,12 +28,12 @@ class AIRouter {
         );
 
       case AITask.knowledge:
-        print("USO GROQ");
+        print("USO OPENROUTER");
         return _find(
           resources,
-          (r) => r.providerId == "groq",
+          (r) => r.providerId == "openrouter",
         );
-
+        
         case AITask.ontologyNormalization:
           print("USO GROQ (ONTOLOGY NORMALIZATION)");
           return _find(

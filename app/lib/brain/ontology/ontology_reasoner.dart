@@ -1,3 +1,8 @@
+import '../semantic/learning/semantic_learning_engine.dart';
+import '../semantic/learning/semantic_learning_request.dart';
+
+import 'semantic_to_ontology_adapter.dart';
+
 class OntologyHypothesis {
   final String unknownConcept;
 
@@ -13,22 +18,41 @@ class OntologyHypothesis {
 }
 
 class OntologyReasoner {
-  const OntologyReasoner();
+
+  final SemanticLearningEngine semanticLearningEngine;
+
+  final SemanticToOntologyAdapter adapter =
+      const SemanticToOntologyAdapter();
+
+  const OntologyReasoner({
+    required this.semanticLearningEngine,
+  });
 
   Future<List<OntologyHypothesis>> reason({
     required List<String> unknownConcepts,
+    required String context,
   }) async {
-    // Per ora nessun ragionamento.
-    // Arriverà nel prossimo step tramite AI.
 
-    return unknownConcepts
-        .map(
-          (c) => OntologyHypothesis(
-            unknownConcept: c,
-            candidate: null,
-            confidence: 0,
-          ),
-        )
-        .toList();
+    final hypotheses = <OntologyHypothesis>[];
+
+    for (final concept in unknownConcepts) {
+
+      final proposal =
+          await semanticLearningEngine.learn(
+        SemanticLearningRequest(
+          entity: concept,
+          text: context,
+        ),
+      );
+
+      hypotheses.add(
+        adapter.adapt(
+          proposal,
+        ),
+      );
+    }
+
+    return hypotheses;
   }
+
 }

@@ -11,9 +11,14 @@ class SemanticProposalParser {
   SemanticProposal parse(
     String jsonText,
   ) {
-    final json =
-        jsonDecode(jsonText) as Map<String, dynamic>;
+    final cleaned = jsonText
+        .replaceAll("```json", "")
+        .replaceAll("```", "")
+        .trim();
 
+    final json =
+        jsonDecode(cleaned) as Map<String, dynamic>;
+        
     final entity =
         json["entity"] as String? ?? "";
 

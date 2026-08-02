@@ -10,4 +10,16 @@ class KnowledgeEntity {
     required this.label,
     required this.type,
   });
+
+  KnowledgeEntity copyWith({
+  String? id,
+  String? label,
+  String? type,
+}) {
+  return KnowledgeEntity(
+    id: id ?? this.id,
+    label: label ?? this.label,
+    type: type ?? this.type,
+  );
+}
 }

@@ -1,0 +1,4 @@
+class SemanticEntityExtractor
+    implements EntityExtractor {
+
+}

@@ -21,6 +21,10 @@ import 'executive/execution_context.dart';
 import 'knowledge/knowledge_json_mapper.dart';
 import 'knowledge/knowledge_parser.dart';
 import '../core/ai/services/ai_ontology_normalizer.dart';
+import 'semantic/semantic_cortex.dart';
+import 'semantic/similarity/similarity_engine.dart';
+import 'semantic/learning/ai_semantic_advisor.dart';
+import 'semantic/learning/semantic_learning_engine.dart';
 
 class CognitiveEngine {
 
@@ -65,6 +69,22 @@ class CognitiveEngine {
         repository: repository,
       );
 
+  late final SimilarityEngine _similarityEngine =
+    SimilarityEngine(
+      cortex: brain.semantic,
+    );
+
+  late final AISemanticAdvisor _semanticAdvisor =
+      AISemanticAdvisor(
+        aiManager: aiManager,
+      );
+
+  late final SemanticLearningEngine _semanticLearningEngine =
+      SemanticLearningEngine(
+        advisor: _semanticAdvisor,
+        similarityEngine: _similarityEngine,
+      );
+
   late final LearningPipeline _learningPipeline =
       LearningPipeline(
         aiManager: aiManager,
@@ -84,7 +104,9 @@ class CognitiveEngine {
         parser: const KnowledgeParser(),
         codec: const KnowledgeJsonMapper(),
       ),
+      semanticLearningEngine: _semanticLearningEngine,
     );
+    
       PendingClarification? _pendingClarification;
 
       final ClarificationResolver

@@ -7,10 +7,10 @@ import 'knowledge_model.dart';
 class CognitiveMemoryManager {
   const CognitiveMemoryManager();
 
-  BrainInstruction build({
-    required KnowledgeModel knowledge,
-    required List<OntologyHypothesis> hypotheses,
-  }) {
+Future<BrainInstruction> build({
+  required KnowledgeModel knowledge,
+  required List<OntologyHypothesis> hypotheses,
+}) async {
     if (knowledge.isEmpty) {
       return const BrainInstruction(
         operation: BrainOperation.ignore,
