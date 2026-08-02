@@ -11,15 +11,15 @@ class SemanticLearningEngine {
   });
 
   Future<SemanticProposal> learn(
-  SemanticLearningRequest request,
-) async {
+    SemanticLearningRequest request,
+  ) async {
 
-  final proposal = await advisor.advise(
-    request,
-  );
+    final proposal = await advisor.advise(
+      request,
+    );
 
-  return proposal;
+    return proposal;
 
-}
+  }
 
 }

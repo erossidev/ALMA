@@ -1,13 +1,15 @@
+import '../semantic_node.dart';
+
 class SimilarityCandidate {
 
-  /// Tipo confrontato
-  final String type;
+  /// Nodo proposto
+  final SemanticNode node;
 
-  /// Punteggio grezzo
+  /// Punteggio di similarità
   final double score;
 
   const SimilarityCandidate({
-    required this.type,
+    required this.node,
     required this.score,
   });
 
