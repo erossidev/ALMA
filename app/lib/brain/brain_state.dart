@@ -1,0 +1,4 @@
+enum BrainState {
+  normal,
+  waitingLearningConfirmation,
+}

@@ -4,6 +4,8 @@ import 'synapse.dart';
 import 'dynamics/neuron_dynamics.dart';
 import 'dynamics/synapse_dynamics.dart';
 import 'semantic/semantic_cortex.dart';
+import 'brain_state.dart';
+
 
 class Brain {
 
@@ -18,15 +20,12 @@ class Brain {
   /// RETE COGNITIVA
   /// ==========================
 
-  final Map<String, Neuron> _neurons = {};
+ final Map<String, Neuron> _neurons = {};
   final Map<String, Synapse> _synapses = {};
 
-
-    Brain({
+  Brain({
     SemanticCortex? semantic,
-  }) : semantic =
-          semantic ??
-          SemanticCortex();
+  }) : semantic = semantic ?? SemanticCortex();
 
   /// ==========================
   /// STATO
@@ -34,15 +33,29 @@ class Brain {
 
   bool _dirty = false;
 
+  BrainState _state = BrainState.normal;
+
   bool get isDirty => _dirty;
+
+  BrainState get state => _state;
 
   void markDirty() {
     _dirty = true;
   }
 
   void clearDirty() {
-    _dirty = false;
-  }
+        _dirty = false;
+      }
+
+      void setState(
+      BrainState state,
+    ) {
+      _state = state;
+    }
+
+    bool isWaiting() {
+      return _state != BrainState.normal;
+    }
 
   /// ==========================
   /// GETTERS

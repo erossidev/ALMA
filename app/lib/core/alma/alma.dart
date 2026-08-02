@@ -7,6 +7,8 @@ import '../../brain/hippocampus/hippocampus.dart';
 
 import '../ai/ai_manager.dart';
 
+import '../../brain/semantic/semantic_bootstrap.dart';
+
 import '../../brain/repositories/firebase_brain_repository.dart';
 
 class Alma {
@@ -35,6 +37,18 @@ class Alma {
   print("===== CARICO BRAIN =====");
 
   final loadedBrain = await repository.loadBrain();
+
+    if (loadedBrain.neuronCount == 0) {
+    print("Brain vuoto: inizializzo il Semantic Cortex...");
+
+    await const SemanticBootstrap().initialize(
+      brain.semantic,
+    );
+  } else {
+    brain.copyFrom(
+      loadedBrain,
+    );
+  }
 
   print("Brain letto da Firestore:");
   print(loadedBrain);

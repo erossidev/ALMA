@@ -56,29 +56,6 @@ print("===== AI RESOURCES =====");
   print("========================");
   print("");
 
-  //TEST SEMANTIC
-  
-  const loader = YamlSemanticLoader();
-
-    const parser = YamlSemanticParser();
-
-    final text = await loader.load(
-      "assets/semantic/entities.yaml",
-    );
-
-    final nodes = await parser.parse(
-      text,
-    );
-
-    print("=== SEMANTIC TEST ===");
-
-    for (final node in nodes) {
-      print("${node.id} -> ${node.label}");
-    }
-
-    print("=====================");
-
-    //FINE TEST
 
   runApp(const AlmaApp());
 }

@@ -4,6 +4,9 @@ import 'learning_decision.dart';
 import 'learning_extractor.dart';
 import 'learning_prompt.dart';
 
+import '../semantic/learning/semantic_learning_engine.dart';
+import '../semantic/learning/semantic_advisor.dart';
+
 class LearningPipeline {
   final AIManager aiManager;
 
