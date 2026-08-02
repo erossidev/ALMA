@@ -18,4 +18,18 @@ class SemanticProposal {
     required this.status,
   });
 
+  /// Miglior candidato
+  SemanticCandidate? get bestCandidate =>
+      candidates.isEmpty
+          ? null
+          : candidates.first;
+
+  /// Esistono candidati?
+  bool get hasCandidates =>
+      candidates.isNotEmpty;
+
+  /// Numero candidati
+  int get candidateCount =>
+      candidates.length;
+
 }
