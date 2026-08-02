@@ -6,6 +6,8 @@ module.exports = async function (request) {
 
         const response = await axios.post(
 
+            
+
             "https://openrouter.ai/api/v1/chat/completions",
 
             {
@@ -24,7 +26,7 @@ module.exports = async function (request) {
 
                 temperature: request.temperature ?? 0,
 
-                max_tokens: request.maxTokens ?? 600,
+                max_tokens: request.maxTokens ?? 120,
 
             },
 
@@ -38,6 +40,12 @@ module.exports = async function (request) {
             }
 
         );
+
+        console.log("");
+            console.log("===== RAW OPENROUTER RESPONSE =====");
+            console.dir(response.data, { depth: null });
+            console.log("==================================");
+            console.log("");
 
         if (
             !response.data ||
@@ -71,6 +79,12 @@ module.exports = async function (request) {
                 response.data.choices[0].message.content,
 
         };
+
+        console.log("");
+        console.log("===== OPENROUTER RESULT =====");
+        console.dir(result, { depth: null });
+        console.log("=============================");
+        console.log("");
 
     } catch (err) {
 

@@ -1,4 +1,4 @@
-import '../ontology/ontology_reasoner.dart';
+import '../semantic/learning/semantic_proposal.dart';
 import '../protocol/brain_instruction.dart';
 
 import 'brain_mapper.dart';
@@ -9,7 +9,7 @@ class CognitiveMemoryManager {
 
 Future<BrainInstruction> build({
   required KnowledgeModel knowledge,
-  required List<OntologyHypothesis> hypotheses,
+  required List<SemanticProposal> proposals,
 }) async {
     if (knowledge.isEmpty) {
       return const BrainInstruction(
@@ -17,7 +17,7 @@ Future<BrainInstruction> build({
       );
     }
 
-    if (hypotheses.any((h) => h.candidate == null)) {
+    if (proposals.any((p) => p.bestCandidate == null)) {
       return const BrainInstruction(
         operation: BrainOperation.clarify,
       );

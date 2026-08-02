@@ -1,21 +1,17 @@
 import '../../core/ai/ai_manager.dart';
-
 import '../protocol/brain_executor.dart';
 import '../protocol/brain_instruction.dart';
 import '../protocol/brain_result.dart';
-
 import 'cognitive_memory_manager.dart';
 import 'knowledge_model.dart';
 import 'knowledge_parser.dart';
 import 'knowledge_extraction_prompt.dart';
-
 import '../ontology/ontology_loader.dart';
-import '../ontology/ontology_reasoner.dart';
 import '../ontology/ontology_validator.dart';
-
 import '../ontology/ontology_normalizer.dart';
 import '../semantic/learning/semantic_learning_engine.dart';
-
+import '../semantic/learning/semantic_learning_request.dart';
+import '../semantic/learning/semantic_proposal.dart';
 
 
 class KnowledgePipeline {
@@ -145,27 +141,35 @@ class KnowledgePipeline {
       }
 
       // ===================================================
-      // REASONER
+      // SEMANTIC LEARNING
       // ===================================================
 
-     final reasoner =
-      OntologyReasoner(
-        semanticLearningEngine: semanticLearningEngine,
-      );
+      final proposals = <SemanticProposal>[];
 
-     final hypotheses =
-        await reasoner.reason(
-      unknownConcepts: unknownConcepts,
-      context: message,
-    );
+      for (final concept in unknownConcepts) {
+        final proposal =
+            await semanticLearningEngine.learn(
+          SemanticLearningRequest(
+            entity: concept,
+            text: message,
+          ),
+        );
 
+        proposals.add(proposal);
+      }
     // ===================================================
-    // APPLY SEMANTIC HYPOTHESES
+    // APPLY SEMANTIC PROPOSALS
     // ===================================================
 
-    for (final hypothesis in hypotheses) {
+    for (final proposal in proposals) {
 
-      print("CERCO: '${hypothesis.unknownConcept}'");
+      final candidate = proposal.bestCandidate;
+
+      if (candidate == null) {
+        continue;
+      }
+
+      print("CERCO: '${proposal.entity}'");
 
       for (final entity in knowledge.entities) {
         print(
@@ -173,16 +177,12 @@ class KnowledgePipeline {
         );
       }
 
-      if (hypothesis.candidate == null) {
-        continue;
-      }
-
       final index = knowledge.entities.indexWhere(
         (entity) =>
             entity.id.toLowerCase() ==
-                hypothesis.unknownConcept.toLowerCase() ||
+                proposal.entity.toLowerCase() ||
             entity.label.toLowerCase() ==
-                hypothesis.unknownConcept.toLowerCase(),
+                proposal.entity.toLowerCase(),
       );
 
       print("INDEX TROVATO = $index");
@@ -193,7 +193,7 @@ class KnowledgePipeline {
 
       knowledge.entities[index] =
           knowledge.entities[index].copyWith(
-        type: hypothesis.candidate!,
+        type: candidate.type,
       );
 
       print(
@@ -202,22 +202,20 @@ class KnowledgePipeline {
     }
 
     print("");
-    print("===== HYPOTHESES =====");
+    print("===== SEMANTIC PROPOSALS =====");
 
-    for (final h in hypotheses) {
-      print(
-        "${h.unknownConcept} -> ${h.candidate} (${h.confidence})",
-      );
-}
-      // ===================================================
-      // COGNITIVE MEMORY
-      // ===================================================
+    for (final proposal in proposals) {
+    print(
+      "${proposal.entity} -> ${proposal.bestCandidate?.type} (${proposal.bestCandidate?.confidence})",
+    );
+  }
+  
+    final BrainInstruction instruction =
+        await memoryManager.build(
+      knowledge: knowledge,
+      proposals: proposals,
+    );
 
-      final BrainInstruction instruction =
-          await memoryManager.build(
-        knowledge: knowledge,
-        hypotheses: hypotheses,
-      );
 
       print("");
       print("===== BRAIN =====");

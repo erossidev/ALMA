@@ -39,6 +39,12 @@ class BackendAIProvider implements AIProvider {
 
     final json = jsonDecode(response.body);
 
+    print("");
+    print("===== BACKEND RESPONSE =====");
+    print(json);
+    print("============================");
+    print("");
+
     return AIResponse(
       reply: json["reply"],
       provider: json["provider"],
