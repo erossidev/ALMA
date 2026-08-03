@@ -21,32 +21,42 @@ class OntologyNormalizerService
   });
 
   @override
-  Future<KnowledgeModel> normalize(
-    KnowledgeModel knowledge,
-  ) async {
+Future<KnowledgeModel> normalize(
+  KnowledgeModel knowledge,
+) async {
 
-    final knowledgeJson =
-        codec.toJson(
-      knowledge,
-    );
+  final knowledgeJson =
+      codec.toJson(
+    knowledge,
+  );
 
-    final prompt =
-        await OntologyNormalizationPrompt.build(
-      knowledgeJson,
-    );
+  final prompt =
+      await OntologyNormalizationPrompt.build(
+    knowledgeJson,
+  );
 
-    final normalizedJson =
-        await aiManager.normalizeOntology(
-      prompt,
-    );
+  print(">>> PRIMA normalizeOntology");
+
+  final normalizedJson =
+      await aiManager.normalizeOntology(
+    prompt,
+  );
+
+  print(">>> DOPO normalizeOntology");
 
   print("");
-print("===== NORMALIZED JSON =====");
-print(normalizedJson);
-print("===========================");
+  print("===== NORMALIZED JSON =====");
+  print(normalizedJson);
+  print("===========================");
 
-    return parser.parse(
-      normalizedJson,
-    );
-  }
+  print(">>> PRIMA parser");
+
+  final result = parser.parse(
+    normalizedJson,
+  );
+
+  print(">>> DOPO parser");
+
+  return result;
+}
 }

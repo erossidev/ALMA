@@ -24,21 +24,47 @@ class AIConversationBuilder implements ConversationBuilder {
   });
 
   @override
-  Future<ConversationModel> update({
-    required ConversationModel conversation,
-    required String message,
-  }) async {
-    final prompt = _buildPrompt(
-      conversation: conversation,
-      message: message,
-    );
+Future<ConversationModel> update({
+  required ConversationModel conversation,
+  required String message,
+}) async {
 
-    final json = await _executePrompt(prompt);
+  final prompt = _buildPrompt(
+    conversation: conversation,
+    message: message,
+  );
+
+  final json = await _executePrompt(prompt);
+
+  final trimmed = json.trim();
+
+  if (trimmed == "{}") {
+    return conversation;
+  }
+
+  try {
 
     final protocol = _parseProtocol(json);
 
+    if (protocol.conversation == null) {
+      return conversation;
+    }
+
     return protocol.conversation;
+
+  } catch (e) {
+
+    print("===== DIALOGUE PARSE ERROR =====");
+    print(e);
+    print("Raw JSON:");
+    print(json);
+    print("===============================");
+
+    return conversation;
+
   }
+
+}
 
   Prompt _buildPrompt({
     required ConversationModel conversation,

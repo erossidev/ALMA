@@ -200,10 +200,7 @@ Future<BrainResult> store(
     print(">>> BrainMemoryManager.clarify()");
 
     return BrainResult.clarification(
-      question:
-          instruction.question ?? "",
-      reason:
-          instruction.reason,
+      proposal: instruction.proposal,
     );
   }
 

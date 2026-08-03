@@ -190,7 +190,7 @@ class KnowledgePipeline {
       if (index == -1) {
         continue;
       }
-
+/*
       knowledge.entities[index] =
           knowledge.entities[index].copyWith(
         type: candidate.type,
@@ -198,7 +198,7 @@ class KnowledgePipeline {
 
       print(
         "UPDATE: ${knowledge.entities[index].label} -> ${knowledge.entities[index].type}",
-      );
+      );*/
     }
 
     print("");

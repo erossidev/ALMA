@@ -8,17 +8,17 @@ module.exports = async function (request) {
 
     const response = await axios.post(
 
-      "https://openrouter.ai/api/v1/chat/completions",
+      "http://127.0.0.1:11434/api/chat",
 
       {
 
-        model: request.model || "openrouter/auto",
+        model: request.model || "qwen2.5:3b",
 
         messages: [
 
           {
             role: "system",
-            content: request.system,
+            content: request.system ?? "",
           },
 
           {
@@ -28,23 +28,15 @@ module.exports = async function (request) {
 
         ],
 
-        temperature: request.temperature ?? 0,
+        think: false,
 
-        max_tokens: request.maxTokens ?? 120,
+        stream: false,
 
       },
 
       {
 
-        timeout: request.timeout ?? 15000,
-
-        headers: {
-
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-
-          "Content-Type": "application/json",
-
-        },
+        timeout: request.timeout ?? 180000,
 
       }
 
@@ -52,34 +44,50 @@ module.exports = async function (request) {
 
     const responseTimeMs = Date.now() - start;
 
+    if (
+
+      !response.data ||
+
+      !response.data.message ||
+
+      !response.data.message.content
+
+    ) {
+
+      throw new Error(
+        "Ollama non ha restituito alcuna risposta."
+      );
+
+    }
+
     return {
 
       success: true,
 
-      provider: "OpenRouter",
+      provider: "Ollama",
 
       model:
         response.data.model ??
         request.model,
 
       reply:
-        response.data.choices[0].message.content,
+        response.data.message.content,
 
       usage: {
 
         promptTokens:
-          response.data.usage?.prompt_tokens ?? 0,
+          response.data.prompt_eval_count ?? 0,
 
         completionTokens:
-          response.data.usage?.completion_tokens ?? 0,
+          response.data.eval_count ?? 0,
 
         totalTokens:
-          response.data.usage?.total_tokens ?? 0,
+          (response.data.prompt_eval_count ?? 0) +
+          (response.data.eval_count ?? 0),
 
         responseTimeMs,
 
-        finishReason:
-          response.data.choices?.[0]?.finish_reason ?? "unknown",
+        finishReason: "stop",
 
       },
 
@@ -94,7 +102,7 @@ module.exports = async function (request) {
       throw new Error(
         JSON.stringify({
 
-          provider: "openrouter",
+          provider: "ollama",
 
           model: request.model,
 

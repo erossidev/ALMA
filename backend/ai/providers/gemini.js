@@ -8,6 +8,8 @@ const ai = new GoogleGenAI({
 
 module.exports = async function (request) {
   try {
+    const start = Date.now();
+
     const response = await ai.models.generateContent({
       model: request.model,
 
@@ -18,10 +20,32 @@ module.exports = async function (request) {
       contents: request.user,
     });
 
+    const responseTimeMs = Date.now() - start;
+
     return {
+      success: true,
+
       provider: "Gemini",
-      model: "gemini-2.5-flash",
+
+      model: request.model,
+
       reply: response.text,
+
+      usage: {
+        promptTokens:
+          response.usageMetadata?.promptTokenCount ?? 0,
+
+        completionTokens:
+          response.usageMetadata?.candidatesTokenCount ?? 0,
+
+        totalTokens:
+          response.usageMetadata?.totalTokenCount ?? 0,
+
+        responseTimeMs,
+
+        finishReason:
+          response.candidates?.[0]?.finishReason ?? "unknown",
+      },
     };
 
   } catch (err) {

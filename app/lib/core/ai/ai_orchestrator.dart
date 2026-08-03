@@ -7,6 +7,8 @@ import 'ai_resource_resolver.dart';
 import 'ai_response.dart';
 import 'ai_router.dart';
 
+import 'configuration/ai_configuration_repository.dart';
+
 class AIOrchestrator {
   final AIRegistry registry;
 
@@ -14,12 +16,13 @@ class AIOrchestrator {
 
   final AIProviderRegistry providerRegistry;
 
-  final AIRouter router = const AIRouter();
+  final AIConfigurationRepository configurationRepository;
 
   const AIOrchestrator({
     required this.registry,
     required this.resolver,
     required this.providerRegistry,
+    required this.configurationRepository,
   });
 
   Future<AIResponse> execute(
@@ -49,7 +52,16 @@ class AIOrchestrator {
       );
     }
 
-    // Il Router sceglie direttamente la migliore
+    // Carica la configurazione AI
+    final configuration =
+        await configurationRepository.load();
+
+    // Crea il router con la configurazione corrente
+    final router = AIRouter(
+      configuration: configuration,
+    );
+
+    // Seleziona la risorsa
     final AIResource resource =
         router.route(
       request.task,

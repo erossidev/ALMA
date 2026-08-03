@@ -1,4 +1,5 @@
 import '../brain_vocabulary.dart';
+import '../semantic/learning/semantic_proposal.dart';
 
 /// ==========================================================
 /// OPERAZIONI DEL BRAIN
@@ -64,6 +65,8 @@ class BrainInstruction {
   /// Fact
   final List<BrainFact> facts;
 
+  final SemanticProposal? proposal;
+
   const BrainInstruction({
     this.version = 1,
     required this.operation,
@@ -75,6 +78,7 @@ class BrainInstruction {
     this.entities = const [],
     this.relations = const [],
     this.facts = const [],
+    this.proposal,
   }); 
 }
 

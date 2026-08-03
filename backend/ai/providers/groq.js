@@ -7,6 +7,9 @@ const groq = new Groq({
 });
 
 module.exports = async function (request) {
+
+  const start = Date.now();
+
   const completion = await groq.chat.completions.create({
     model: request.model,
     messages: [
@@ -21,9 +24,21 @@ module.exports = async function (request) {
     ],
   });
 
+  const responseTimeMs = Date.now() - start;
+
   return {
     provider: "Groq",
-    model: "llama-3.3-70b-versatile",
+
+    model: request.model,
+
     reply: completion.choices[0].message.content,
+
+    usage: {
+      promptTokens: completion.usage?.prompt_tokens ?? 0,
+      completionTokens: completion.usage?.completion_tokens ?? 0,
+      totalTokens: completion.usage?.total_tokens ?? 0,
+      responseTimeMs: responseTimeMs,
+      finishReason: completion.choices[0].finish_reason ?? "unknown",
+    },
   };
 };

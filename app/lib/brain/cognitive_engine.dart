@@ -196,38 +196,74 @@ print("");
 
   if (brainResult.requiresClarification) {
 
-     _pendingClarification = PendingClarification(
-        conflict: brainResult.conflict,
-        question: brainResult.question ??
-            "Puoi chiarire questa informazione?",
-        createdAt: DateTime.now(),
-      );
+  String reply;
 
-    total.stop();
+  final proposal = brainResult.proposal;
 
-print("");
-print("============= PERFORMANCE =============");
-print("Tempo totale: ${total.elapsedMilliseconds} ms");
-print("=======================================");
-print("");
+  if (proposal != null) {
 
-      return AIResponse(
-        reply: brainResult.question ??
-            "Puoi chiarire questa informazione?",
-        provider: "ALMA Brain",
-        model: "Clarification",
-      );
+    final buffer = StringBuffer();
+
+    buffer.writeln(
+        'Non conosco "${proposal.entity}".');
+
+    buffer.writeln();
+    buffer.writeln(
+        "Ho trovato queste possibili classificazioni:");
+
+    buffer.writeln();
+
+    for (int i = 0;
+        i < proposal.candidates.length;
+        i++) {
+
+      final c = proposal.candidates[i];
+
+      buffer.writeln(
+          "${i + 1}. ${c.type} (${(c.confidence * 100).toStringAsFixed(0)}%)");
+
+      if (c.reason.isNotEmpty) {
+        buffer.writeln(c.reason);
+      }
+
+      buffer.writeln();
     }
 
+    buffer.writeln(
+        "Quale descrive meglio questa entità?");
 
+    reply = buffer.toString();
+
+  } else {
+
+    reply = brainResult.question ??
+        "Puoi chiarire questa informazione?";
+
+  }
+
+  _pendingClarification = PendingClarification(
+    conflict: brainResult.conflict,
+    question: reply,
+    createdAt: DateTime.now(),
+  );
+
+  total.stop();
+
+  print("");
+  print("============= PERFORMANCE =============");
+  print("Tempo totale: ${total.elapsedMilliseconds} ms");
+  print("=======================================");
+  print("");
+
+  return AIResponse(
+    reply: reply,
+    provider: "ALMA Brain",
+    model: "Clarification",
+  );
+}
 
     return context.response!;
     }
-    
-
-  
-
- 
 
   // =====================================================
   // SONNO

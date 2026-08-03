@@ -7,15 +7,42 @@ import 'ai_resource_resolver.dart';
 import 'backend_ai_registry.dart';
 import 'ai_task.dart';
 
+import 'services/ai_execution_recorder.dart';
+import 'services/console_execution_recorder.dart';
+import 'configuration/memory_ai_configuration_repository.dart';
+
 class AIManager {
   final AIOrchestrator _orchestrator;
 
+  final AIExecutionRecorder _recorder =
+      const ConsoleExecutionRecorder();
+
   AIManager()
-      : _orchestrator = AIOrchestrator(
-          registry: BackendAIRegistry(),
-          resolver: const AIResourceResolver(),
-          providerRegistry: AIProviderRegistry(),
-        );
+    : _orchestrator = AIOrchestrator(
+        registry: BackendAIRegistry(),
+        resolver: const AIResourceResolver(),
+        providerRegistry: AIProviderRegistry(),
+        configurationRepository:
+            MemoryAIConfigurationRepository(),
+      );
+
+  // =====================================================
+  // ESECUZIONE GENERICA
+  // =====================================================
+
+  Future<AIResponse> _execute(
+    AIRequest request,
+  ) async {
+    final response =
+        await _orchestrator.execute(request);
+
+    await _recorder.record(
+      request: request,
+      response: response,
+    );
+
+    return response;
+  }
 
   // =====================================================
   // CHAT
@@ -24,10 +51,10 @@ class AIManager {
   Future<AIResponse> generateResponse(
     String prompt,
   ) async {
-    return await _orchestrator.execute(
-         AIRequest(
-         prompt: prompt,
-         task: AITask.language,
+    return await _execute(
+      AIRequest(
+        prompt: prompt,
+        task: AITask.language,
         requiredCapabilities: const [
           "conversation",
         ],
@@ -36,14 +63,13 @@ class AIManager {
   }
 
   // =====================================================
-  // ESTRAZIONE SEMANTICA
+  // KNOWLEDGE
   // =====================================================
 
   Future<String> extractKnowledge(
     String prompt,
   ) async {
-    final response =
-        await _orchestrator.execute(
+    final response = await _execute(
       AIRequest(
         prompt: prompt,
         task: AITask.knowledge,
@@ -58,14 +84,13 @@ class AIManager {
   }
 
   // =====================================================
-  // LEARNING CLASSIFICATION
+  // LEARNING
   // =====================================================
 
   Future<String> classifyLearning(
     String prompt,
   ) async {
-    final response =
-        await _orchestrator.execute(
+    final response = await _execute(
       AIRequest(
         prompt: prompt,
         task: AITask.learning,
@@ -78,26 +103,24 @@ class AIManager {
     return response.reply;
   }
 
-// =====================================================
-// ONTOLOGY NORMALIZATION
-// =====================================================
+  // =====================================================
+  // ONTOLOGY NORMALIZATION
+  // =====================================================
 
-Future<String> normalizeOntology(
-  String prompt,
-) async {
-  final response =
-      await _orchestrator.execute(
-    AIRequest(
-      prompt: prompt,
-      task: AITask.ontologyNormalization,
-      requiredCapabilities: const [
-        "reasoning",
-        "json",
-      ],
-    ),
-  );
+  Future<String> normalizeOntology(
+    String prompt,
+  ) async {
+    final response = await _execute(
+      AIRequest(
+        prompt: prompt,
+        task: AITask.ontologyNormalization,
+        requiredCapabilities: const [
+          "reasoning",
+          "json",
+        ],
+      ),
+    );
 
-  return response.reply;
-}
-
+    return response.reply;
+  }
 }
