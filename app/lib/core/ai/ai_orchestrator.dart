@@ -6,8 +6,11 @@ import 'ai_resource.dart';
 import 'ai_resource_resolver.dart';
 import 'ai_response.dart';
 import 'ai_router.dart';
+import 'ai_task.dart';
 
-import 'configuration/ai_configuration_repository.dart';
+import 'configuration/ai_configuration.dart';
+import 'backend_ai_service.dart';
+
 
 class AIOrchestrator {
   final AIRegistry registry;
@@ -16,35 +19,46 @@ class AIOrchestrator {
 
   final AIProviderRegistry providerRegistry;
 
-  final AIConfigurationRepository configurationRepository;
+  final BackendAIService backendAIService;
+
 
   const AIOrchestrator({
     required this.registry,
     required this.resolver,
     required this.providerRegistry,
-    required this.configurationRepository,
+    required this.backendAIService,
   });
+
+
 
   Future<AIResponse> execute(
     AIRequest request,
   ) async {
 
-    // Carica tutte le AI disponibili
+
+    // Carica tutte le risorse AI disponibili
     final resources =
         await registry.loadResources();
 
-    // Filtra quelle compatibili con il task
+
+
+    // Filtra le risorse compatibili con il task
     final candidates =
         resolver.resolveCandidates(
       request: request,
       resources: resources,
     );
 
-    // Tiene solo quelle abilitate
+
+
     final activeCandidates =
         candidates
-            .where((e) => e.enabled)
+            .where(
+              (e) => e.enabled,
+            )
             .toList();
+
+
 
     if (activeCandidates.isEmpty) {
       throw Exception(
@@ -52,21 +66,63 @@ class AIOrchestrator {
       );
     }
 
-    // Carica la configurazione AI
-    final configuration =
-        await configurationRepository.load();
 
-    // Crea il router con la configurazione corrente
-    final router = AIRouter(
-      configuration: configuration,
+
+    // ==============================
+    // ROUTING DAL BACKEND
+    // ==============================
+
+    final routingJson =
+        await backendAIService.loadRouting();
+
+
+
+    final routing =
+        <AITask, String>{};
+
+
+
+    routingJson.forEach(
+      (key, value) {
+
+        final task =
+            AITask.values.firstWhere(
+          (e) => e.name == key,
+          orElse: () =>
+              AITask.dialogue,
+        );
+
+
+        routing[task] =
+            value.toString();
+
+      },
     );
 
-    // Seleziona la risorsa
+
+
+    final configuration =
+        AIConfiguration(
+          routing: routing,
+        );
+
+
+
+    // Router con configurazione backend
+    final router =
+        AIRouter(
+          configuration: configuration,
+        );
+
+
+
     final AIResource resource =
         router.route(
       request.task,
       activeCandidates,
     );
+
+
 
     print("");
     print("===== MODEL SELECTION =====");
@@ -74,14 +130,20 @@ class AIOrchestrator {
     print("==========================");
     print("");
 
+
+
     final AIProvider provider =
         providerRegistry.getProvider(
       resource.providerId,
     );
 
+
+
     print(
       "🧠 ${resource.displayName}",
     );
+
+
 
     final AIResponse response =
         await provider.sendMessage(
@@ -89,9 +151,13 @@ class AIOrchestrator {
       resource: resource,
     );
 
+
+
     print(
       "✅ ${resource.displayName}",
     );
+
+
 
     return response;
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../shared/navigation/navigation_item.dart';
 
-class AlmaModule implements NavigationItem {
+class AICenterSection implements NavigationItem {
   @override
   final String id;
 
@@ -15,7 +15,7 @@ class AlmaModule implements NavigationItem {
   @override
   final Widget page;
 
-  const AlmaModule({
+  const AICenterSection({
     required this.id,
     required this.title,
     required this.icon,

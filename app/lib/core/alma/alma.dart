@@ -33,11 +33,16 @@ class Alma {
   final FirebaseBrainRepository repository =
     FirebaseBrainRepository();
 
- Future<void> initialize() async {
+Future<void> initialize() async {
+
+  print("===== INIZIALIZZO AI MANAGER =====");
+
+  await aiManager.init();
+
   print("===== CARICO BRAIN =====");
 
   final loadedBrain = await repository.loadBrain();
-
+  
     if (loadedBrain.neuronCount == 0) {
     print("Brain vuoto: inizializzo il Semantic Cortex...");
 

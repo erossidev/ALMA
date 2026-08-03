@@ -6,20 +6,32 @@ const cors = require("cors");
 const aiRouter = require("./ai/router");
 const providers = require("./ai/config/providers");
 
+const routingRepository =
+    require("./ai/routing/routingRepository");
+
+
 const app = express();
+
 
 app.use(cors());
 app.use(express.json());
 
+
+// ==============================
+// HOME
+// ==============================
+
 app.get("/", (req, res) => {
   res.send("ALMA Backend Online");
 });
+
 
 // ==============================
 // CHAT
 // ==============================
 
 app.post("/chat", async (req, res) => {
+
   try {
 
     const {
@@ -31,27 +43,45 @@ app.post("/chat", async (req, res) => {
       timeout,
     } = req.body;
 
+
     const result = await aiRouter({
+
       message,
+
       provider,
+
       model,
+
       maxTokens,
+
       temperature,
+
       timeout,
+
     });
+
 
     res.json(result);
 
+
   } catch (error) {
+
 
     console.error(error);
 
+
     res.status(500).json({
+
       error: error.message,
+
     });
 
+
   }
+
 });
+
+
 
 // ==============================
 // AI RESOURCES
@@ -59,17 +89,24 @@ app.post("/chat", async (req, res) => {
 
 app.get("/resources", (req, res) => {
 
+
   const resources = [];
+
 
   for (const provider of providers) {
 
+
     if (!provider.enabled) {
+
       continue;
+
     }
+
 
     for (const resource of provider.resources) {
 
-     resources.push({
+
+      resources.push({
 
         id: resource.id,
 
@@ -87,18 +124,103 @@ app.get("/resources", (req, res) => {
 
       });
 
+
     }
+
 
   }
 
+
   res.json(resources);
 
+
 });
+
+
 
 // ==============================
+// AI PROVIDERS
+// ==============================
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(
-    `Server avviato sulla porta ${process.env.PORT || 3000}`,
-  );
+app.get("/providers", (req, res) => {
+
+
+  const result = providers.map(provider => ({
+
+
+    id: provider.id,
+
+
+    name: provider.name,
+
+
+    enabled: provider.enabled,
+
+
+  }));
+
+
+  res.json(result);
+
+
 });
+
+
+
+
+// ==============================
+// ROUTING
+// ==============================
+
+app.get("/routing", (req, res) => {
+
+
+  res.json(
+
+    routingRepository.getRouting()
+
+  );
+
+
+});
+
+
+
+app.put("/routing", (req, res) => {
+
+
+  routingRepository.saveRouting(
+
+    req.body
+
+  );
+
+
+  res.json({
+
+    success: true,
+
+  });
+
+
+});
+
+
+
+
+// ==============================
+// START SERVER
+// ==============================
+
+app.listen(
+  process.env.PORT || 3000,
+  () => {
+
+    console.log(
+
+      `Server avviato sulla porta ${process.env.PORT || 3000}`
+
+    );
+
+  }
+);
