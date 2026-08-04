@@ -1,11 +1,11 @@
-import '../../knowledge/model/knowledge_entity.dart';
-import '../../knowledge/model/knowledge_fact.dart';
-import '../../knowledge/model/knowledge_model.dart';
-import '../../knowledge/model/knowledge_relation.dart';
+import '../../knowledge/knowledge_entity.dart';
+import '../../knowledge/knowledge_fact.dart';
+import '../../knowledge/knowledge_model.dart';
+import '../../knowledge/knowledge_relation.dart';
 
-import '../model/meaning.dart';
-import '../model/meaning_entity.dart';
-import '../model/meaning_proposition.dart';
+import '../meaning.dart';
+import '../atoms/meaning_entity.dart';
+import '../atoms/meaning_proposition.dart';
 
 class MeaningInterpreter {
   const MeaningInterpreter();

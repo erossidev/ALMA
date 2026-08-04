@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import '../model/meaning.dart';
-import '../model/meaning_entity.dart';
-import '../model/meaning_proposition.dart';
+import '../meaning.dart';
+import '../atoms/meaning_entity.dart';
+import '../atoms/meaning_proposition.dart';
 import 'meaning_parser_exception.dart';
 
 class MeaningParser {

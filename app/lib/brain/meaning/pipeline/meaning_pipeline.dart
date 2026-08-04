@@ -1,11 +1,11 @@
-import '../../core/ai/ai_manager.dart';
+import '../../../core/ai/ai_manager.dart';
 
-import '../knowledge/knowledge_model.dart';
+import '../../knowledge/knowledge_model.dart';
 
-import '../meaning/interpreter/meaning_interpreter.dart';
-import '../meaning/model/semantic_parsing_request.dart';
-import '../meaning/parser/meaning_parser.dart';
-import '../meaning/prompt/semantic_parsing_prompt.dart';
+import '../interpreter/meaning_interpreter.dart';
+import '../parser/meaning_parser.dart';
+import '../prompt/semantic_parsing_prompt.dart';
+import '../prompt/semantic_parsing_request.dart';
 
 class MeaningPipeline {
   final AIManager aiManager;
@@ -17,50 +17,84 @@ class MeaningPipeline {
   Future<KnowledgeModel> process(
     String message,
   ) async {
+    try {
+      //--------------------------------------------------
+      // Prompt
+      //--------------------------------------------------
 
-    //--------------------------------------------------
-    // Prompt
-    //--------------------------------------------------
+      final prompt =
+          const SemanticParsingPrompt().build(
+        SemanticParsingRequest(
+          message: message,
+        ),
+      );
 
-    final prompt =
-        const SemanticParsingPrompt().build(
-      SemanticParsingRequest(
-        message: message,
-      ),
-    );
+      print("");
+      print("===== MEANING PROMPT =====");
+      print(prompt);
+      print("==========================");
+      print("");
 
-    //--------------------------------------------------
-    // AI
-    //--------------------------------------------------
+      //--------------------------------------------------
+      // AI
+      //--------------------------------------------------
 
-    final raw =
-        await aiManager.extractMeaning(
-      prompt,
-    );
+      final raw =
+          await aiManager.extractMeaning(
+        prompt,
+      );
 
-    final json = raw
-        .replaceAll("```json", "")
-        .replaceAll("```", "")
-        .trim();
+      print("");
+      print("===== MEANING JSON =====");
+      print(raw);
+      print("========================");
+      print("");
 
-    //--------------------------------------------------
-    // Parser
-    //--------------------------------------------------
+      final json = raw
+          .replaceAll("```json", "")
+          .replaceAll("```", "")
+          .trim();
 
-    final meaning =
-        const MeaningParser().parse(
-      json,
-    );
+      //--------------------------------------------------
+      // Parser
+      //--------------------------------------------------
 
-    //--------------------------------------------------
-    // Interpreter
-    //--------------------------------------------------
+      final meaning =
+          const MeaningParser().parse(
+        json,
+      );
 
-    final knowledge =
-        const MeaningInterpreter().interpret(
-      meaning,
-    );
+      //--------------------------------------------------
+      // Interpreter
+      //--------------------------------------------------
 
-    return knowledge;
+      final knowledge =
+          const MeaningInterpreter().interpret(
+        meaning,
+      );
+
+      //--------------------------------------------------
+      // Debug
+      //--------------------------------------------------
+
+      print("");
+      print("===== MEANING PIPELINE =====");
+      print("Entities : ${knowledge.entities.length}");
+      print("Relations: ${knowledge.relations.length}");
+      print("Facts    : ${knowledge.facts.length}");
+      print("============================");
+      print("");
+
+      return knowledge;
+    } catch (e, stackTrace) {
+      print("");
+      print("===== MEANING PIPELINE ERROR =====");
+      print(e);
+      print(stackTrace);
+      print("=================================");
+      print("");
+
+      rethrow;
+    }
   }
 }

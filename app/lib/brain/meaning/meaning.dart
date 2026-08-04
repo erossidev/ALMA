@@ -1,5 +1,5 @@
-import 'meaning_entity.dart';
-import 'meaning_proposition.dart';
+import 'atoms/meaning_entity.dart';
+import 'atoms/meaning_proposition.dart';
 
 class Meaning {
 

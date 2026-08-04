@@ -25,6 +25,7 @@ import 'semantic/semantic_cortex.dart';
 import 'semantic/similarity/similarity_engine.dart';
 import 'semantic/learning/ai_semantic_advisor.dart';
 import 'semantic/learning/semantic_learning_engine.dart';
+import 'meaning/pipeline/meaning_pipeline.dart';
 
 class CognitiveEngine {
 
@@ -126,10 +127,27 @@ class CognitiveEngine {
   // CICLO COGNITIVO
   // =====================================================
 
-  Future<AIResponse> think(
-    
+  Future<AIResponse> think(  
     String message,
   ) async {
+
+     final pipeline = MeaningPipeline(
+      aiManager: aiManager,
+    );
+
+    final knowledge = await pipeline.process(
+      message,
+    );
+
+    
+
+    print("");
+    print("========== TEST MEANING ==========");
+    print(knowledge);
+    print("=================================");
+    print("");
+
+    throw UnimplementedError();
 
     final total = Stopwatch()..start();
 

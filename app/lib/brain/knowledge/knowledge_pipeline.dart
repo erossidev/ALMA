@@ -12,9 +12,9 @@ import '../ontology/ontology_normalizer.dart';
 import '../semantic/learning/semantic_learning_engine.dart';
 import '../semantic/learning/semantic_learning_request.dart';
 import '../semantic/learning/semantic_proposal.dart';
+import '../contracts/cognitive_pipeline.dart';
 
-
-class KnowledgePipeline {
+class KnowledgePipeline implements CognitivePipeline {
   final AIManager aiManager;
 
   final BrainExecutor brainExecutor;
