@@ -1,11 +1,15 @@
-class MeaningEntity extends MeaningAtom {
+class MeaningEntity {
+
   final String id;
+
   final String text;
-  final String kind;
 
   const MeaningEntity({
+
     required this.id,
+
     required this.text,
-    required this.kind,
+
   });
+
 }
