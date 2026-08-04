@@ -284,4 +284,36 @@ class AIManager {
 
   }
 
+  // =====================================================
+// MEANING
+// =====================================================
+
+Future<String> extractMeaning(
+  String prompt,
+) async {
+
+  final response =
+      await _execute(
+
+    AIRequest(
+
+      prompt: prompt,
+
+      task: AITask.knowledge,
+
+      requiredCapabilities: const [
+
+        "reasoning",
+
+        "json",
+
+      ],
+
+    ),
+
+  );
+
+  return response.reply;
+}
+
 }
