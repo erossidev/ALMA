@@ -100,11 +100,17 @@ class CognitiveEngine {
     KnowledgePipeline(
       aiManager: aiManager,
       brainExecutor: _brainExecutor,
+
+      meaningPipeline: MeaningPipeline(
+        aiManager: aiManager,
+      ),
+
       ontologyNormalizer: OntologyNormalizerService(
         aiManager: aiManager,
         parser: const KnowledgeParser(),
         codec: const KnowledgeJsonMapper(),
       ),
+
       semanticLearningEngine: _semanticLearningEngine,
     );
     
@@ -131,23 +137,7 @@ class CognitiveEngine {
     String message,
   ) async {
 
-     final pipeline = MeaningPipeline(
-      aiManager: aiManager,
-    );
-
-    final knowledge = await pipeline.process(
-      message,
-    );
-
-    
-
-    print("");
-    print("========== TEST MEANING ==========");
-    print(knowledge);
-    print("=================================");
-    print("");
-
-    throw UnimplementedError();
+        
 
     final total = Stopwatch()..start();
 
