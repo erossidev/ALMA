@@ -1,7 +1,7 @@
 import '../../brain/brain.dart';
 import '../../brain/cognitive_engine.dart';
 import '../../brain/working_memory.dart';
-
+import '../../brain/semantic/resolution/semantic_resolver.dart';
 import '../../brain/attention/attention_engine.dart';
 import '../../brain/hippocampus/hippocampus.dart';
 
@@ -44,16 +44,40 @@ Future<void> initialize() async {
   final loadedBrain = await repository.loadBrain();
   
     if (loadedBrain.neuronCount == 0) {
-    print("Brain vuoto: inizializzo il Semantic Cortex...");
 
-    await const SemanticBootstrap().initialize(
-      brain.semantic,
+        print("Brain vuoto");
+
+      } else {
+
+        brain.copyFrom(
+          loadedBrain,
+        );
+
+      }
+
+
+      // SEMPRE carico memoria semantica
+      print("===== CARICO SEMANTIC CORTEX =====");
+
+      await const SemanticBootstrap().initialize(
+        brain.semantic,
+      );
+    
+    final resolver = SemanticResolver(
+      cortex: brain.semantic,
     );
-  } else {
-    brain.copyFrom(
-      loadedBrain,
-    );
-  }
+
+
+    final decision =
+        await resolver.resolve("PLA");
+
+
+    print("===== SEMANTIC TEST =====");
+    print("Entity: ${decision.entity}");
+    print("Known: ${decision.known}");
+    print("Semantic: ${decision.semanticType}");
+    print("Brain: ${decision.brainType}");
+    print("=========================");
 
   print("Brain letto da Firestore:");
   print(loadedBrain);

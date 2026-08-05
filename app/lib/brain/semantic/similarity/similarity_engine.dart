@@ -46,9 +46,18 @@ double _calculateScore(
 ) {
   double score = 0;
 
-  final text = _normalize(
-    "${request.entity} ${request.context}",
-  );
+
+  // Se entity e context sono uguali significa
+  // che siamo in fase di apprendimento.
+  // Non dobbiamo usare il contesto perché
+  // potrebbe contaminare il risultato.
+
+  final text =
+      _normalize(
+        request.entity == request.context
+            ? request.entity
+            : "${request.entity} ${request.context}",
+      );
 
   // --------------------------
   // LABEL
@@ -106,39 +115,89 @@ List<SimilarityCandidate> _sortCandidates(
 /// ===============================
 
 class SimilarityEngine {
+
   final SemanticCortex cortex;
+
 
   const SimilarityEngine({
     required this.cortex,
   });
 
+
+
   Future<SimilarityResult> classify(
     SimilarityRequest request,
   ) async {
-    final candidates = <SimilarityCandidate>[];
+
+
+    final candidates =
+        <SimilarityCandidate>[];
+
+
 
     for (final node in cortex.nodes) {
-      final score = _calculateScore(
-        request,
-        node,
-      );
+
+
+      final score =
+          _calculateScore(
+            request,
+            node,
+          );
+
+
+
+      if (score > 0) {
+
+        print(
+          "SIMILARITY CHECK "
+          "${request.entity} -> "
+          "${node.label} "
+          "score=$score",
+        );
+
+      }
+
+
 
       if (score >= _minimumScore) {
+
+
         candidates.add(
+
           SimilarityCandidate(
+
             node: node,
+
             score: score,
+
           ),
+
         );
+
       }
+
+
     }
 
+
+
     final sorted =
-        _sortCandidates(candidates);
+        _sortCandidates(
+          candidates,
+        );
+
+
 
     return SimilarityResult(
+
       candidates:
-          sorted.take(_maxResults).toList(),
+          sorted
+              .take(_maxResults)
+              .toList(),
+
     );
+
+
   }
+
 }

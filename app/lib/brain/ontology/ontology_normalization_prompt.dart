@@ -125,6 +125,12 @@ L'unica differenza consentita è l'eventuale modifica di:
 - facts.type
 
 Tutto il resto deve rimanere IDENTICO.
+
+Return ONLY valid JSON.
+
+Do not explain.
+Do not use markdown.
+Do not use ``` blocks.
 ''';
   }
 }

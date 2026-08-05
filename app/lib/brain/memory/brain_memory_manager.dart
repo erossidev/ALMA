@@ -209,34 +209,37 @@ Future<BrainResult> store(
 // =====================================================
 
   Future<BrainConflict?> _detectConflict(
-  BrainInstruction instruction,
-) async {
-  for (final relation in instruction.relations) {
-    final conflict =
-        _conflictDetector.detect(
-      brain: brain,
-      fromId: relation.from,
-      relationship: relation.type,
-      toId: relation.to,
-    );
+    BrainInstruction instruction,
+  ) async {
 
-  if (conflict != null) {
-    final to = brain.getNeuron(
-        relation.to,
-      );
+    for (final relation in instruction.relations) {
 
-    return BrainConflict(
-      existing: conflict.existing,
-      fromId: conflict.fromId,
-      toId: conflict.toId,
-      newLabel: to?.label ?? relation.to,
-      relationship: conflict.relationship,
-    );
-}
+      final conflict =
+          _conflictDetector.detect(
+            brain: brain,
+            fromId: relation.from,
+            toId: relation.to,
+            relationship: relation.type,
+          );
+
+      if (conflict != null) {
+
+        final to = brain.getNeuron(
+          relation.to,
+        );
+
+        return BrainConflict(
+          existing: conflict.existing,
+          fromId: conflict.fromId,
+          toId: conflict.toId,
+          newLabel: to?.label ?? relation.to,
+          relationship: conflict.relationship,
+        );
+      }
+    }
+
+    return null;
   }
-
-  return null;
-}
 
   
   // =====================================================
@@ -260,22 +263,22 @@ Future<BrainResult> store(
 
     print("===== NEURONI =====");
 
-    for (final neuron
-        in brain.neurons) {
+    for (final neuron in brain.neurons) {
       print(
-        "${neuron.id} (${neuron.type.name})",
-      );
+          "${neuron.id} "
+          "(${neuron.type.name}) "
+          "semantic=${neuron.semanticType}",
+        );
     }
 
     print("");
 
     print("===== SINAPSI =====");
 
-    for (final synapse
-        in brain.synapses) {
+    for (final synapse in brain.synapses) {
       print(
         "${synapse.id}"
-        " -> ${synapse.relationship.name}"
+        " -> ${synapse.relationship}"
         " (${synapse.from.label} -> ${synapse.to.label})",
       );
     }

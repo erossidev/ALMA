@@ -16,7 +16,7 @@ class BrainRetriever {
     final results = <Synapse>[];
 
     for (final synapse in brain.synapses) {
-      if (synapse.relationship.name
+      if (synapse.relationship
               .toLowerCase()
               .contains(q) ||
           synapse.from.label

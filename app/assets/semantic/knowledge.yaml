@@ -1,0 +1,30 @@
+entities:
+
+  - id: pla
+
+    label: PLA
+
+    description: Filamento per stampa 3D
+
+    semanticType: material
+
+    brainType: technology
+
+    aliases:
+      - pla
+      - acido polilattico
+
+
+  - id: ender
+
+    label: Ender
+
+    description: Stampante 3D
+
+    semanticType: product
+
+    brainType: product
+
+    aliases:
+      - ender 3
+      - creality ender

@@ -13,16 +13,29 @@ Extract the semantic meaning of the user's message.
 
 Return ONLY valid JSON.
 
+- Separare il nome dell'entità dalla sua categoria.
+- Esempio:
+  "La stampante Ender"
+  deve diventare:
+  text: "Ender"
+  type: "stampante"
+
+- Il tipo descrive la categoria, non fa parte del nome.
+
+
 The JSON MUST have exactly this structure:
+
+
 
 {
   "version": 1,
-  "entities": [
-    {
-      "id": "e1",
-      "text": "Mario"
-    }
-  ],
+    "entities": [
+  {
+    "id": "e1",
+    "text": "Ender",
+    "type": "stampante"
+  }
+  ]
   "propositions": [
     {
       "subject": "speaker",

@@ -20,18 +20,40 @@ class SemanticBootstrap {
   ) async {
 
 
-    final text = await loader.load(
-    "assets/semantic/entities.yaml",
+    final ontologyText = await loader.load(
+      "assets/semantic/entities.yaml",
     );
 
-    final nodes = await parser.parse(
-      text,
+
+    final knowledgeText = await loader.load(
+      "assets/semantic/knowledge.yaml",
     );
+
+
+    final ontologyNodes = await parser.parse(
+      ontologyText,
+    );
+
+
+    final knowledgeNodes = await parser.parse(
+      knowledgeText,
+    );
+
+
+    final nodes = [
+      ...ontologyNodes,
+      ...knowledgeNodes,
+    ];
 
 print("===== SEMANTIC BOOTSTRAP =====");
 print("Loaded ${nodes.length} entities");
 
     for (final node in nodes) {
+
+      print(
+      "SEMANTIC NODE: ${node.label}",
+      );
+
       cortex.register(node);
     }
 

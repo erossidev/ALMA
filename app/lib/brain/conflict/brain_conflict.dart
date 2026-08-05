@@ -11,7 +11,7 @@ class BrainConflict {
   // <-- nuovo
   final String newLabel;
 
-  final RelationshipType relationship;
+  final String relationship;
 
   const BrainConflict({
     required this.existing,

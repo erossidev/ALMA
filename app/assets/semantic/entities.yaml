@@ -17,3 +17,9 @@ entities:
   - id: place
     label: Place
     description: Physical or virtual location
+
+  - id: pla
+    label: PLA
+    description: Materiale per stampa 3D
+    semanticType: material
+    brainType: technology

@@ -40,7 +40,7 @@ class MeaningInterpreter {
           (entity) => KnowledgeEntity(
             id: entity.id,
             label: entity.text,
-            type: 'unknown',
+            type: entity.type ?? 'unknown',
           ),
         )
         .toList();

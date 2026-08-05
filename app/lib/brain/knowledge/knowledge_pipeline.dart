@@ -6,6 +6,7 @@ import '../protocol/brain_result.dart';
 
 import 'cognitive_memory_manager.dart';
 import 'knowledge_model.dart';
+import 'knowledge_entity.dart';
 import 'knowledge_parser.dart';
 
 import '../ontology/ontology_loader.dart';
@@ -16,12 +17,16 @@ import '../semantic/learning/semantic_learning_engine.dart';
 import '../semantic/learning/semantic_learning_request.dart';
 import '../semantic/learning/semantic_proposal.dart';
 
+import '../semantic/resolution/semantic_resolver.dart';
+
 import '../contracts/cognitive_pipeline.dart';
 
 import '../meaning/pipeline/meaning_pipeline.dart';
-
+import '../brain.dart';
+import '../semantic/learning/pending_learning.dart';
 
 class KnowledgePipeline implements CognitivePipeline {
+
 
   final AIManager aiManager;
 
@@ -31,22 +36,40 @@ class KnowledgePipeline implements CognitivePipeline {
 
   final OntologyNormalizer ontologyNormalizer;
 
-  final KnowledgeParser knowledgeParser =
-      const KnowledgeParser();
-
-  final CognitiveMemoryManager memoryManager =
-      const CognitiveMemoryManager();
+  final SemanticResolver semanticResolver;
 
   final SemanticLearningEngine semanticLearningEngine;
 
 
+  final KnowledgeParser knowledgeParser =
+      const KnowledgeParser();
+
+
+  final CognitiveMemoryManager memoryManager =
+      const CognitiveMemoryManager();
+
+  final Brain brain;
+
+
+
   KnowledgePipeline({
+
     required this.aiManager,
+
     required this.brainExecutor,
+
     required this.ontologyNormalizer,
+
+    required this.semanticResolver,
+
     required this.semanticLearningEngine,
+
     required this.meaningPipeline,
-  });
+
+    required this.brain,
+
+});
+
 
 
   @override
@@ -54,16 +77,19 @@ class KnowledgePipeline implements CognitivePipeline {
     String message,
   ) async {
 
+
     try {
 
+
       // =====================================================
-      // MEANING PIPELINE V2
+      // MEANING PIPELINE
       // =====================================================
 
       KnowledgeModel knowledge =
           await meaningPipeline.process(
         message,
       );
+
 
 
       // =====================================================
@@ -76,136 +102,431 @@ class KnowledgePipeline implements CognitivePipeline {
       );
 
 
+
       print("");
       print("===== KNOWLEDGE =====");
+
       print(
         "Entities  : ${knowledge.entities.length}",
       );
+
       print(
         "Relations : ${knowledge.relations.length}",
       );
+
       print(
         "Facts     : ${knowledge.facts.length}",
       );
 
 
-      // =====================================================
-      // NESSUNA CONOSCENZA
-      // =====================================================
 
-      if (knowledge.entities.isEmpty &&
-          knowledge.relations.isEmpty &&
-          knowledge.facts.isEmpty) {
+      if (knowledge.isEmpty) {
 
-        print("");
-        print("===== KNOWLEDGE =====");
-        print("Nessuna conoscenza da memorizzare.");
-        print("");
+        print(
+          "Nessuna conoscenza da memorizzare.",
+        );
 
         return BrainResult.ignored();
       }
+
+
+
+
+      // =====================================================
+      // SEMANTIC RESOLUTION
+      // ALMA MEMORY FIRST
+      // =====================================================
+
+
+      print("");
+      print("===== SEMANTIC RESOLUTION =====");
+
+
+      final resolvedEntities =
+          <KnowledgeEntity>[];
+
+
+
+      for (final entity in knowledge.entities) {
+
+
+        final decision =
+            await semanticResolver.resolve(
+          entity.label,
+        );
+
+
+
+        if (decision.known) {
+
+
+          print(
+            "MEMORY HIT: ${entity.label} -> "
+            "${decision.semanticType}",
+          );
+
+
+
+          resolvedEntities.add(
+            entity.copyWith(
+              semanticType: decision.semanticType,
+            ),
+          );
+
+
+
+        } else {
+
+
+          print(
+            "UNKNOWN ENTITY: ${entity.label}",
+          );
+
+
+          resolvedEntities.add(
+            entity,
+          );
+
+        }
+
+      }
+
+
+
+      knowledge =
+          KnowledgeModel(
+            entities: resolvedEntities,
+            relations: knowledge.relations,
+            facts: knowledge.facts,
+          );
+
+      print("");
+      print("===== AFTER RESOLUTION DEBUG =====");
+
+      for (final e in knowledge.entities) {
+
+        print(
+          "${e.label} | "
+          "type=${e.type} | "
+          "semantic=${e.semanticType}",
+        );
+
+      }
+
+print("=================================");
+
+      print("");
+      print("===== AFTER SEMANTIC RESOLUTION =====");
+
+      for(final e in knowledge.entities){
+
+        print(
+          "${e.label} "
+          "type=${e.type} "
+          "semantic=${e.semanticType}"
+        );
+
+      }
+
+print("=====================================");
+
+      print("");
+      print("===== DEBUG SEMANTIC SAVED =====");
+
+      for(final e in knowledge.entities){
+
+        print(
+          "${e.label} "
+          "TYPE=${e.type} "
+          "SEMANTIC=${e.semanticType}"
+        );
+
+      }
+
+print("===============================");
+
+
 
 
       // =====================================================
       // ONTOLOGY VALIDATION
       // =====================================================
 
+
       final ontology =
           await OntologyLoader.load();
 
 
+
       final validator =
           OntologyValidator(
-        ontology,
+            ontology,
+          );
+
+    final unresolvedKnowledge =
+        KnowledgeModel(
+          entities: knowledge.entities
+              .where(
+                (e) => e.semanticType == null,
+              )
+              .toList(),
+          relations: knowledge.relations,
+          facts: knowledge.facts,
+        );
+
+    print("");
+    print("===== CHECK BEFORE VALIDATOR =====");
+
+    for (final e in knowledge.entities) {
+
+      print(
+        "${e.label} "
+        "semanticType=${e.semanticType}",
       );
 
+    }
 
-      final unknownConcepts =
-          validator.validate(
-        knowledge,
-      );
+    print("==================================");
+
+    final unknownConcepts =
+        validator.validate(
+          unresolvedKnowledge,
+        );
+
 
 
       print("");
       print("===== ONTOLOGY =====");
+
       print(
         "Unknown concepts : ${unknownConcepts.length}",
       );
 
 
       for (final concept in unknownConcepts) {
-        print(" - $concept");
+
+        print(
+          " - $concept",
+        );
+
       }
+
+
 
 
 
       // =====================================================
       // SEMANTIC LEARNING
+      // SOLO SE ALMA NON SA
       // =====================================================
+
 
       final proposals =
           <SemanticProposal>[];
 
 
+
       for (final concept in unknownConcepts) {
 
-        final proposal =
-            await semanticLearningEngine.learn(
-          SemanticLearningRequest(
-            entity: concept,
-            text: message,
-          ),
-        );
+
+          print(
+            "LEARNING UNKNOWN ENTITY: $concept",
+          );
 
 
-        proposals.add(
-          proposal,
-        );
-      }
+          final entity =
+              knowledge.entities.firstWhere(
+            (e) =>
+                e.label.toLowerCase() ==
+                concept.toLowerCase(),
+          );
 
 
+          final proposal =
+              await semanticLearningEngine.learn(
 
-      // =====================================================
-      // DEBUG PROPOSALS
-      // =====================================================
+            SemanticLearningRequest(
 
-      print("");
-      print("===== SEMANTIC PROPOSALS =====");
+              entity: concept,
 
+              text: message,
 
-      for (final proposal in proposals) {
+              type: entity.type,
 
-        print(
-          "${proposal.entity} -> "
-          "${proposal.bestCandidate?.type} "
-          "(${proposal.bestCandidate?.confidence})",
-        );
-      }
+            ),
+
+          );
 
 
-
-      // =====================================================
-      // BUILD BRAIN INSTRUCTION
-      // =====================================================
-
-      final BrainInstruction instruction =
-          await memoryManager.build(
-        knowledge: knowledge,
-        proposals: proposals,
-      );
+          proposals.add(
+            proposal,
+          );
 
 
-      print("");
-      print("===== BRAIN =====");
-      print(
-        "Operation : ${instruction.operation}",
-      );
+        }
 
 
 
-      // =====================================================
+
+            // =====================================================
+            // DEBUG PROPOSALS
+            // =====================================================
+
+            print("");
+            print("===== SEMANTIC PROPOSALS =====");
+
+
+            for (final proposal in proposals) {
+
+              print(
+                "${proposal.entity} -> "
+                "semantic=${proposal.bestCandidate?.type} "
+                "brain=${proposal.bestCandidate?.brainType} "
+                "confidence=${proposal.bestCandidate?.confidence}",
+              );
+
+            }
+
+
+
+            // =====================================================
+            // APPLY PROPOSALS
+            // =====================================================
+
+
+            for (final proposal in proposals) {
+
+
+              final candidate =
+                  proposal.bestCandidate;
+
+
+
+              // ===============================
+              // NESSUN CANDIDATO
+              // RICHIESTA CHIARIMENTO
+              // ===============================
+
+              if (candidate == null) {
+
+
+                print(
+                  ">>> NECESSARIO CHIARIMENTO: ${proposal.entity}",
+                );
+
+
+
+                brain.setPendingLearning(
+
+                  PendingLearning(
+
+                    entity:
+                        proposal.entity,
+
+                    context:
+                        message,
+
+                  ),
+
+                );
+
+
+
+                return BrainResult.clarification(
+
+                  question:
+                      "Non conosco '${proposal.entity}'. Che tipo di elemento è?",
+
+                  proposal:
+                      proposal,
+
+                  reason:
+                      "Unknown semantic entity",
+
+                );
+
+              }
+
+
+
+
+
+              final index =
+                  knowledge.entities.indexWhere(
+
+                (entity) =>
+
+                    entity.label.toLowerCase() ==
+                    proposal.entity.toLowerCase(),
+
+              );
+
+
+
+              if (index == -1) {
+
+                continue;
+
+              }
+
+
+
+
+              knowledge.entities[index] =
+
+                  knowledge.entities[index].copyWith(
+
+                    type:
+                        candidate.type,
+
+                    semanticType:
+                        candidate.type,
+
+                  );
+
+            }
+
+
+
+
+
+            // =====================================================
+            // BUILD BRAIN INSTRUCTION
+            // =====================================================
+
+
+            final BrainInstruction instruction =
+
+                await memoryManager.build(
+
+                  knowledge:
+                      knowledge,
+
+                  proposals:
+                      proposals,
+
+                );
+
+
+
+
+            print("");
+
+            print("===== BRAIN =====");
+
+
+            print(
+              "Operation : ${instruction.operation}",
+            );
+
+
+
+
+
+                  // =====================================================
       // EXECUTION
       // =====================================================
+
 
       return await brainExecutor.execute(
         instruction,
@@ -214,25 +535,34 @@ class KnowledgePipeline implements CognitivePipeline {
 
     } catch (e, stackTrace) {
 
+
       print("");
+
       print(
         "===== KNOWLEDGE PIPELINE ERROR =====",
       );
 
+
       print(e);
+
       print(stackTrace);
+
 
       print(
         "====================================",
       );
 
-      print("");
-
 
       return BrainResult.failure(
+
         BrainOperation.ignore,
+
         e.toString(),
+
       );
+
     }
+
   }
+
 }

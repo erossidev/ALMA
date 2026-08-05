@@ -59,6 +59,7 @@ class MeaningParser {
         MeaningEntity(
           id: item['id'],
           text: item['text'],
+          type: item['type'],
         ),
       );
     }

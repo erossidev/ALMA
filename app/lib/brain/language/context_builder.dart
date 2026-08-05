@@ -151,7 +151,7 @@ class ContextBuilder {
 
           default:
             buffer.writeln(
-              "- ${synapse.from.label} → ${synapse.relationship.name} → ${synapse.to.label}",
+              "- ${synapse.from.label} → ${synapse.relationship} → ${synapse.to.label}",
             );
         }
       }

@@ -10,8 +10,11 @@ class SemanticCandidate {
 
   final SemanticCandidateSource source;
 
+  final String brainType;
+
   const SemanticCandidate({
     required this.type,
+    required this.brainType,
     required this.confidence,
     required this.reason,
     required this.source,

@@ -87,16 +87,30 @@ class BrainInstruction {
 /// ==========================================================
 
 class BrainEntity {
+
   final String id;
 
   final String label;
 
-  final EntityType type;
+
+  /// Tipo interno del Brain
+  final String type;
+
+
+  /// Tipo semantico imparato da Alma
+  final String? semanticType;
+
 
   const BrainEntity({
+
     required this.id,
+
     required this.label,
+
     required this.type,
+
+    this.semanticType,
+
   });
 }
 
@@ -109,7 +123,7 @@ class BrainRelation {
 
   final String to;
 
-  final RelationshipType type;
+  final String type;
 
   const BrainRelation({
     required this.from,

@@ -13,7 +13,16 @@ class FirebaseBrainRepository implements BrainRepository {
   final FirebaseAuth _auth =
       FirebaseAuth.instance;
 
-  String get _uid => _auth.currentUser!.uid;
+  String get _uid {
+  final user = _auth.currentUser;
+
+  print("===== FIREBASE USER =====");
+  print(user?.uid);
+  print(user?.email);
+  print("=========================");
+
+  return user!.uid;
+}
 
   CollectionReference<Map<String, dynamic>>
       get _neurons => _firestore

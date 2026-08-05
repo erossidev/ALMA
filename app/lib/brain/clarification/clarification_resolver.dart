@@ -42,12 +42,12 @@ class ClarificationResolver {
         BrainEntity(
           id: conflict.fromId,
           label: "Utente",
-          type: EntityType.person,
+          type: "person",
         ),
         BrainEntity(
           id: conflict.toId,
           label: conflict.newLabel,
-          type: EntityType.person,
+          type: "person",
         ),
       ],
       relations: [

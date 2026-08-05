@@ -4,6 +4,7 @@ class SemanticLearningPrompt {
 
   const SemanticLearningPrompt();
 
+
   String build(
     SemanticLearningRequest request,
   ) {
@@ -20,13 +21,16 @@ classifications for an unknown entity.
 
 The final decision will always be made by ALMA.
 
+
 ENTITY
 
 ${request.entity}
 
+
 CONTEXT
 
 ${request.text}
+
 
 RULES
 
@@ -35,14 +39,69 @@ RULES
 - Produce at most 3 candidates.
 - Order candidates by confidence (highest first).
 - Explain why every candidate was chosen.
-- Use only ontology-compatible semantic types.
-- If no classification is possible, return "unknown".
 - Return ONLY valid JSON.
+- Do not use markdown.
+- Do not explain outside JSON.
+
+
+SEMANTIC TYPE VS BRAIN TYPE
+
+IMPORTANT:
+
+"type" and "brainType" are two different concepts.
+
+"type" represents the semantic nature of the entity.
+
+Examples:
+- PLA -> type: material
+- Ender 3D printer -> type: product
+- Python -> type: technology
+
+
+"brainType" represents the ALMA memory category.
+
+Do NOT automatically copy type into brainType.
+
+Examples:
+
+PLA:
+{
+  "type": "material",
+  "brainType": "technology"
+}
+
+3D printer:
+{
+  "type": "product",
+  "brainType": "product"
+}
+
+
+VALID brainType VALUES:
+
+person,
+animal,
+place,
+organization,
+company,
+project,
+product,
+technology,
+document,
+concept,
+preference,
+goal,
+emotion
+
 
 JSON FORMAT
 
+
 {
   "entity": "${request.entity}",
+
+  "brainType": "",
+
   "candidates": [
     {
       "type": "",
@@ -51,8 +110,7 @@ JSON FORMAT
     }
   ]
 }
+
 ''';
-
   }
-
 }

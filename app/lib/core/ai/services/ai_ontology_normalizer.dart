@@ -51,8 +51,26 @@ Future<KnowledgeModel> normalize(
 
   print(">>> PRIMA parser");
 
+  String cleanJson(String text) {
+
+      final start = text.indexOf('{');
+
+      final end = text.lastIndexOf('}');
+
+      if (start == -1 || end == -1) {
+        return text;
+      }
+
+      return text.substring(
+        start,
+        end + 1,
+      );
+    }
+
+
+
   final result = parser.parse(
-    normalizedJson,
+    cleanJson(normalizedJson),
   );
 
   print(">>> DOPO parser");

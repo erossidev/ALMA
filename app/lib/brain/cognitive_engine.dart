@@ -26,6 +26,7 @@ import 'semantic/similarity/similarity_engine.dart';
 import 'semantic/learning/ai_semantic_advisor.dart';
 import 'semantic/learning/semantic_learning_engine.dart';
 import 'meaning/pipeline/meaning_pipeline.dart';
+import 'semantic/resolution/semantic_resolver.dart';
 
 class CognitiveEngine {
 
@@ -96,14 +97,13 @@ class CognitiveEngine {
         brainMemoryManager: _brainMemoryManager,
       );
 
-  late final KnowledgePipeline _knowledgePipeline =
+ late final KnowledgePipeline _knowledgePipeline =
     KnowledgePipeline(
       aiManager: aiManager,
-      brainExecutor: _brainExecutor,
 
-      meaningPipeline: MeaningPipeline(
-        aiManager: aiManager,
-      ),
+      brain: brain,
+
+      brainExecutor: _brainExecutor,
 
       ontologyNormalizer: OntologyNormalizerService(
         aiManager: aiManager,
@@ -112,6 +112,14 @@ class CognitiveEngine {
       ),
 
       semanticLearningEngine: _semanticLearningEngine,
+
+      meaningPipeline: MeaningPipeline(
+        aiManager: aiManager,
+      ),
+
+      semanticResolver: SemanticResolver(
+        cortex: brain.semantic,
+      ),
     );
     
       PendingClarification? _pendingClarification;

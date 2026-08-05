@@ -1,5 +1,5 @@
 import 'package:yaml/yaml.dart';
-
+import 'semantic_metadata.dart';
 import 'semantic_node.dart';
 import 'semantic_node_type.dart';
 import 'semantic_parser.dart';
@@ -29,7 +29,20 @@ class YamlSemanticParser
       id: id,
       type: SemanticNodeType.entity,
       label: label,
-    );
+      metadata: SemanticMetadata(
+        semanticType:
+            entity["semanticType"]?.toString(),
+
+        brainType:
+            entity["brainType"]?.toString(),
+
+        description:
+            entity["description"]?.toString(),
+
+        source:
+            "yaml",
+      ),
+);
 
     nodes.add(node);
 

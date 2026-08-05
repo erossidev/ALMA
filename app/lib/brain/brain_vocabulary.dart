@@ -306,8 +306,16 @@ class BrainVocabulary {
 };
 
 static bool isSingleRelation(
-  RelationshipType relation,
+  String relationship,
 ) {
+
+  final relation =
+      RelationshipType.values.firstWhere(
+        (e) => e.name == relationship,
+        orElse: () => RelationshipType.relatedTo,
+      );
+
+
   return relationshipDefinitions[relation]!
           .cardinality ==
       RelationshipCardinality.single;
